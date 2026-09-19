@@ -4,7 +4,11 @@ import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
 import { useLogout, useNodeStatus, useCampaigns } from '../../api/hooks'
 
-export function Navbar() {
+interface NavbarProps {
+  onOpenMobileMenu?: () => void
+}
+
+export function Navbar({ onOpenMobileMenu }: NavbarProps) {
   const { user, campaignId, logout: logoutStore } = useAuthStore()
   const branding = useBrandingStore()
   const logout = useLogout()
@@ -45,10 +49,22 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 h-16 bg-surface z-50 shadow-[0_1px_8px_rgba(0,0,0,0.06)] border-b border-surface-container-high">
-      <div className="h-16 w-full px-4 sm:px-6 flex items-center justify-between gap-4">
-        {/* Brand */}
-        <div className="flex items-center gap-4 min-w-max">
-          <Link to="/" className="flex items-center gap-3">
+      <div className="h-16 w-full px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4">
+        {/* Brand & Mobile Hamburger */}
+        <div className="flex items-center gap-2 sm:gap-4 min-w-max">
+          {onOpenMobileMenu && (
+            <button
+              onClick={onOpenMobileMenu}
+              type="button"
+              className="lg:hidden p-1.5 -ml-1 text-on-surface-variant hover:text-on-surface flex items-center justify-center cursor-pointer"
+              title="Abrir menú"
+              aria-label="Abrir menú de navegación"
+            >
+              <span className="material-symbols-outlined text-[26px]">menu</span>
+            </button>
+          )}
+
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3">
             {branding.logoUrl ? (
               <img
                 alt={branding.appName}

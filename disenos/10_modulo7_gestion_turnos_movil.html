@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","surface-container-low":"#f4f4f4","on-primary-container":"#161616","inverse-primary":"#78a9ff","on-background":"#161616","error-container":"#fff1f1","outline-variant":"#e0e0e0","tertiary-container":"#a7f0ba","surface-container-highest":"#c6c6c6","surface-tint":"#0f62fe","primary-container":"#d0e2ff","on-error-container":"#750e13","on-secondary-container":"#525252","surface-dim":"#e0e0e0","tertiary":"#198038","tertiary-fixed-dim":"#42be65","surface-bright":"#ffffff","background":"#ffffff","surface":"#ffffff","primary-fixed":"#d0e2ff","on-surface":"#161616","inverse-on-surface":"#f4f4f4","on-primary-fixed-variant":"#0043ce","secondary-container":"#e0e0e0","on-tertiary-fixed":"#022d0d","secondary":"#6f6f6f","on-tertiary":"#ffffff","on-primary-fixed":"#001d6c","tertiary-fixed":"#a7f0ba","primary":"#0f62fe","secondary-fixed":"#e0e0e0","on-surface-variant":"#525252","secondary-fixed-dim":"#c6c6c6","on-tertiary-fixed-variant":"#044317","inverse-surface":"#393939","on-error":"#ffffff","outline":"#8d8d8d","surface-container":"#f4f4f4","on-secondary":"#ffffff","surface-container-high":"#e0e0e0","on-secondary-fixed-variant":"#525252","on-tertiary-container":"#044317","on-primary":"#ffffff","surface-variant":"#f4f4f4","primary-fixed-dim":"#78a9ff","on-secondary-fixed":"#161616","error":"#da1e28"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{},"fontFamily":{"headline":["IBM Plex Sans"],"display":["IBM Plex Sans"],"body":["IBM Plex Sans"],"label":["IBM Plex Sans"]},"fontSize":{}}}};</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#ffffff;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-4 flex items-center justify-between"><div class="flex items-center gap-2"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WZ0tE2OVs5Sheyc4hORQ0oGj271jvC10KhuNWKN1dg5zIqDxV7G-A7uAlo05HPtzIkVbqgyemo4dRRGPbfdkGxo6aQrrKFjPQ7xIccQx8klvnBNRNPpsibPhkHx5XYAJ2HK5ZrAmfuqejPoxEsriVD84qCOv1n4wuo4x9p_qVw4BA17-e0mGJupmkTuWM5DDoVqIrv2hP_BAqGfrBHTMMhrO_vKhumJiQEyQ-oiRRi1lEDdTH5vXQOKGkS"/><div class="flex flex-col"><span class="font-headline font-bold text-xs tracking-wider uppercase text-on-surface leading-tight">Semilla Salud</span><span class="font-label text-[10px] text-on-surface-variant font-medium leading-none truncate max-w-[120px]">Mas</span></div></div><div class="flex items-center gap-2"><div class="flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container text-tertiary text-[11px] font-semibold tracking-wide"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span>Sinc</span></div><button aria-label="Notificaciones" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-20 bg-surface flex-grow min-h-screen"><div class="flex flex-col w-full pb-8">
+<!-- Top Context Header Bar -->
+<section class="bg-surface-container px-4 py-3 flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+<span class="font-headline font-semibold text-[11px] uppercase tracking-wider text-on-surface-variant">Administración • Equipo de Campo</span>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[11px] font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+        Cusco 2025 (24 en línea)
+      </span>
+</div>
+<!-- Quick Shift Overview Stats -->
+<div class="flex items-center gap-2 overflow-x-auto py-1.5 scrollbar-none">
+<div class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg shadow-sm shrink-0 min-w-[124px]">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">groups</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-surface leading-tight">24</span>
+<span class="font-label text-[11px] text-on-surface-variant">En turno</span>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg shadow-sm shrink-0 min-w-[120px]">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">stethoscope</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-surface leading-tight">8</span>
+<span class="font-label text-[11px] text-on-surface-variant">Médicos</span>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg shadow-sm shrink-0 min-w-[120px]">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">ecg_heart</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-surface leading-tight">14</span>
+<span class="font-label text-[11px] text-on-surface-variant">Enfermeros</span>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 bg-surface rounded-lg shadow-sm shrink-0 min-w-[130px]">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-base font-bold text-on-surface leading-tight">2</span>
+<span class="font-label text-[11px] text-on-surface-variant">Soporte Técnico</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Search & Badge Scanner Action Bar -->
+<section class="px-4 pt-4 pb-2">
+<div class="flex items-center gap-2 bg-surface-container-low p-1.5 rounded-lg">
+<div class="relative flex-1 flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-secondary text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-3 bg-surface text-on-surface text-[13px] rounded placeholder:text-outline focus:outline-none shadow-sm" id="staffSearch" placeholder="Buscar por nombre, CMP o box..." type="text"/>
+</div>
+<button aria-label="Escanear Gafete QR" class="h-10 px-3.5 bg-primary text-on-primary rounded flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-transform" id="qrScannerBtn">
+<span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+<span class="text-xs font-semibold tracking-wide">Escanear</span>
+</button>
+</div>
+</section>
+<!-- Staff Directory List -->
+<section class="px-4 py-2 flex flex-col gap-3">
+<div class="flex items-center justify-between px-0.5">
+<span class="font-headline font-semibold text-xs tracking-wider uppercase text-on-surface-variant">Personal Desplegado en Campo</span>
+<span class="font-label text-[11px] text-primary font-medium">Turno Mañana (07:00 - 15:00)</span>
+</div>
+<!-- Card 1: Dr. Marco Huamán -->
+<article class="p-3.5 bg-surface-container-low rounded-lg shadow-sm flex flex-col gap-3 transition-colors hover:bg-surface-container">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Close up warm documentary portrait of a Peruvian male doctor in his 40s wearing scrubs and medical coat in a rural high Andes healthcare outpost, soft realistic lighting with deep IBM navy blue accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_fZa6k71BhXbWg0ClY-tJn4TqxLu8MZFZ3mbL_Cdg-7M8J017o3V_i3KFGwGKcr_8RFPzmAoNJmr089rksdD3m2Lj9lIGkXRFubxHpG0HQmnY-yLXaAJ4xtzv9GBtHhE36UmS4vP3UT_TxGyALxeOnalTck_cnGK6fTNM4eGaRTfyAou5F4C1IKnyCIckPCzYC54llnQ9G-EGnfKJucmhT8LK6m46DAJUF0axyw0WjILmthXyqGn0OA"/>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<h2 class="font-headline text-sm font-semibold text-on-surface truncate">Dr. Marco Huamán Quispe</h2>
+</div>
+<span class="font-label text-xs text-on-surface-variant font-medium">Médico General • CMP 48920</span>
+<div class="flex items-center gap-1 mt-1 text-[11px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">meeting_room</span>
+<span>Puesto: <strong class="text-on-surface">Consultorio 1</strong></span>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-tight shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          En Consulta
+        </span>
+</div>
+<div class="flex items-center justify-between pt-2 border-t-0 bg-surface px-3 py-2 rounded">
+<div class="flex items-center gap-2">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+<span class="font-label text-xs font-medium text-on-surface">Acceso Activo</span>
+</div>
+<button class="h-8 px-3 rounded bg-primary-container text-on-primary-fixed-variant hover:bg-primary hover:text-on-primary transition-colors text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">swap_horiz</span>
+          Reasignar Box
+        </button>
+</div>
+</article>
+<!-- Card 2: Lic. Elena Mamani -->
+<article class="p-3.5 bg-surface-container-low rounded-lg shadow-sm flex flex-col gap-3 transition-colors hover:bg-surface-container">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Portrait of a female indigenous Peruvian triage nurse smiling warmly, wearing a professional clinic uniform in a high-altitude Andean health center, authentic documentary photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIcEZn5NIFgZg1XDLJpip3K0RQ3PmC8I-zULLq1H9fuCPz7Vfla_3havcELe-YNtUhQoRIuzEiuWOjAnkckp0CcIXmGfNnIWOc64NSDj5fNdKKq39Qj8jwNbyjZ6vIqVJg02cXH6uY505LPeMzXBuDXsJMz2BUvnLktvM80GFS32OXKydBQ5FEtF5kUWjNaI176xBEir5eQ2LNitJj8PQr8XCUathKpiXT7NabEx3yrV4SgkM53QIC-A"/>
+<div class="flex flex-col min-w-0">
+<h2 class="font-headline text-sm font-semibold text-on-surface truncate">Lic. Elena Mamani</h2>
+<span class="font-label text-xs text-on-surface-variant font-medium">Enfermera Triaje • CEP 61092</span>
+<div class="flex items-center gap-1 mt-1 text-[11px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">vital_signs</span>
+<span>Puesto: <strong class="text-on-surface">Box Triaje B-02</strong></span>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-tight shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          Activa
+        </span>
+</div>
+<div class="flex items-center justify-between pt-2 bg-surface px-3 py-2 rounded">
+<div class="flex items-center gap-2">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+<span class="font-label text-xs font-medium text-on-surface">Acceso Activo</span>
+</div>
+<button class="h-8 px-3 rounded bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary transition-colors text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">pin</span>
+          PIN Temporal
+        </button>
+</div>
+</article>
+<!-- Card 3: Santos Valerio -->
+<article class="p-3.5 bg-surface-container-low rounded-lg shadow-sm flex flex-col gap-3 transition-colors hover:bg-surface-container">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Realistic portrait of a young Quechua-speaking male community health coordinator in Cusco Peru, wearing volunteer vest, natural sunlit community clinic setting, warm and friendly demeanor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhYYjRcc-yrGN5_iZNFdeOocZ8Y91I0Utetit-5pjxZH7JZmk6FhVG0a7oV_5099O_7btxD2wyi5ewNNWtJCkgS2eRUflgwsSlUVD_UvblTeJsXK5rlKcipAgvISg4YWu_33hI9t5GPzbUjP0-OB8bX0clw6N6Xy-Cx_wj__KYmf59Fmj-uqoKPwnu8RhiJeZ_5TRzm3rl16IbBMxTp7FRXY7cCi97pvrJ8LyHUlZYecOyZjpN48TBqg"/>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h2 class="font-headline text-sm font-semibold text-on-surface truncate">Santos Valerio</h2>
+<span class="px-1.5 py-0.5 rounded bg-primary-container text-on-primary-fixed-variant text-[9px] font-bold">Runa Simi</span>
+</div>
+<span class="font-label text-xs text-on-surface-variant font-medium">Admisión / Lengua Quechua</span>
+<div class="flex items-center gap-1 mt-1 text-[11px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">how_to_reg</span>
+<span>Puesto: <strong class="text-on-surface">Mesa Admisión 01</strong></span>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-container text-on-primary-fixed text-[10px] font-bold uppercase tracking-tight shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+          Operativo
+        </span>
+</div>
+<div class="flex items-center justify-between pt-2 bg-surface px-3 py-2 rounded">
+<div class="flex items-center gap-2">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+<span class="font-label text-xs font-medium text-on-surface">Acceso Activo</span>
+</div>
+<button class="h-8 px-3 rounded bg-surface-container-high text-on-surface hover:bg-primary hover:text-on-primary transition-colors text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">badge</span>
+          Ver Credencial
+        </button>
+</div>
+</article>
+<!-- Card 4: Dra. Sofía Ramos -->
+<article class="p-3.5 bg-surface-container-low rounded-lg shadow-sm flex flex-col gap-3 transition-colors hover:bg-surface-container">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3 min-w-0">
+<img class="w-12 h-12 rounded-full object-cover shrink-0 shadow-sm" data-alt="Portrait of a female pediatrician in blue medical scrubs holding a chart in a rural clinic setting in southern Peru, gentle focused expression, professional clinical lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEiIKBxK1QjAv7XtFr9elvxmatoooxt-7TIsIKbM-v3tc_GGGh8K9rEOHpaoHCdBXHHl4h6A1Wwq3EOW8vIsUdxDAdXDRK16UwjmKNa-_HF3C1HCoIAgRwGcADkxgUWQeoKxJ2gSYKmGVhoc5UkqHQEcvLxk8J24vBePKLsMwR_5uRGlCABpF3dfdKqy_O0VA8hEpsP4fMqnfdwf41NhJk8nit9rmiiImZqGj7LVctmT8bczKBKzMGOg"/>
+<div class="flex flex-col min-w-0">
+<h2 class="font-headline text-sm font-semibold text-on-surface truncate">Dra. Sofía Ramos</h2>
+<span class="font-label text-xs text-on-surface-variant font-medium">Pediatría • CMP 55102</span>
+<div class="flex items-center gap-1 mt-1 text-[11px] text-secondary">
+<span class="material-symbols-outlined text-[14px]">child_care</span>
+<span>Puesto: <strong class="text-on-surface">Consultorio 2</strong></span>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-bold uppercase tracking-tight shrink-0">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          Activa
+        </span>
+</div>
+<div class="flex items-center justify-between pt-2 bg-surface px-3 py-2 rounded">
+<div class="flex items-center gap-2">
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-surface peer-checked:bg-primary after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
+</label>
+<span class="font-label text-xs font-medium text-on-surface">Acceso Activo</span>
+</div>
+<button class="h-8 px-3 rounded bg-primary-container text-on-primary-fixed-variant hover:bg-primary hover:text-on-primary transition-colors text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">swap_horiz</span>
+          Reasignar Box
+        </button>
+</div>
+</article>
+</section>
+<!-- Quick Floating Add Button Bar -->
+<section class="px-4 pt-2">
+<button class="w-full h-12 bg-primary text-on-primary rounded font-headline font-semibold text-sm flex items-center justify-center gap-2 shadow-md hover:bg-opacity-95 active:scale-[0.99] transition-all" id="addVolunteerBtn">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+<span>+ Agregar Voluntario</span>
+</button>
+</section>
+<!-- Field Quick Tools Panel -->
+<section class="px-4 pt-6 flex flex-col gap-2.5">
+<div class="flex items-center gap-2 px-0.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">build_circle</span>
+<span class="font-headline font-semibold text-xs tracking-wider uppercase text-on-surface-variant">Herramientas Rápidas de Campo</span>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Tool 1 -->
+<button class="w-full p-3.5 bg-surface-container-low hover:bg-surface-container-high rounded text-left flex items-center justify-between transition-colors shadow-sm active:bg-surface-container-highest">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0">
+<span class="material-symbols-outlined text-[20px]">pin_invoke</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-xs font-semibold text-on-surface">Generar PIN de Guardia para turno tarde</span>
+<span class="font-label text-[11px] text-on-surface-variant">Habilitación temporal por código sin conexión</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">chevron_right</span>
+</button>
+<!-- Tool 2 -->
+<button class="w-full p-3.5 bg-surface-container-low hover:bg-error-container rounded text-left flex items-center justify-between transition-colors shadow-sm group">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-error-container text-error flex items-center justify-center shrink-0 group-hover:bg-error group-hover:text-on-error transition-colors">
+<span class="material-symbols-outlined text-[20px]">phonelink_erase</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-xs font-semibold text-error">Bloquear terminales extraviadas / revocación Mesh</span>
+<span class="font-label text-[11px] text-on-error-container">Protección criptográfica inmediata en nodos locales</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-error text-[20px]">lock_reset</span>
+</button>
+<!-- Tool 3 -->
+<button class="w-full p-3.5 bg-surface-container-low hover:bg-surface-container-high rounded text-left flex items-center justify-between transition-colors shadow-sm active:bg-surface-container-highest">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-surface-container-highest flex items-center justify-center text-on-surface shrink-0">
+<span class="material-symbols-outlined text-[20px]">contract</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline text-xs font-semibold text-on-surface">Descargar padrón de firmas de turno</span>
+<span class="font-label text-[11px] text-on-surface-variant">Generar acta oficial PDF para la DIRESA</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary text-[20px]">download</span>
+</button>
+</div>
+</section>
+<!-- Interactive Modal Scanner Dialog Placeholder -->
+<div class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" id="scannerModal">
+<div class="w-full max-w-sm bg-surface rounded-xl p-5 shadow-xl flex flex-col gap-4 animate-in fade-in zoom-in-95">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">qr_code_scanner</span>
+<h3 class="font-headline text-sm font-bold text-on-surface">Escanear Gafete del Voluntario</h3>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary hover:text-on-surface" id="closeModalBtn">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="relative w-full aspect-square bg-inverse-surface rounded-lg flex flex-col items-center justify-center overflow-hidden">
+<div class="w-48 h-48 border-2 border-dashed border-tertiary-fixed-dim rounded-lg flex items-center justify-center relative">
+<span class="material-symbols-outlined text-tertiary text-4xl animate-pulse">center_focus_strong</span>
+<div class="absolute top-0 left-0 w-full h-1 bg-tertiary animate-[bounce_2s_infinite]"></div>
+</div>
+<span class="text-xs text-inverse-on-surface mt-4 tracking-wide font-medium">Alinee el código QR de la credencial física</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded text-[11px] text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[18px]">offline_bolt</span>
+<span>Validación local con firma ECDSA offline activa.</span>
+</div>
+<button class="w-full h-11 bg-primary text-on-primary rounded text-xs font-semibold flex items-center justify-center gap-2" id="simSuccessBtn">
+<span>Simular Verificación Exitosa</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interactions and Scanner Dialog Handling
+  const qrBtn = document.getElementById('qrScannerBtn');
+  const modal = document.getElementById('scannerModal');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const simSuccess = document.getElementById('simSuccessBtn');
+  const addVolunteer = document.getElementById('addVolunteerBtn');
+
+  if (qrBtn && modal && closeBtn) {
+    qrBtn.addEventListener('click', () => {
+      modal.classList.remove('hidden');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.classList.add('hidden');
+    });
+
+    if (simSuccess) {
+      simSuccess.addEventListener('click', () => {
+        simSuccess.innerHTML = '<span class="material-symbols-outlined text-[18px]">check_circle</span> Credencial Aprobada';
+        simSuccess.classList.remove('bg-primary');
+        simSuccess.classList.add('bg-tertiary');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+          simSuccess.classList.remove('bg-tertiary');
+          simSuccess.classList.add('bg-primary');
+          simSuccess.textContent = 'Simular Verificación Exitosa';
+        }, 1200);
+      });
+    }
+  }
+
+  if (addVolunteer) {
+    addVolunteer.addEventListener('click', () => {
+      const originalHtml = addVolunteer.innerHTML;
+      addVolunteer.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">refresh</span> Abriendo Registro Rápido...';
+      setTimeout(() => {
+        addVolunteer.innerHTML = originalHtml;
+      }, 1000);
+    });
+  }
+
+  // Live filter simulation
+  const searchInput = document.getElementById('staffSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const val = e.target.value.toLowerCase();
+      const cards = document.querySelectorAll('article');
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(val)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-semibold"><div class="flex items-center justify-around h-16 px-1"><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="registro" href="#"><span class="material-symbols-outlined text-[20px]">person_add</span><span class="font-label text-[10px] tracking-tight mt-0.5">Registro</span></a><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="triaje" href="#"><span class="material-symbols-outlined text-[20px]">ecg_heart</span><span class="font-label text-[10px] tracking-tight mt-0.5">Triaje</span></a><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="cola-de-atencion" href="#"><span class="material-symbols-outlined text-[20px]">format_list_numbered</span><span class="font-label text-[10px] tracking-tight mt-0.5">Cola</span></a><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="consulta" href="#"><span class="material-symbols-outlined text-[20px]">stethoscope</span><span class="font-label text-[10px] tracking-tight mt-0.5">Consulta</span></a><a aria-current="page" class="flex flex-col items-center justify-center w-14 h-12 transition-colors text-primary font-semibold" data-path="mas" href="#"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span class="font-label text-[10px] tracking-tight mt-0.5">Más</span></a></div></nav></body></html>

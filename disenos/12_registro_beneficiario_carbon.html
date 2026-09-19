@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "secondary-fixed-dim": "#c6c6c6",
+          "secondary-fixed": "#e0e0e0",
+          "surface-container-lowest": "#ffffff",
+          "primary-fixed": "#d0e2ff",
+          "outline": "#8d8d8d",
+          "background": "#ffffff",
+          "on-secondary-fixed": "#161616",
+          "surface-container-high": "#e0e0e0",
+          "surface-container-low": "#f4f4f4",
+          "surface": "#ffffff",
+          "on-surface-variant": "#525252",
+          "surface-bright": "#ffffff",
+          "on-tertiary-container": "#044317",
+          "on-error": "#ffffff",
+          "primary-fixed-dim": "#78a9ff",
+          "surface-tint": "#0f62fe",
+          "tertiary-fixed": "#a7f0ba",
+          "error": "#da1e28",
+          "primary": "#0f62fe",
+          "tertiary-container": "#a7f0ba",
+          "on-primary": "#ffffff",
+          "on-primary-fixed": "#001d6c",
+          "on-background": "#161616",
+          "surface-container-highest": "#c6c6c6",
+          "on-surface": "#161616",
+          "secondary": "#6f6f6f",
+          "error-container": "#fff1f1",
+          "on-tertiary": "#ffffff",
+          "on-primary-fixed-variant": "#0043ce",
+          "on-primary-container": "#161616",
+          "on-error-container": "#750e13",
+          "inverse-surface": "#393939",
+          "primary-container": "#d0e2ff",
+          "secondary-container": "#e0e0e0",
+          "outline-variant": "#e0e0e0",
+          "surface-dim": "#e0e0e0",
+          "inverse-on-surface": "#f4f4f4",
+          "on-tertiary-fixed-variant": "#044317",
+          "surface-variant": "#f4f4f4",
+          "surface-container": "#f4f4f4",
+          "inverse-primary": "#78a9ff",
+          "on-secondary-fixed-variant": "#525252",
+          "on-secondary": "#ffffff",
+          "tertiary": "#198038",
+          "on-secondary-container": "#525252",
+          "on-tertiary-fixed": "#022d0d",
+          "tertiary-fixed-dim": "#42be65"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {},
+        "fontFamily": {
+          "headline": [
+            "IBM Plex Sans"
+          ],
+          "display": [
+            "IBM Plex Sans"
+          ],
+          "body": [
+            "IBM Plex Sans"
+          ],
+          "label": [
+            "IBM Plex Sans"
+          ]
+        },
+        "fontSize": {}
+      },
+    },
+  }</script></head><body class="bg-surface-container-low font-body text-on-surface antialiased min-h-screen"><header class="fixed top-0 left-0 right-0 h-14 bg-surface z-50 shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="h-14 w-full px-4 flex items-center justify-between gap-4"><div class="flex items-center gap-4 min-w-max"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WHui6EMlZ8nLYWhqM7Pt8xyBgk9V73SUi-O3GdU4QWAqyQOCDKLbzOxctZ7wZ3QiylxrmLuvQW71vVeBAssOJflzXXy76a1cXn6KwfL0JJAaxblaCy7MdqZr0BlEsQ4wKHJbGszn7p9AWkNF0LUcgBdjCcr0hKtytcRr-r3cFvcYm7_2Y7GIXLfg8IT-5Ta8t6TCqSLvT87qdOBISwCYI__NdVWoRNkfVnnJ30-vqAo6u2jU06N36Q89g_"/><div class="flex items-center gap-2"><span class="text-sm font-semibold tracking-tight text-on-surface">Semilla</span><span class="text-xs text-on-surface-variant">|</span><span class="text-xs font-normal text-on-surface-variant uppercase tracking-wider">Triaje Clínico &amp; Campañas</span></div></div><div class="flex items-center gap-3"><div class="hidden md:flex items-center bg-surface-container px-2.5 py-1 gap-2"><span class="material-symbols-outlined text-[16px] text-primary">local_hospital</span><span class="text-xs font-medium text-on-surface">Campaña Activa: Cusco - Valle Sagrado 2025</span><button aria-label="Cambiar campaña activa" class="text-primary hover:text-on-primary-fixed-variant flex items-center" type="button"><span class="material-symbols-outlined text-[16px]">expand_more</span></button></div><div class="flex items-center bg-tertiary-container text-on-tertiary-container px-2 py-0.5 gap-1.5"><span class="material-symbols-outlined text-[14px] text-tertiary">cloud_done</span><span class="text-xs font-medium tracking-tight">Sincronizado / Offline-ready</span></div></div><div class="flex items-center gap-4 min-w-max"><div class="relative flex items-center justify-center p-1.5 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span></span></div><div class="text-right hidden sm:block"><div class="text-xs font-medium text-on-surface leading-none">Dr. M. Huamán</div><div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Enfermería Triaje</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><aside class="fixed left-0 top-14 bottom-0 w-64 bg-surface z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex flex-col justify-between overflow-y-auto"><div class="py-3"><div class="px-4 pb-2 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Operaciones de Campaña</div><nav class="space-y-0.5 px-2" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="registro-de-pacientes" href="#"><span class="material-symbols-outlined text-[18px] mr-3">person_add</span>Registro de Pacientes</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="triaje-clinico" href="#"><span class="material-symbols-outlined text-[18px] mr-3">vital_signs</span>Triaje Clínico</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="cola-de-espera-medica" href="#"><span class="material-symbols-outlined text-[18px] mr-3">hourglass_empty</span>Cola de Espera Médica</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="consulta-medica" href="#"><span class="material-symbols-outlined text-[18px] mr-3">clinical_notes</span>Consulta Médica</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="ticket-termico" href="#"><span class="material-symbols-outlined text-[18px] mr-3">receipt_long</span>Ticket Térmico</a></nav><div class="px-4 pt-6 pb-2 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Administración</div><nav class="space-y-0.5 px-2" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="gestion-de-usuarios-y-permisos" href="#"><span class="material-symbols-outlined text-[18px] mr-3">manage_accounts</span>Gestión de Usuarios</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="integraciones-api-y-webhooks" href="#"><span class="material-symbols-outlined text-[18px] mr-3">hub</span>Integraciones (API &amp; Webhooks)</a></nav></div><div class="p-3 bg-surface-container-low m-2"><div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-1"><span class="font-medium">Terminal Local</span><span class="text-tertiary font-semibold">Activo</span></div><div class="text-[11px] text-on-surface-variant truncate">Nodo: CUS-VALLE-04</div></div></aside><div class="pl-64"><main class="w-full pt-14 px-8 min-h-screen bg-surface-container-low text-on-surface"><div class="flex flex-col w-full pb-16 text-on-surface">
+<!-- Header Contextual Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 mb-6 border-b border-surface-container-high">
+<div>
+<div class="flex items-center gap-2 mb-1.5">
+<span class="px-2 py-0.5 text-[11px] font-semibold tracking-wider uppercase bg-primary-container text-on-primary-fixed">ADM-01</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-surface-container text-on-surface-variant flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+          Campaña Activa: Cusco - Valle Sagrado 2025
+        </span>
+</div>
+<h1 class="text-2xl lg:text-3xl font-light tracking-tight text-on-surface">
+        Registro de Beneficiario <span class="font-semibold text-on-primary-fixed-variant">&amp; Afiliación de Campaña</span>
+</h1>
+</div>
+<!-- Live Counter and Action Badges -->
+<div class="flex items-center gap-4 flex-wrap">
+<div class="flex items-center bg-surface px-4 py-2.5 shadow-sm">
+<div class="mr-3 p-2 bg-primary-container text-on-primary-fixed">
+<span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+</div>
+<div>
+<div class="text-[11px] uppercase tracking-wider font-semibold text-on-surface-variant">Registrados Hoy</div>
+<div class="flex items-baseline gap-1.5">
+<span class="text-xl font-bold text-on-surface" id="counter-registered">142</span>
+<span class="text-[11px] text-tertiary font-medium">↑ +18 última hora</span>
+</div>
+</div>
+</div>
+<div class="flex items-center bg-surface px-4 py-2.5 shadow-sm">
+<div class="mr-3 p-2 bg-surface-container text-on-surface">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+<div>
+<div class="text-[11px] uppercase tracking-wider font-semibold text-on-surface-variant">Tiempo Prom. Mesa</div>
+<div class="text-xl font-bold text-on-surface">02:14 <span class="text-[11px] font-normal text-on-surface-variant">min</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Notification System Status Banners -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+<!-- Hardware status (Green) -->
+<div class="flex items-start bg-surface p-3.5 shadow-sm">
+<div class="mr-3 text-tertiary">
+<span class="material-symbols-outlined text-[20px]">usb</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<div class="text-xs font-semibold text-on-surface">Periférico Biométrico RENIEC Conectado</div>
+<span class="px-1.5 py-0.5 text-[10px] uppercase font-bold bg-tertiary-container text-on-tertiary-container">Online USB-02</span>
+</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Lector DNIe listo para captura de huella dactilar y firma óptica de afiliación.</div>
+</div>
+</div>
+<!-- Alert / Validation context (Warning/Notice) -->
+<div class="flex items-start bg-[#fff8e1] p-3.5 shadow-sm" id="duplicate-warning-banner">
+<div class="mr-3 text-[#b78103]">
+<span class="material-symbols-outlined text-[20px]">notification_important</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<div class="text-xs font-semibold text-[#5c4100]">Control de Historial Anual</div>
+<span class="text-[11px] font-mono text-[#5c4100]">EXP-2024-CUS</span>
+</div>
+<div class="text-xs text-[#5c4100] mt-0.5">
+          Al ingresar el DNI el sistema verificará si el paciente ya fue atendido en la jornada de Urubamba (Mayo 2024).
+        </div>
+</div>
+</div>
+</div>
+<!-- Primary Workspace Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+<!-- LEFT COLUMN: Input Form Sections (8 Cols) -->
+<div class="xl:col-span-8 flex flex-col gap-6">
+<!-- SECTION 1: Identificación y Datos Personales -->
+<section class="bg-surface p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">1</span>
+<h2 class="text-base font-semibold tracking-tight text-on-surface uppercase">Identificación y Datos Personales</h2>
+</div>
+<span class="text-xs text-on-surface-variant font-mono">* Campos obligatorios</span>
+</div>
+<div class="space-y-4">
+<!-- DNI with RENIEC API Lookup -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+<div class="md:col-span-6">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-dni">
+                Documento Nacional de Identidad (DNI) *
+              </label>
+<div class="relative flex">
+<input class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm font-mono border-b-2 border-primary focus:outline-none focus:bg-surface-container transition-colors" id="input-dni" maxlength="8" placeholder="Ingrese 8 dígitos numéricos" type="text" value="45892104"/>
+<button class="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-medium flex items-center gap-1.5 transition-colors whitespace-nowrap" id="btn-reniec-search" type="button">
+<span class="material-symbols-outlined text-[16px]">fingerprint</span>
+<span>Buscar RENIEC</span>
+</button>
+</div>
+</div>
+<div class="md:col-span-6 flex items-center gap-2 pb-2 text-xs text-tertiary font-medium">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Validación de identidad conectada con RENIEC v2.1</span>
+</div>
+</div>
+<!-- Nombres y Apellidos -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-apellidos">Apellidos Completos *</label>
+<input class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none focus:bg-surface-container transition-colors" id="input-apellidos" type="text" value="QUISPE HUAMÁN"/>
+</div>
+<div>
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-nombres">Nombres *</label>
+<input class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none focus:bg-surface-container transition-colors" id="input-nombres" type="text" value="SANTOS FAUSTINO"/>
+</div>
+</div>
+<!-- Fecha de Nacimiento, Edad, Sexo, Estado Civil, Idioma -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+<div class="sm:col-span-1 md:col-span-1">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-nacimiento">F. Nacimiento *</label>
+<input class="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border-b border-surface-container-highest focus:border-primary focus:outline-none" id="input-nacimiento" type="date" value="1968-08-14"/>
+</div>
+<div class="sm:col-span-1 md:col-span-1">
+<label class="block text-xs font-medium text-on-surface mb-1">Edad Calc.</label>
+<div class="h-10 px-3 bg-surface-container flex items-center justify-between text-sm font-semibold text-on-surface">
+<span id="label-age">56</span>
+<span class="text-[11px] font-normal text-on-surface-variant">años</span>
+</div>
+</div>
+<div class="sm:col-span-1 md:col-span-1">
+<label class="block text-xs font-medium text-on-surface mb-1" for="select-sexo">Sexo Biológico *</label>
+<select class="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border-b border-surface-container-highest focus:border-primary focus:outline-none cursor-pointer" id="select-sexo">
+<option selected="" value="M">Masculino</option>
+<option value="F">Femenino</option>
+</select>
+</div>
+<div class="sm:col-span-1 md:col-span-1">
+<label class="block text-xs font-medium text-on-surface mb-1" for="select-civil">Estado Civil</label>
+<select class="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border-b border-surface-container-highest focus:border-primary focus:outline-none cursor-pointer" id="select-civil">
+<option selected="" value="conviviente">Conviviente</option>
+<option value="casado">Casado(a)</option>
+<option value="soltero">Soltero(a)</option>
+<option value="viudo">Viudo(a)</option>
+</select>
+</div>
+<div class="sm:col-span-2 md:col-span-1">
+<label class="block text-xs font-medium text-on-surface mb-1" for="select-idioma">Lengua Materna *</label>
+<select class="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border-b border-surface-container-highest focus:border-primary focus:outline-none cursor-pointer" id="select-idioma">
+<option selected="" value="quechua">Quechua Collao</option>
+<option value="castellano">Castellano</option>
+<option value="aimara">Aimara</option>
+<option value="bilingue">Quechua / Castellano</option>
+</select>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: Residencia y Contacto Comunitario -->
+<section class="bg-surface p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">2</span>
+<h2 class="text-base font-semibold tracking-tight text-on-surface uppercase">Datos de Residencia y Contacto Comunitario</h2>
+</div>
+<span class="text-xs text-on-surface-variant">Acceso geográfico y cobertura</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<!-- Localidad / Comunidad -->
+<div class="md:col-span-6">
+<label class="block text-xs font-medium text-on-surface mb-1" for="select-comunidad">Comunidad / Sector Rural *</label>
+<select class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none cursor-pointer" id="select-comunidad">
+<option selected="" value="rumichaca">Rumichaca (Sector Alto)</option>
+<option value="ollantaytambo">Ollantaytambo (Comunidad Willoq)</option>
+<option value="marcas">Marcas - Huayllabamba</option>
+<option value="urubamba">Urubamba Centro</option>
+<option value="yanahuara">Yanahuara</option>
+<option value="otra">Otra comunidad dispersa...</option>
+</select>
+</div>
+<!-- Teléfono / Contacto -->
+<div class="md:col-span-6">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-telefono">Móvil / WhatsApp (Titular o Pariente de Contacto)</label>
+<div class="flex">
+<span class="h-10 px-3 bg-surface-container text-xs text-on-surface-variant flex items-center font-mono">+51</span>
+<input class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none" id="input-telefono" type="tel" value="984 312 809"/>
+</div>
+</div>
+<!-- Métricas de Traslado y Altitud -->
+<div class="md:col-span-4">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-altitud">Altitud Habitual (msnm)</label>
+<div class="relative">
+<input class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none" id="input-altitud" type="number" value="3450"/>
+<span class="absolute right-3 top-2.5 text-xs text-on-surface-variant">m s. n. m.</span>
+</div>
+</div>
+<div class="md:col-span-4">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-tiempo-viaje">Tiempo de Traslado a pie</label>
+<select class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none cursor-pointer" id="input-tiempo-viaje">
+<option value="30">Menos de 30 min</option>
+<option value="60">30 min a 1 hora</option>
+<option selected="" value="120">1 a 2 horas a pie</option>
+<option value="180">Más de 2 horas a pie / acémila</option>
+</select>
+</div>
+<!-- Seguro de Salud -->
+<div class="md:col-span-4">
+<label class="block text-xs font-medium text-on-surface mb-1" for="select-seguro">Afiliación a Seguro Médico *</label>
+<select class="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border-b border-surface-container-highest focus:border-primary focus:outline-none cursor-pointer" id="select-seguro">
+<option selected="" value="sis">SIS Gratuito Subsidiado</option>
+<option value="essalud">EsSalud (Seguro Social)</option>
+<option value="ninguno">Sin Seguro / No Afiliado</option>
+<option value="privado">Seguro Privado / PNP / FFAA</option>
+</select>
+</div>
+</div>
+</section>
+<!-- SECTION 3: Antecedentes Clínicos y Factores de Riesgo -->
+<section class="bg-surface p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">3</span>
+<h2 class="text-base font-semibold tracking-tight text-on-surface uppercase">Antecedentes &amp; Factores de Riesgo Crónico</h2>
+</div>
+<span class="text-xs text-on-surface-variant font-medium">Marcaje rápido de tamizaje inicial</span>
+</div>
+<!-- Risk checkboxes grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+<label class="flex items-start gap-3 p-3 bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input checked="" class="mt-0.5 h-4 w-4 accent-primary rounded-none" type="checkbox"/>
+<div>
+<div class="text-xs font-semibold text-on-surface">Hipertensión Arterial</div>
+<div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Control de presión requerido en Triaje</div>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 h-4 w-4 accent-primary rounded-none" type="checkbox"/>
+<div>
+<div class="text-xs font-semibold text-on-surface">Diabetes Mellitus</div>
+<div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Glucemia capilar recomendada</div>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 h-4 w-4 accent-primary rounded-none" type="checkbox"/>
+<div>
+<div class="text-xs font-semibold text-on-surface">Asma / EPOC / Silicosis</div>
+<div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Exposición a humo de leña / minas</div>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 h-4 w-4 accent-primary rounded-none" type="checkbox"/>
+<div>
+<div class="text-xs font-semibold text-on-surface">Desnutrición / Anemia</div>
+<div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Dosaje de Hemoglobina rápida</div>
+</div>
+</label>
+<label class="flex items-start gap-3 p-3 bg-surface-container-low hover:bg-surface-container cursor-pointer transition-colors">
+<input class="mt-0.5 h-4 w-4 accent-primary rounded-none" id="check-gestante" type="checkbox"/>
+<div>
+<div class="text-xs font-semibold text-on-surface">Embarazo / Gestante</div>
+<div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Prioridad Obstétrica en Triaje</div>
+</div>
+</label>
+<label class="flex items-start gap-3 bg-error-container p-3 cursor-pointer">
+<input checked="" class="mt-0.5 h-4 w-4 accent-error rounded-none" type="checkbox"/>
+<div>
+<div class="text-xs font-bold text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px]">warning</span>
+                Alergias Medicamentosas
+              </div>
+<div class="text-[11px] text-on-error-container font-medium mt-0.5">Penicilina / AINEs (Declarado)</div>
+</div>
+</label>
+</div>
+<!-- Additional Allergen input -->
+<div class="mt-4 pt-3 border-t border-surface-container-high">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-alergias-detalle">
+            Detalle de Alergias o Reacciones Adversas conocidas:
+          </label>
+<input class="w-full h-9 px-3 bg-surface-container-low text-xs text-error font-medium border-b border-error focus:outline-none" id="input-alergias-detalle" type="text" value="Alérgico a Penicilina (choque anafiláctico hace 8 años)"/>
+</div>
+</section>
+<!-- SECTION 4: Observaciones de Recepción / Prioridad Inicial -->
+<section class="bg-surface p-6 shadow-sm">
+<div class="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
+<div class="flex items-center gap-2">
+<span class="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">4</span>
+<h2 class="text-base font-semibold tracking-tight text-on-surface uppercase">Observaciones y Condición Especial</h2>
+</div>
+<span class="text-xs text-on-surface-variant">Clasificación inicial de flujo</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<div class="md:col-span-7">
+<label class="block text-xs font-medium text-on-surface mb-1" for="input-motivo">Motivo Principal de Consulta Manifestado *</label>
+<textarea class="w-full p-3 bg-surface-container-low text-on-surface text-xs border-b border-surface-container-highest focus:border-primary focus:outline-none resize-none" id="input-motivo" rows="3">Dolor lumbar persistente de 3 meses de evolución tras carga de cosechas y mareos matutinos frecuentes.</textarea>
+</div>
+<div class="md:col-span-5 flex flex-col justify-between">
+<div>
+<label class="block text-xs font-medium text-on-surface mb-1">Condición de Vulnerabilidad / Preferente</label>
+<div class="space-y-2 pt-1">
+<label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+<input class="accent-primary" name="condicion" type="radio"/>
+<span>Adulto Mayor (&gt;60 años)</span>
+</label>
+<label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+<input class="accent-primary" name="condicion" type="radio"/>
+<span>Discapacidad Motriz o Sensorial</span>
+</label>
+<label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+<input class="accent-primary" name="condicion" type="radio"/>
+<span>Madre con Lactante en brazos</span>
+</label>
+<label class="flex items-center gap-2 text-xs text-on-surface cursor-pointer">
+<input checked="" class="accent-primary" name="condicion" type="radio"/>
+<span class="text-on-surface-variant">Ninguna (Flujo Regular)</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Action Footer Toolbar (Integrated IBM Carbon style) -->
+<div class="sticky bottom-0 bg-surface p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 z-30 border-t border-surface-container-high">
+<div class="flex items-center gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+<span>Formulario completado. Listo para asignación de ticket impreso.</span>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="flex-1 sm:flex-initial h-12 px-6 bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-medium uppercase tracking-wider transition-colors flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-[18px]">save</span>
+            Guardar Borrador
+          </button>
+<button class="flex-1 sm:flex-initial h-12 px-8 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 shadow-sm" id="btn-submit-patient" type="button">
+<span>Registrar y Pasar a Triaje Clínico</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+<kbd class="hidden md:inline-block ml-1 px-1.5 py-0.5 text-[10px] bg-[#001d6c] font-mono text-on-primary">↵ Enter</kbd>
+</button>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Realtime Patient Badge Summary & Queue History (4 Cols) -->
+<div class="xl:col-span-4 flex flex-col gap-6">
+<!-- Patient Preview Card (Thermal Ticket simulation) -->
+<div class="bg-surface p-5 shadow-sm">
+<div class="flex items-center justify-between pb-2 mb-4 border-b border-surface-container-high">
+<div class="text-xs font-bold uppercase tracking-wider text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">badge</span>
+            Vista Previa de Ficha y Ticket
+          </div>
+<span class="px-2 py-0.5 text-[10px] font-mono bg-tertiary-container text-on-tertiary-container font-semibold">
+            TICKET #143
+          </span>
+</div>
+<div class="bg-surface-container-low p-4 text-xs font-mono space-y-3">
+<div class="flex justify-between items-start border-b border-surface-container-high pb-2">
+<div>
+<div class="font-bold text-sm text-on-surface" id="preview-nombre">QUISPE HUAMÁN, SANTOS F.</div>
+<div class="text-[11px] text-on-surface-variant font-sans">DNI: 45892104 • 56 AÑOS • MASC.</div>
+</div>
+<div class="text-right">
+<span class="inline-block px-1.5 py-0.5 text-[9px] bg-primary text-on-primary font-bold">TRIAJE 01</span>
+</div>
+</div>
+<div class="space-y-1 text-[11px]">
+<div class="flex justify-between">
+<span class="text-on-surface-variant font-sans">Procedencia:</span>
+<span class="font-medium text-on-surface">Rumichaca (Alto)</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant font-sans">Seguro:</span>
+<span class="font-medium text-on-surface">SIS Activo</span>
+</div>
+<div class="flex justify-between">
+<span class="text-on-surface-variant font-sans">Riesgo / Alertas:</span>
+<span class="font-bold text-error">ALERGIA PENICILINA</span>
+</div>
+</div>
+<!-- Barcode simulation representation -->
+<div class="pt-2 border-t border-surface-container-high flex flex-col items-center">
+<div class="h-10 w-full flex items-center justify-center gap-[2px] bg-surface px-2 py-1">
+<span class="w-[2px] h-8 bg-on-surface"></span>
+<span class="w-[1px] h-8 bg-on-surface"></span>
+<span class="w-[3px] h-8 bg-on-surface"></span>
+<span class="w-[1px] h-8 bg-on-surface"></span>
+<span class="w-[4px] h-8 bg-on-surface"></span>
+<span class="w-[2px] h-8 bg-on-surface"></span>
+<span class="w-[1px] h-8 bg-on-surface"></span>
+<span class="w-[3px] h-8 bg-on-surface"></span>
+<span class="w-[1px] h-8 bg-on-surface"></span>
+<span class="w-[2px] h-8 bg-on-surface"></span>
+<span class="w-[4px] h-8 bg-on-surface"></span>
+<span class="w-[1px] h-8 bg-on-surface"></span>
+<span class="w-[3px] h-8 bg-on-surface"></span>
+<span class="w-[2px] h-8 bg-on-surface"></span>
+<span class="w-[1px] h-8 bg-on-surface"></span>
+<span class="w-[3px] h-8 bg-on-surface"></span>
+</div>
+<div class="text-[9px] text-on-surface-variant tracking-widest mt-1 font-mono">ID: PER-CUS-2025-0143</div>
+</div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 h-9 px-3 bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-medium flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+            Probar Impresión Térmica
+          </button>
+</div>
+</div>
+<!-- Quick Recent Registrations in this Campaign Desk -->
+<div class="bg-surface p-5 shadow-sm flex-1">
+<div class="flex items-center justify-between pb-2 mb-4 border-b border-surface-container-high">
+<div class="text-xs font-bold uppercase tracking-wider text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">history</span>
+            Últimos 5 Registrados en Mesa
+          </div>
+<span class="text-[11px] text-on-surface-variant font-mono">Hoy</span>
+</div>
+<div class="divide-y divide-surface-container-high">
+<!-- Item 1 -->
+<div class="py-2.5 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="text-xs font-semibold text-on-surface truncate">Mamani Ccallo, Gregoria</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-2">
+<span class="font-mono">DNI: 23901844</span>
+<span>•</span>
+<span>68a</span>
+<span>•</span>
+<span class="text-tertiary font-medium">En Triaje</span>
+</div>
+</div>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Reimprimir sticker" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+</button>
+</div>
+<!-- Item 2 -->
+<div class="py-2.5 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="text-xs font-semibold text-on-surface truncate">Condori Farfán, Edwin</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-2">
+<span class="font-mono">DNI: 71203948</span>
+<span>•</span>
+<span>24a</span>
+<span>•</span>
+<span class="text-on-surface-variant">En Espera</span>
+</div>
+</div>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Reimprimir sticker" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+</button>
+</div>
+<!-- Item 3 -->
+<div class="py-2.5 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="text-xs font-semibold text-on-surface truncate">Yupanqui Paucar, Rosa Maria</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-2">
+<span class="font-mono">DNI: 44109823</span>
+<span>•</span>
+<span>31a</span>
+<span>•</span>
+<span class="text-primary font-medium">Atendida</span>
+</div>
+</div>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Reimprimir sticker" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+</button>
+</div>
+<!-- Item 4 -->
+<div class="py-2.5 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="text-xs font-semibold text-on-surface truncate">Ccama Ttito, Lucio</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-2">
+<span class="font-mono">DNI: 01928475</span>
+<span>•</span>
+<span>72a</span>
+<span>•</span>
+<span class="text-error font-medium">Prioridad 1</span>
+</div>
+</div>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Reimprimir sticker" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+</button>
+</div>
+<!-- Item 5 -->
+<div class="py-2.5 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="text-xs font-semibold text-on-surface truncate">Flores Quispe, Yaneth</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-2">
+<span class="font-mono">DNI: 78945612</span>
+<span>•</span>
+<span>19a</span>
+<span>•</span>
+<span class="text-on-surface-variant">En Espera</span>
+</div>
+</div>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Reimprimir sticker" type="button">
+<span class="material-symbols-outlined text-[16px]">print</span>
+</button>
+</div>
+</div>
+<!-- Metric micro-card footer -->
+<div class="mt-4 p-3 bg-surface-container text-xs text-on-surface-variant flex items-center justify-between">
+<span class="font-medium">Capacidad diaria estimada:</span>
+<span class="font-mono font-bold text-on-surface">142 / 200 (71%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Micro-interaction logic script -->
+<script>
+    (function() {
+      const dniInput = document.getElementById('input-dni');
+      const reniecBtn = document.getElementById('btn-reniec-search');
+      const nombresInput = document.getElementById('input-nombres');
+      const apellidosInput = document.getElementById('input-apellidos');
+      const previewNombre = document.getElementById('preview-nombre');
+      const submitBtn = document.getElementById('btn-submit-patient');
+      const counterEl = document.getElementById('counter-registered');
+
+      // Update real-time ticket preview
+      function updateTicketPreview() {
+        const nom = (nombresInput.value || '').trim();
+        const ape = (apellidosInput.value || '').trim();
+        if (nom || ape) {
+          previewNombre.textContent = `${ape}, ${nom}`.toUpperCase();
+        } else {
+          previewNombre.textContent = 'SIN NOMBRE';
+        }
+      }
+
+      nombresInput.addEventListener('input', updateTicketPreview);
+      apellidosInput.addEventListener('input', updateTicketPreview);
+
+      // RENIEC Mock lookup simulation
+      reniecBtn.addEventListener('click', function() {
+        const val = dniInput.value.trim();
+        if (val.length === 8) {
+          reniecBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span><span>Buscando...</span>';
+          setTimeout(() => {
+            nombresInput.value = 'SANTOS FAUSTINO';
+            apellidosInput.value = 'QUISPE HUAMÁN';
+            updateTicketPreview();
+            reniecBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">verified</span><span>Encontrado</span>';
+            setTimeout(() => {
+              reniecBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">fingerprint</span><span>Buscar RENIEC</span>';
+            }, 2000);
+          }, 450);
+        } else {
+          alert('Por favor ingrese un número de DNI de 8 dígitos para consultar a RENIEC.');
+          dniInput.focus();
+        }
+      });
+
+      // Submit patient and advance to clinical triage
+      submitBtn.addEventListener('click', function() {
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Registrando...</span>';
+        setTimeout(() => {
+          let currentCount = parseInt(counterEl.textContent, 10) || 142;
+          counterEl.textContent = currentCount + 1;
+          alert('Beneficiario registrado exitosamente con Ticket #143. Derivado a Triaje Clínico.');
+          submitBtn.innerHTML = '<span>Registrar y Pasar a Triaje Clínico</span><span class="material-symbols-outlined text-[18px]">arrow_forward</span><kbd class="hidden md:inline-block ml-1 px-1.5 py-0.5 text-[10px] bg-[#001d6c] font-mono text-on-primary">↵ Enter</kbd>';
+        }, 600);
+      });
+
+      // Keyboard shortcut: Enter on form
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+          submitBtn.click();
+        }
+      });
+    })();
+  </script>
+</div></main></div></body></html>

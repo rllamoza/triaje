@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-lowest":"#ffffff","surface-container-low":"#f4f4f4","on-primary-container":"#161616","inverse-primary":"#78a9ff","on-background":"#161616","error-container":"#fff1f1","outline-variant":"#e0e0e0","tertiary-container":"#a7f0ba","surface-container-highest":"#c6c6c6","surface-tint":"#0f62fe","primary-container":"#d0e2ff","on-error-container":"#750e13","on-secondary-container":"#525252","surface-dim":"#e0e0e0","tertiary":"#198038","tertiary-fixed-dim":"#42be65","surface-bright":"#ffffff","background":"#ffffff","surface":"#ffffff","primary-fixed":"#d0e2ff","on-surface":"#161616","inverse-on-surface":"#f4f4f4","on-primary-fixed-variant":"#0043ce","secondary-container":"#e0e0e0","on-tertiary-fixed":"#022d0d","secondary":"#6f6f6f","on-tertiary":"#ffffff","on-primary-fixed":"#001d6c","tertiary-fixed":"#a7f0ba","primary":"#0f62fe","secondary-fixed":"#e0e0e0","on-surface-variant":"#525252","secondary-fixed-dim":"#c6c6c6","on-tertiary-fixed-variant":"#044317","inverse-surface":"#393939","on-error":"#ffffff","outline":"#8d8d8d","surface-container":"#f4f4f4","on-secondary":"#ffffff","surface-container-high":"#e0e0e0","on-secondary-fixed-variant":"#525252","on-tertiary-container":"#044317","on-primary":"#ffffff","surface-variant":"#f4f4f4","primary-fixed-dim":"#78a9ff","on-secondary-fixed":"#161616","error":"#da1e28"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{},fontFamily:{headline:["IBM Plex Sans"],display:["IBM Plex Sans"],body:["IBM Plex Sans"],label:["IBM Plex Sans"]},fontSize:{}}}}</script></head><body class="bg-surface font-body text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-14 px-4 flex items-center gap-3 bg-surface-container-low"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WZ0tE2OVs5Sheyc4hORQ0oGj271jvC10KhuNWKN1dg5zIqDxV7G-A7uAlo05HPtzIkVbqgyemo4dRRGPbfdkGxo6aQrrKFjPQ7xIccQx8klvnBNRNPpsibPhkHx5XYAJ2HK5ZrAmfuqejPoxEsriVD84qCOv1n4wuo4x9p_qVw4BA17-e0mGJupmkTuWM5DDoVqIrv2hP_BAqGfrBHTMMhrO_vKhumJiQEyQ-oiRRi1lEDdTH5vXQOKGkS"/><div class="flex flex-col min-w-0 leading-none"><span class="text-xs font-semibold uppercase tracking-wider text-on-surface truncate">Semilla Salud</span><span class="text-[10px] text-on-surface-variant tracking-tight truncate mt-0.5">Operaciones Terreno</span></div></div><div class="px-3 py-2 bg-surface-container-low"><div class="p-2.5 bg-surface rounded flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-tertiary"></span><span class="text-[11px] font-medium text-on-surface">Nodo Local Activo</span></div><span class="text-[10px] text-on-surface-variant font-mono">v2.4.1</span></div></div><div class="flex-1 overflow-y-auto px-2 py-3"><div class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Operaciones</div><nav class="space-y-0.5 mb-6" data-active-classes="bg-primary text-on-primary font-medium"><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="registro-de-pacientes" href="#"><span class="material-symbols-outlined text-[18px]">person_add</span><span class="truncate">Registro de Pacientes</span></a><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="triaje-clinico" href="#"><span class="material-symbols-outlined text-[18px]">vital_signs</span><span class="truncate">Triaje Clínico</span></a><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="cola-de-espera-medica" href="#"><span class="material-symbols-outlined text-[18px]">format_list_numbered</span><span class="truncate">Cola de Espera Médica</span></a><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="consulta-medica" href="#"><span class="material-symbols-outlined text-[18px]">clinical_notes</span><span class="truncate">Consulta Médica</span></a><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ticket-termico" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span class="truncate">Ticket Térmico</span></a></nav><div class="px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Administración</div><nav class="space-y-0.5" data-active-classes="bg-primary text-on-primary font-medium"><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="gestion-de-usuarios" href="#"><span class="material-symbols-outlined text-[18px]">badge</span><span class="truncate">Gestión de Usuarios</span></a><a class="flex items-center gap-3 px-3 py-2.5 text-xs text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="integraciones" href="#"><span class="material-symbols-outlined text-[18px]">webhook</span><span class="truncate">Integraciones (API &amp; Webhooks)</span></a></nav></div><div class="p-3 bg-surface-container-low"><div class="flex items-center gap-3 p-2 bg-surface rounded"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0"><span class="text-xs font-semibold text-on-surface truncate">Dra. M. Ramos</span><span class="text-[11px] text-on-surface-variant truncate">Coordinador Médico</span></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-14 bg-surface/90 backdrop-blur-xl z-40 flex items-center justify-between px-6 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-4 min-w-0"><div class="flex items-center gap-2 px-2.5 py-1 bg-primary-container text-on-primary-container rounded text-xs font-medium"><span class="material-symbols-outlined text-[16px] text-primary">campaign</span><span class="truncate">Cusco - Valle Sagrado 2025</span></div><div class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-low text-on-surface-variant rounded text-xs"><span class="w-2 h-2 rounded-full bg-tertiary"></span><span>Sync Offline: OK (hace 2 min)</span></div></div><div class="flex items-center gap-3"><div class="flex items-center gap-1 px-2 py-1 text-xs text-on-surface-variant bg-surface-container-low rounded"><span class="material-symbols-outlined text-[16px]">storage</span><span class="font-mono">Node-04</span></div><button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface rounded transition-colors" title="Notificaciones" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-14 px-8 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Breadcrumb & Header Unit -->
+<header class="py-6 flex flex-col gap-3">
+<nav aria-label="Breadcrumb" class="flex items-center gap-2 text-xs text-on-surface-variant font-mono uppercase tracking-wider">
+<span class="hover:text-primary cursor-pointer transition-colors">Administración</span>
+<span class="text-secondary">/</span>
+<span class="text-on-surface font-semibold">Usuarios</span>
+</nav>
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+<div>
+<h1 class="text-2xl lg:text-3xl font-light text-on-surface tracking-tight">Gestión de Usuarios y Permisos de Brigada</h1>
+<p class="text-xs lg:text-sm text-on-surface-variant mt-1 max-w-3xl">
+          Control de accesos offline-first, firma digital y asignación de puestos para campaña activa Cusco 2025. Sincronización criptográfica P2P validada.
+        </p>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<span class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container text-xs font-mono text-on-surface">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+          Mesh v2.4.1 [Enlace Seguro]
+        </span>
+</div>
+</div>
+</header>
+<!-- Metric Summary Cards (Carbon Grid) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="bg-surface-container-low p-4 flex flex-col justify-between h-32 hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between">
+<span class="text-xs uppercase tracking-wider font-semibold text-on-surface-variant">Total Voluntarios Activos</span>
+<span class="material-symbols-outlined text-primary text-xl">group</span>
+</div>
+<div>
+<div class="text-3xl font-light tracking-tight text-on-surface">38</div>
+<div class="text-xs text-on-surface-variant mt-0.5">38 usuarios registrados en base local</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col justify-between h-32 hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between">
+<span class="text-xs uppercase tracking-wider font-semibold text-on-surface-variant">En Turno / En Terreno</span>
+<span class="material-symbols-outlined text-tertiary text-xl">hub</span>
+</div>
+<div>
+<div class="text-3xl font-light tracking-tight text-tertiary">24</div>
+<div class="text-xs text-on-surface-variant mt-0.5">24 conectados en red local Mesh</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col justify-between h-32 hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between">
+<span class="text-xs uppercase tracking-wider font-semibold text-on-surface-variant">Médicos Colegiados (CMP)</span>
+<span class="material-symbols-outlined text-primary text-xl">medical_services</span>
+</div>
+<div>
+<div class="text-3xl font-light tracking-tight text-on-surface">08</div>
+<div class="text-xs text-on-surface-variant mt-0.5">8 profesionales habilitados con firma DNIe</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col justify-between h-32 hover:bg-surface-container transition-colors">
+<div class="flex items-start justify-between">
+<span class="text-xs uppercase tracking-wider font-semibold text-on-surface-variant">Licencias Enfermería (CEP)</span>
+<span class="material-symbols-outlined text-primary text-xl">stethoscope</span>
+</div>
+<div>
+<div class="text-3xl font-light tracking-tight text-on-surface">14</div>
+<div class="text-xs text-on-surface-variant mt-0.5">14 especialistas en triaje clínico</div>
+</div>
+</div>
+</section>
+<!-- Primary Action & Filter Bar -->
+<section class="bg-surface-container-low p-4 mb-4 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+<!-- Search Input -->
+<div class="relative flex-1 min-w-[240px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-surface text-on-surface pl-10 pr-4 h-10 text-xs focus:outline-none placeholder:text-outline" id="user-search-input" placeholder="Buscar por Nombre, DNI o N° Colegiatura..." type="text"/>
+</div>
+<!-- Role Filter -->
+<div class="relative">
+<select class="h-10 bg-surface text-on-surface text-xs px-3 pr-8 focus:outline-none cursor-pointer appearance-none min-w-[160px]" id="role-filter-select">
+<option value="all">Todos los Roles</option>
+<option value="medico">Médico Colegiado</option>
+<option value="enfermeria">Enfermería Triaje</option>
+<option value="admision">Admisión / Empadronador</option>
+<option value="farmacia">Farmacia / Botiquín</option>
+<option value="admin">Administrador Técnico</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-base pointer-events-none">expand_more</span>
+</div>
+<!-- Sector Filter -->
+<div class="relative">
+<select class="h-10 bg-surface text-on-surface text-xs px-3 pr-8 focus:outline-none cursor-pointer appearance-none min-w-[170px]" id="sector-filter-select">
+<option value="all">Todos los Sectores</option>
+<option value="rumichaca">Sector Rumichaca</option>
+<option value="ollantaytambo">Sector Ollantaytambo Alto</option>
+<option value="movil">Carpa Móvil</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant text-base pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Main Trigger Button -->
+<button class="h-10 px-5 bg-primary hover:bg-primary-fixed-variant text-on-primary text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors flex-shrink-0" onclick="document.getElementById('modal-new-user').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-base">person_add</span>
+<span>+ Nuevo Usuario / Voluntario</span>
+</button>
+</section>
+<!-- Carbon Data Table: User Roster -->
+<section class="bg-surface overflow-hidden shadow-sm mb-10">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="roster-table">
+<thead>
+<tr class="bg-surface-container-low text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
+<th class="py-3.5 px-4">Usuario / Profesional</th>
+<th class="py-3.5 px-4">Rol y Colegiatura</th>
+<th class="py-3.5 px-4">Puesto Asignado</th>
+<th class="py-3.5 px-4">Estado en Terreno</th>
+<th class="py-3.5 px-4">Autenticación &amp; DNIe</th>
+<th class="py-3.5 px-4 text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-xs">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface" data-role="medico" data-sector="rumichaca">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">
+                  MH
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Dr. Marco Huamán Quispe</span>
+<span class="text-[11px] text-on-surface-variant font-mono">DNI 45198231</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium">Médico General</span>
+<span class="text-[11px] text-on-surface-variant font-mono">CMP 48920</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">room</span>
+                Consultorio 1
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                En Consulta (Mesh Activo)
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono text-[11px]">
+<span class="material-symbols-outlined text-tertiary text-sm">verified_user</span>
+                Token Físico + PIN OK
+              </div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Editar Perfil">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Desactivar PIN">
+<span class="material-symbols-outlined text-base">lock_reset</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Auditoría P2P">
+<span class="material-symbols-outlined text-base">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-low/50" data-role="enfermeria" data-sector="ollantaytambo">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-xs">
+                  EM
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Lic. Elena Mamani Sicuani</span>
+<span class="text-[11px] text-on-surface-variant font-mono">DNI 70291140</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium">Enfermera Triaje</span>
+<span class="text-[11px] text-on-surface-variant font-mono">CEP 61092</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">room</span>
+                Box Triaje B-02
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Activa en Terreno
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono text-[11px]">
+<span class="material-symbols-outlined text-tertiary text-sm">fingerprint</span>
+                Biometría DNIe Verificada
+              </div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Editar Perfil">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Desactivar PIN">
+<span class="material-symbols-outlined text-base">lock_reset</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Auditoría P2P">
+<span class="material-symbols-outlined text-base">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface" data-role="admision" data-sector="rumichaca">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-xs">
+                  SV
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Santos Valerio Farfán</span>
+<span class="text-[11px] text-on-surface-variant font-mono">DNI 23901452</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium">Admisión / Empadronador</span>
+<span class="text-[11px] text-on-surface-variant font-mono">Líder Comunitario</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">room</span>
+                Mesa Admisión 01
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-container text-on-primary-container text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                En Turno
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono text-[11px]">
+<span class="material-symbols-outlined text-secondary text-sm">badge</span>
+                DNI + Contraseña Local
+              </div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Editar Perfil">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Desactivar PIN">
+<span class="material-symbols-outlined text-base">lock_reset</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Auditoría P2P">
+<span class="material-symbols-outlined text-base">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface-container-low/50" data-role="medico" data-sector="movil">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs">
+                  SR
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Dra. Sofía Ramos Ttito</span>
+<span class="text-[11px] text-on-surface-variant font-mono">DNI 48201934</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium">Pediatra</span>
+<span class="text-[11px] text-on-surface-variant font-mono">CMP 55102</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">room</span>
+                Consultorio 2 (Pediatría)
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                En Consulta
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono text-[11px]">
+<span class="material-symbols-outlined text-tertiary text-sm">draw</span>
+                Firma Digital Activa
+              </div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Editar Perfil">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Desactivar PIN">
+<span class="material-symbols-outlined text-base">lock_reset</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Auditoría P2P">
+<span class="material-symbols-outlined text-base">history</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors bg-surface" data-role="admin" data-sector="rumichaca">
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold text-xs">
+                  CM
+                </div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Ing. Carlos Mendoza</span>
+<span class="text-[11px] text-on-surface-variant font-mono">DNI 10293847</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="text-on-surface font-medium">Soporte Técnico / Telecom</span>
+<span class="text-[11px] text-on-surface-variant font-mono">CIP 198201</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-primary text-sm">room</span>
+                Nodo Central Satelital
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container-high text-on-surface text-[11px] font-semibold uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                SuperAdmin
+              </span>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-mono text-[11px]">
+<span class="material-symbols-outlined text-primary text-sm">vpn_key</span>
+                Llave Criptográfica FIDO2
+              </div>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Editar Perfil">
+<span class="material-symbols-outlined text-base">edit</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-error hover:bg-surface-container transition-colors" title="Desactivar PIN">
+<span class="material-symbols-outlined text-base">lock_reset</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Auditoría P2P">
+<span class="material-symbols-outlined text-base">history</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Status -->
+<div class="bg-surface-container-low px-4 py-2.5 flex items-center justify-between text-xs text-on-surface-variant">
+<span>Mostrando 5 de 38 colaboradores</span>
+<div class="flex items-center gap-4">
+<span>Sincronización P2P: 0 bloques pendientes</span>
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 flex items-center justify-center bg-surface hover:bg-surface-container text-on-surface">1</button>
+<button class="w-7 h-7 flex items-center justify-center bg-surface-container text-on-surface-variant hover:bg-surface">2</button>
+<button class="w-7 h-7 flex items-center justify-center bg-surface-container text-on-surface-variant hover:bg-surface">3</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Granular Permission Matrix Drawer / Sub-panel -->
+<section class="bg-surface-container-low p-6 mb-12">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">security</span>
+<h2 class="text-base font-semibold text-on-surface uppercase tracking-wider">Matriz Granular de Privilegios de Seguridad</h2>
+</div>
+<p class="text-xs text-on-surface-variant mt-0.5">
+          Definición estricta de capacidades delegadas por rol para operaciones clínicas y técnicas sin conexión a internet.
+        </p>
+</div>
+<!-- Role Tabs -->
+<div class="inline-flex bg-surface p-0.5" id="role-tab-container">
+<button class="px-4 py-2 text-xs font-semibold bg-primary text-on-primary transition-colors" id="tab-medico" onclick="selectMatrixRole('medico')" type="button">
+          Médico
+        </button>
+<button class="px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors" id="tab-triaje" onclick="selectMatrixRole('triaje')" type="button">
+          Triaje
+        </button>
+<button class="px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors" id="tab-admision" onclick="selectMatrixRole('admision')" type="button">
+          Admisión
+        </button>
+<button class="px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors" id="tab-farmacia" onclick="selectMatrixRole('farmacia')" type="button">
+          Farmacia
+        </button>
+</div>
+</div>
+<!-- Matrix Table -->
+<div class="bg-surface overflow-x-auto">
+<table class="w-full text-left text-xs">
+<thead>
+<tr class="bg-surface-container text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
+<th class="py-3 px-4 w-1/2">Privilegio / Operación Crítica</th>
+<th class="py-3 px-4 w-1/6 text-center">Permiso Activo</th>
+<th class="py-3 px-4 w-1/3">Nivel de Autenticación Requerido</th>
+</tr>
+</thead>
+<tbody class="divide-y-0" id="matrix-tbody">
+<!-- Row 1 -->
+<tr class="bg-surface">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">clinical_notes</span>
+<span>Acceso a Historia Clínica Completa y Antecedentes</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<label class="inline-flex items-center cursor-pointer">
+<input checked="" class="matrix-check w-4 h-4 text-primary accent-primary rounded-none" type="checkbox"/>
+</label>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-mono text-[11px]">
+              DNIe / Certificado RENIEC en Token
+            </td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-low/40">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">medication</span>
+<span>Prescripción de Fármacos Controlados y Receta Digital</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<label class="inline-flex items-center cursor-pointer">
+<input checked="" class="matrix-check w-4 h-4 text-primary accent-primary rounded-none" type="checkbox"/>
+</label>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-mono text-[11px]">
+              Firma Digital CMP Habilitada
+            </td>
+</tr>
+<!-- Row 3 -->
+<tr class="bg-surface">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">cancel_presentation</span>
+<span>Anulación de Tickets y Reasignación de Turnos</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<label class="inline-flex items-center cursor-pointer">
+<input class="matrix-check w-4 h-4 text-primary accent-primary rounded-none" type="checkbox"/>
+</label>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-mono text-[11px]">
+              PIN Supervisor de Campo
+            </td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-container-low/40">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">cloud_sync</span>
+<span>Exportación de Base de Datos P2P / Volcado USB Cifrado</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<label class="inline-flex items-center cursor-pointer">
+<input class="matrix-check w-4 h-4 text-primary accent-primary rounded-none" type="checkbox"/>
+</label>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-mono text-[11px]">
+              Llave FIDO2 de Telecomunicaciones
+            </td>
+</tr>
+<!-- Row 5 -->
+<tr class="bg-surface">
+<td class="py-3.5 px-4 font-medium text-on-surface">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">print</span>
+<span>Configuración de Impresora Térmica y Nodos Mesh</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<label class="inline-flex items-center cursor-pointer">
+<input class="matrix-check w-4 h-4 text-primary accent-primary rounded-none" type="checkbox"/>
+</label>
+</td>
+<td class="py-3.5 px-4 text-on-surface-variant font-mono text-[11px]">
+              Contraseña de Infraestructura
+            </td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Matrix Footnote Actions -->
+<div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-3 pt-3">
+<span class="text-xs text-on-surface-variant">
+        Última modificación de perfil aplicada por <span class="font-mono text-on-surface">SuperAdmin (hace 45 min)</span>
+</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 bg-surface text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" type="button">
+          Restablecer Valores Predeterminados
+        </button>
+<button class="px-4 py-2 bg-primary text-on-primary hover:bg-primary-fixed-variant text-xs font-semibold transition-colors flex items-center gap-1.5" onclick="showSavedNotice()" type="button">
+<span class="material-symbols-outlined text-sm">save</span>
+          Guardar Cambios de Perfil
+        </button>
+</div>
+</div>
+</section>
+<!-- Modal Component: Nuevo Usuario / Voluntario (Offline Provisioning) -->
+<div class="hidden fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-4" id="modal-new-user">
+<div class="bg-surface w-full max-w-xl p-6 shadow-xl relative animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-center justify-between pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">badge</span>
+<h3 class="text-base font-semibold text-on-surface">Provisionamiento de Voluntario / Personal</h3>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface" onclick="document.getElementById('modal-new-user').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<p class="text-xs text-on-surface-variant mb-4">
+        Asignación de credenciales operativas para el nodo mesh local. Los datos se transmitirán en el siguiente ciclo de gossip criptográfico.
+      </p>
+<form class="space-y-4" onsubmit="event.preventDefault(); document.getElementById('modal-new-user').classList.add('hidden');">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase">Nombre Completo</label>
+<input class="h-10 bg-surface-container-low px-3 text-xs focus:outline-none text-on-surface" placeholder="Ej. Dr. Juan Quispe" required="" type="text"/>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase">N° DNI / Documento</label>
+<input class="h-10 bg-surface-container-low px-3 text-xs focus:outline-none text-on-surface font-mono" placeholder="8 dígitos numéricos" required="" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase">Rol Operativo</label>
+<select class="h-10 bg-surface-container-low px-3 text-xs focus:outline-none text-on-surface">
+<option>Médico General (CMP)</option>
+<option>Médico Especialista (CMP)</option>
+<option>Lic. Enfermería Triaje (CEP)</option>
+<option>Admisión y Triage Social</option>
+<option>Farmacia / Despacho Botiquín</option>
+<option>Soporte Técnico Nodo</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase">N° Colegiatura (Si aplica)</label>
+<input class="h-10 bg-surface-container-low px-3 text-xs focus:outline-none text-on-surface font-mono" placeholder="Ej. CMP 62810 / CEP 4120" type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div class="flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase">Sector Asignado</label>
+<select class="h-10 bg-surface-container-low px-3 text-xs focus:outline-none text-on-surface">
+<option>Sector Rumichaca</option>
+<option>Sector Ollantaytambo Alto</option>
+<option>Carpa Móvil Periférica</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="text-[11px] font-semibold text-on-surface-variant uppercase">Puesto / Consultorio</label>
+<input class="h-10 bg-surface-container-low px-3 text-xs focus:outline-none text-on-surface" placeholder="Ej. Consultorio 3 / Box A-01" type="text"/>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-base flex-shrink-0 mt-0.5">nfc</span>
+<span>Se generará un par de claves Ed25519 en el nodo local vinculado al DNI ingresado para operaciones sin internet.</span>
+</div>
+<div class="flex items-center justify-end gap-2 pt-2">
+<button class="px-4 py-2 bg-surface text-on-surface hover:bg-surface-container text-xs font-semibold transition-colors" onclick="document.getElementById('modal-new-user').classList.add('hidden')" type="button">
+            Cancelar
+          </button>
+<button class="px-5 py-2 bg-primary text-on-primary hover:bg-primary-fixed-variant text-xs font-semibold uppercase tracking-wider transition-colors" type="submit">
+            Emitir Credencial &amp; Activar
+          </button>
+</div>
+</form>
+</div>
+</div>
+<!-- Notification Toast -->
+<div class="hidden fixed bottom-6 right-6 z-50 bg-tertiary text-on-tertiary px-4 py-3 shadow-lg flex items-center gap-2 text-xs font-medium" id="toast-saved">
+<span class="material-symbols-outlined text-base">check_circle</span>
+<span>Privilegios sincronizados en el nodo mesh exitosamente.</span>
+</div>
+<script>
+    // Tab filtering for Permission Matrix
+    const matrixProfiles = {
+      medico: [true, true, false, false, false],
+      triaje: [true, false, false, false, false],
+      admision: [false, false, true, false, false],
+      farmacia: [true, false, false, false, true]
+    };
+
+    function selectMatrixRole(roleKey) {
+      const tabs = ['medico', 'triaje', 'admision', 'farmacia'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tab-' + t);
+        if (t === roleKey) {
+          btn.className = "px-4 py-2 text-xs font-semibold bg-primary text-on-primary transition-colors";
+        } else {
+          btn.className = "px-4 py-2 text-xs font-semibold text-on-surface-variant hover:text-on-surface transition-colors";
+        }
+      });
+
+      const checkboxes = document.querySelectorAll('#matrix-tbody .matrix-check');
+      const perms = matrixProfiles[roleKey] || [false, false, false, false, false];
+      checkboxes.forEach((cb, idx) => {
+        cb.checked = !!perms[idx];
+      });
+    }
+
+    function showSavedNotice() {
+      const toast = document.getElementById('toast-saved');
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Quick Live Roster Filter by text and select
+    const searchInput = document.getElementById('user-search-input');
+    const roleSelect = document.getElementById('role-filter-select');
+    const sectorSelect = document.getElementById('sector-filter-select');
+    const tableRows = document.querySelectorAll('#roster-table tbody tr');
+
+    function filterTable() {
+      const q = (searchInput.value || '').toLowerCase().trim();
+      const selRole = roleSelect.value;
+      const selSector = sectorSelect.value;
+
+      tableRows.forEach(row => {
+        const rowText = row.innerText.toLowerCase();
+        const rowRole = row.getAttribute('data-role');
+        const rowSector = row.getAttribute('data-sector');
+
+        const matchesQuery = !q || rowText.includes(q);
+        const matchesRole = selRole === 'all' || rowRole === selRole;
+        const matchesSector = selSector === 'all' || rowSector === selSector;
+
+        if (matchesQuery && matchesRole && matchesSector) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    roleSelect.addEventListener('change', filterTable);
+    sectorSelect.addEventListener('change', filterTable);
+  </script>
+</div></main></div></body></html>

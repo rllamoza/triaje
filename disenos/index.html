@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semilla Triaje de Salud — Catálogo de Diseños</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root{--ibm-blue:#0f62fe;--ibm-blue-dark:#0043ce;--ibm-green:#198038;--ibm-red:#da1e28;--ibm-yellow:#f1c21b;--ibm-gray-10:#f4f4f4;--ibm-gray-20:#e0e0e0;--ibm-gray-40:#a8a8a8;--ibm-gray-60:#6f6f6f;--ibm-gray-80:#393939;--ibm-gray-100:#161616;--ibm-white:#ffffff}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'IBM Plex Sans',sans-serif;background:var(--ibm-gray-10);color:var(--ibm-gray-100);line-height:1.5}
+    .header{background:var(--ibm-gray-100);color:var(--ibm-white);padding:0 2rem;display:flex;align-items:center;height:3rem;border-bottom:1px solid var(--ibm-blue)}
+    .header-logo{font-size:.875rem;font-weight:600;letter-spacing:.02em;color:var(--ibm-blue);margin-right:1rem}
+    .header-title{font-size:.875rem;color:var(--ibm-gray-40)}
+    .hero{background:linear-gradient(135deg,#001141 0%,#0f1f5c 40%,#0f62fe 100%);color:white;padding:4rem 2rem 3rem;border-bottom:3px solid var(--ibm-blue)}
+    .hero-tag{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem}
+    .hero h1{font-size:2.5rem;font-weight:700;line-height:1.2;margin-bottom:.75rem;max-width:700px}
+    .hero p{font-size:1rem;color:rgba(255,255,255,.75);max-width:600px;margin-bottom:2rem}
+    .hero-stats{display:flex;gap:2rem;flex-wrap:wrap}
+    .stat{display:flex;flex-direction:column;gap:.2rem}
+    .stat-value{font-size:1.75rem;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--ibm-yellow)}
+    .stat-label{font-size:.75rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em}
+    .filters{background:var(--ibm-white);padding:1rem 2rem;border-bottom:1px solid var(--ibm-gray-20);display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+    .filter-label{font-size:.75rem;font-weight:600;color:var(--ibm-gray-60);text-transform:uppercase;letter-spacing:.05em;margin-right:.5rem}
+    .filter-btn{font-family:'IBM Plex Sans',sans-serif;font-size:.8125rem;padding:.375rem 1rem;border:1px solid var(--ibm-gray-40);background:transparent;cursor:pointer;border-radius:2px;color:var(--ibm-gray-80);transition:all .15s ease}
+    .filter-btn:hover{background:var(--ibm-gray-10)}
+    .filter-btn.active{background:var(--ibm-blue);color:white;border-color:var(--ibm-blue)}
+    .main{padding:2rem;max-width:1600px;margin:0 auto}
+    .section-heading{font-size:1.25rem;font-weight:600;margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:2px solid var(--ibm-blue);display:flex;align-items:center;gap:.75rem}
+    .section-heading .count{font-family:'IBM Plex Mono',monospace;font-size:.8125rem;background:var(--ibm-blue);color:white;padding:.1rem .5rem;border-radius:2px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.5rem;margin-bottom:3rem}
+    .card{background:var(--ibm-white);border:1px solid var(--ibm-gray-20);transition:box-shadow .2s ease,transform .2s ease;position:relative;overflow:hidden}
+    .card:hover{box-shadow:0 8px 24px rgba(15,98,254,.12);transform:translateY(-2px)}
+    .card-badge{position:absolute;top:.75rem;right:.75rem;font-family:'IBM Plex Mono',monospace;font-size:.625rem;font-weight:500;text-transform:uppercase;letter-spacing:.08em;padding:.2rem .5rem;border-radius:2px;z-index:2}
+    .badge-desktop{background:#001d6c;color:#78a9ff}
+    .badge-mobile{background:#022d0d;color:#42be65}
+    .card-num{position:absolute;top:.75rem;left:.75rem;font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.9);background:rgba(0,0,0,.5);padding:.15rem .5rem;border-radius:2px;z-index:2}
+    .card-img-wrap{position:relative;overflow:hidden;height:220px;background:var(--ibm-gray-10)}
+    .card-img-wrap img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .4s ease}
+    .card:hover .card-img-wrap img{transform:scale(1.03)}
+    .card-body{padding:1rem 1.25rem;border-top:1px solid var(--ibm-gray-20)}
+    .card-module{font-family:'IBM Plex Mono',monospace;font-size:.6875rem;color:var(--ibm-blue);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem}
+    .card-title{font-size:.9375rem;font-weight:600;color:var(--ibm-gray-100);margin-bottom:.5rem;line-height:1.35}
+    .card-meta{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+    .meta-item{display:flex;align-items:center;gap:.3rem;font-size:.75rem;color:var(--ibm-gray-60);font-family:'IBM Plex Mono',monospace}
+    .card-actions{display:flex;gap:.5rem}
+    .btn-primary{flex:1;padding:.5rem;background:var(--ibm-blue);color:white;border:none;font-family:'IBM Plex Sans',sans-serif;font-size:.8125rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:background .15s ease}
+    .btn-primary:hover{background:var(--ibm-blue-dark)}
+    .btn-secondary{padding:.5rem .75rem;background:transparent;color:var(--ibm-blue);border:1px solid var(--ibm-blue);font-family:'IBM Plex Sans',sans-serif;font-size:.8125rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:.25rem;transition:background .15s ease}
+    .btn-secondary:hover{background:rgba(15,98,254,.08)}
+    .diagram-section{background:var(--ibm-white);border:1px solid var(--ibm-gray-20);margin-bottom:3rem;overflow:hidden}
+    .diagram-header{background:var(--ibm-gray-100);color:white;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+    .diagram-header h2{font-size:1rem;font-weight:600}
+    .diagram-header p{font-size:.8125rem;color:var(--ibm-gray-40)}
+    .diagram-img{width:100%;display:block}
+    .legend{background:var(--ibm-white);border:1px solid var(--ibm-gray-20);padding:1.5rem;margin-bottom:3rem}
+    .legend h3{font-size:.875rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ibm-gray-60);margin-bottom:1rem}
+    .legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem}
+    .legend-item{display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;background:var(--ibm-gray-10);border-left:3px solid var(--ibm-blue);font-size:.8125rem}
+    .legend-num{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:.75rem;color:var(--ibm-blue);min-width:1.5rem}
+    footer{background:var(--ibm-gray-100);color:var(--ibm-gray-60);text-align:center;padding:1.5rem;font-size:.8125rem;font-family:'IBM Plex Mono',monospace}
+    footer span{color:var(--ibm-blue)}
+  </style>
+</head>
+<body>
+<header class="header">
+  <span class="header-logo">⚕ SEMILLA SALUD</span>
+  <span class="header-title">/ Triaje de Salud — Catálogo de Diseños Stitch</span>
+</header>
+<section class="hero">
+  <div class="hero-tag">Proyecto Stitch · ID: 14873538246097879185 · Carbon Design System</div>
+  <h1>Semilla Triaje de Salud</h1>
+  <p>Sistema completo de triaje médico para campañas rurales. 8 módulos · 17 pantallas · Diseño IBM Carbon · Desktop + Móvil</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-value">17</span><span class="stat-label">Pantallas</span></div>
+    <div class="stat"><span class="stat-value">8</span><span class="stat-label">Módulos</span></div>
+    <div class="stat"><span class="stat-value">2</span><span class="stat-label">Plataformas</span></div>
+    <div class="stat"><span class="stat-value">16</span><span class="stat-label">HTMLs</span></div>
+  </div>
+</section>
+<div class="filters">
+  <span class="filter-label">Filtrar:</span>
+  <button class="filter-btn active" onclick="filterCards('all',this)">Todos</button>
+  <button class="filter-btn" onclick="filterCards('desktop',this)">Desktop</button>
+  <button class="filter-btn" onclick="filterCards('mobile',this)">Móvil</button>
+  <button class="filter-btn" onclick="filterCards('modulo1',this)">M1 · Login</button>
+  <button class="filter-btn" onclick="filterCards('modulo2',this)">M2 · Registro</button>
+  <button class="filter-btn" onclick="filterCards('modulo3',this)">M3 · Triaje</button>
+  <button class="filter-btn" onclick="filterCards('modulo4',this)">M4 · Cola</button>
+  <button class="filter-btn" onclick="filterCards('modulo5',this)">M5 · Consulta</button>
+  <button class="filter-btn" onclick="filterCards('modulo6',this)">M6 · Ticket</button>
+  <button class="filter-btn" onclick="filterCards('modulo7',this)">M7 · Usuarios</button>
+  <button class="filter-btn" onclick="filterCards('modulo8',this)">M8 · Integración</button>
+</div>
+<main class="main">
+  <div class="diagram-section">
+    <div class="diagram-header">
+      <div><h2>🗺 Diagrama de Arquitectura del Sistema</h2><p>Flujo clínico + técnico completo · 8 módulos · ESC/POS · Starlink · SQLite P2P</p></div>
+      <a href="00_diagrama_arquitectura_sistema.webp" target="_blank" class="btn-secondary">Ver completo →</a>
+    </div>
+    <img src="00_diagrama_arquitectura_sistema.webp" alt="Arquitectura" class="diagram-img" />
+  </div>
+  <div class="legend">
+    <h3>📋 Mapa de módulos</h3>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="legend-num">M1</span>Login y Selector de Campaña</div>
+      <div class="legend-item"><span class="legend-num">M2</span>Registro de Beneficiario / RENIEC</div>
+      <div class="legend-item"><span class="legend-num">M3</span>Triaje &amp; Signos Vitales</div>
+      <div class="legend-item"><span class="legend-num">M4</span>Cola de Espera en Tiempo Real</div>
+      <div class="legend-item"><span class="legend-num">M5</span>Consulta Médica &amp; Receta</div>
+      <div class="legend-item"><span class="legend-num">M6</span>Ticket Térmico ESC/POS 80mm</div>
+      <div class="legend-item"><span class="legend-num">M7</span>Gestión de Usuarios y Roles</div>
+      <div class="legend-item"><span class="legend-num">M8</span>Red Mesh Local &amp; Sync Cloud</div>
+    </div>
+  </div>
+  <h2 class="section-heading">🖥 Pantallas Desktop <span class="count">8</span></h2>
+  <div class="grid">
+    <div class="card" data-device="desktop" data-module="modulo1"><div class="card-num">#11</div><div class="card-badge badge-desktop">Desktop · 2560×2076</div><div class="card-img-wrap"><img src="11_modulo1_login_campaña_carbon.webp" alt="Login Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 1 · Login &amp; Campaña</div><div class="card-title">Login y Selector de Campaña (Carbon)</div><div class="card-meta"><span class="meta-item">📐 2560×2076</span><span class="meta-item">🖥 Desktop</span></div><div class="card-actions"><a href="11_modulo1_login_campaña_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="11_modulo1_login_campaña_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo2"><div class="card-num">#12</div><div class="card-badge badge-desktop">Desktop · 4978×3516</div><div class="card-img-wrap"><img src="12_registro_beneficiario_carbon.webp" alt="Registro Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 2 · Registro / RENIEC</div><div class="card-title">Registro de Beneficiario — Admisión de Campaña (Carbon)</div><div class="card-meta"><span class="meta-item">📐 4978×3516</span><span class="meta-item">🖥 Desktop</span></div><div class="card-actions"><a href="12_registro_beneficiario_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="12_registro_beneficiario_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo3"><div class="card-num">#13</div><div class="card-badge badge-desktop">Desktop · 2560×3330</div><div class="card-img-wrap"><img src="13_triage_signos_vitales_carbon.webp" alt="Triage Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 3 · Triaje Clínico</div><div class="card-title">Triaje Clínico — Signos Vitales &amp; Prioridad (Carbon)</div><div class="card-meta"><span class="meta-item">📐 2560×3330</span><span class="meta-item">🖥 Desktop</span><span class="meta-item">🔴🟡🟢</span></div><div class="card-actions"><a href="13_triage_signos_vitales_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="13_triage_signos_vitales_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo4"><div class="card-num">#05</div><div class="card-badge badge-desktop">Desktop · 2560×3114</div><div class="card-img-wrap"><img src="05_cola_espera_triage_carbon.webp" alt="Cola Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 4 · Cola de Espera</div><div class="card-title">Cola de Espera Médica — Clasificación y Triage (Carbon)</div><div class="card-meta"><span class="meta-item">📐 2560×3114</span><span class="meta-item">🖥 Desktop</span></div><div class="card-actions"><a href="05_cola_espera_triage_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="05_cola_espera_triage_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo5"><div class="card-num">#02</div><div class="card-badge badge-desktop">Desktop · 4978×3014</div><div class="card-img-wrap"><img src="02_consulta_medica_carbon.webp" alt="Consulta Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 5 · Consulta Médica</div><div class="card-title">Consulta Médica — Diagnóstico y Receta (Carbon)</div><div class="card-meta"><span class="meta-item">📐 4978×3014</span><span class="meta-item">🖥 Desktop</span></div><div class="card-actions"><a href="02_consulta_medica_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="02_consulta_medica_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo6"><div class="card-num">#07</div><div class="card-badge badge-desktop">Desktop · 2560×3476</div><div class="card-img-wrap"><img src="07_modulo6_ticket_termico_carbon.webp" alt="Ticket Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 6 · Ticket Térmico</div><div class="card-title">Módulo 6: Ticket Térmico de Campaña (Carbon)</div><div class="card-meta"><span class="meta-item">📐 2560×3476</span><span class="meta-item">🖥 Desktop</span><span class="meta-item">🖨 ESC/POS</span></div><div class="card-actions"><a href="07_modulo6_ticket_termico_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="07_modulo6_ticket_termico_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo7"><div class="card-num">#08</div><div class="card-badge badge-desktop">Desktop · 2560×3054</div><div class="card-img-wrap"><img src="08_modulo7_gestion_usuarios_carbon.webp" alt="Usuarios Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 7 · Usuarios &amp; Roles</div><div class="card-title">Módulo 7: Gestión de Usuarios y Permisos (Carbon)</div><div class="card-meta"><span class="meta-item">📐 2560×3054</span><span class="meta-item">🖥 Desktop</span></div><div class="card-actions"><a href="08_modulo7_gestion_usuarios_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="08_modulo7_gestion_usuarios_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="desktop" data-module="modulo8"><div class="card-num">#04</div><div class="card-badge badge-desktop">Desktop · 2560×4146</div><div class="card-img-wrap"><img src="04_modulo8_integraciones_carbon.webp" alt="Integraciones Carbon" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 8 · Integraciones &amp; Red</div><div class="card-title">Módulo 8: Integraciones Técnicas y Sincronización (Carbon)</div><div class="card-meta"><span class="meta-item">📐 2560×4146</span><span class="meta-item">🖥 Desktop</span><span class="meta-item">🛰 Starlink</span></div><div class="card-actions"><a href="04_modulo8_integraciones_carbon.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="04_modulo8_integraciones_carbon.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+  </div>
+  <h2 class="section-heading">📱 Pantallas Móvil <span class="count">8</span></h2>
+  <div class="grid">
+    <div class="card" data-device="mobile" data-module="modulo1"><div class="card-num">#14</div><div class="card-badge badge-mobile">Móvil · 780×1768</div><div class="card-img-wrap"><img src="14_modulo1_login_campaña_movil.webp" alt="Login Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 1 · Login &amp; Campaña</div><div class="card-title">Módulo 1: Login y Selector de Campaña (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×1768</span><span class="meta-item">📱 Móvil</span></div><div class="card-actions"><a href="14_modulo1_login_campaña_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="14_modulo1_login_campaña_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo2"><div class="card-num">#01</div><div class="card-badge badge-mobile">Móvil · 780×3104</div><div class="card-img-wrap"><img src="01_registro_beneficiario_movil.webp" alt="Registro Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 2 · Registro Beneficiario</div><div class="card-title">Registro de Beneficiario — Admisión Rápida (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×3104</span><span class="meta-item">📱 Móvil</span></div><div class="card-actions"><a href="01_registro_beneficiario_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="01_registro_beneficiario_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo3"><div class="card-num">#09</div><div class="card-badge badge-mobile">Móvil · 780×3214</div><div class="card-img-wrap"><img src="09_triage_signos_vitales_movil.webp" alt="Triage Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 3 · Triaje Clínico</div><div class="card-title">Triaje Clínico — Signos Vitales &amp; Prioridad (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×3214</span><span class="meta-item">📱 Móvil</span><span class="meta-item">🔴🟡🟢</span></div><div class="card-actions"><a href="09_triage_signos_vitales_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="09_triage_signos_vitales_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo4"><div class="card-num">#03</div><div class="card-badge badge-mobile">Móvil · 780×2864</div><div class="card-img-wrap"><img src="03_cola_espera_triage_movil.webp" alt="Cola Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 4 · Cola de Espera</div><div class="card-title">Cola de Espera Médica — Clasificación y Triage (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×2864</span><span class="meta-item">📱 Móvil</span></div><div class="card-actions"><a href="03_cola_espera_triage_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="03_cola_espera_triage_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo5"><div class="card-num">#16</div><div class="card-badge badge-mobile">Móvil · 780×3280</div><div class="card-img-wrap"><img src="16_consulta_medica_campo_movil.webp" alt="Consulta Campo Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 5 · Consulta de Campo</div><div class="card-title">Consulta Médica — Atención de Campo (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×3280</span><span class="meta-item">📱 Móvil</span></div><div class="card-actions"><a href="16_consulta_medica_campo_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="16_consulta_medica_campo_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo6"><div class="card-num">#15</div><div class="card-badge badge-mobile">Móvil · 780×3262</div><div class="card-img-wrap"><img src="15_modulo6_ticket_termico_movil.webp" alt="Ticket Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 6 · Ticket Térmico</div><div class="card-title">Módulo 6: Ticket Térmico de Campaña (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×3262</span><span class="meta-item">📱 Móvil</span></div><div class="card-actions"><a href="15_modulo6_ticket_termico_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="15_modulo6_ticket_termico_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo7"><div class="card-num">#10</div><div class="card-badge badge-mobile">Móvil · 780×2778</div><div class="card-img-wrap"><img src="10_modulo7_gestion_turnos_movil.webp" alt="Turnos Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 7 · Usuarios &amp; Turnos</div><div class="card-title">Módulo 7: Gestión de Usuarios y Turnos (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×2778</span><span class="meta-item">📱 Móvil</span></div><div class="card-actions"><a href="10_modulo7_gestion_turnos_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="10_modulo7_gestion_turnos_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+    <div class="card" data-device="mobile" data-module="modulo8"><div class="card-num">#06</div><div class="card-badge badge-mobile">Móvil · 780×2912</div><div class="card-img-wrap"><img src="06_modulo8_telemetria_movil.webp" alt="Telemetria Móvil" loading="lazy"/></div><div class="card-body"><div class="card-module">Módulo 8 · Telemetría &amp; Red</div><div class="card-title">Módulo 8: Telemetría e Integraciones de Red (Móvil)</div><div class="card-meta"><span class="meta-item">📐 780×2912</span><span class="meta-item">📱 Móvil</span><span class="meta-item">🛰 Edge Mesh</span></div><div class="card-actions"><a href="06_modulo8_telemetria_movil.html" target="_blank" class="btn-primary">Abrir HTML</a><a href="06_modulo8_telemetria_movil.webp" target="_blank" class="btn-secondary">IMG</a></div></div></div>
+  </div>
+</main>
+<footer>Generado por <span>Antigravity IDE</span> · Proyecto <span>Semilla Triaje de Salud</span> · Stitch ID: <span>14873538246097879185</span></footer>
+<script>
+function filterCards(type,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card').forEach(card=>{
+    if(type==='all') card.style.display='';
+    else if(type==='desktop'||type==='mobile') card.style.display=card.dataset.device===type?'':'none';
+    else card.style.display=card.dataset.module===type?'':'none';
+  });
+}
+</script>
+</body>
+</html>

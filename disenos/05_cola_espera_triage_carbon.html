@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "secondary-fixed-dim": "#c6c6c6",
+          "secondary-fixed": "#e0e0e0",
+          "surface-container-lowest": "#ffffff",
+          "primary-fixed": "#d0e2ff",
+          "outline": "#8d8d8d",
+          "background": "#ffffff",
+          "on-secondary-fixed": "#161616",
+          "surface-container-high": "#e0e0e0",
+          "surface-container-low": "#f4f4f4",
+          "surface": "#ffffff",
+          "on-surface-variant": "#525252",
+          "surface-bright": "#ffffff",
+          "on-tertiary-container": "#044317",
+          "on-error": "#ffffff",
+          "primary-fixed-dim": "#78a9ff",
+          "surface-tint": "#0f62fe",
+          "tertiary-fixed": "#a7f0ba",
+          "error": "#da1e28",
+          "primary": "#0f62fe",
+          "tertiary-container": "#a7f0ba",
+          "on-primary": "#ffffff",
+          "on-primary-fixed": "#001d6c",
+          "on-background": "#161616",
+          "surface-container-highest": "#c6c6c6",
+          "on-surface": "#161616",
+          "secondary": "#6f6f6f",
+          "error-container": "#fff1f1",
+          "on-tertiary": "#ffffff",
+          "on-primary-fixed-variant": "#0043ce",
+          "on-primary-container": "#161616",
+          "on-error-container": "#750e13",
+          "inverse-surface": "#393939",
+          "primary-container": "#d0e2ff",
+          "secondary-container": "#e0e0e0",
+          "outline-variant": "#e0e0e0",
+          "surface-dim": "#e0e0e0",
+          "inverse-on-surface": "#f4f4f4",
+          "on-tertiary-fixed-variant": "#044317",
+          "surface-variant": "#f4f4f4",
+          "surface-container": "#f4f4f4",
+          "inverse-primary": "#78a9ff",
+          "on-secondary-fixed-variant": "#525252",
+          "on-secondary": "#ffffff",
+          "tertiary": "#198038",
+          "on-secondary-container": "#525252",
+          "on-tertiary-fixed": "#022d0d",
+          "tertiary-fixed-dim": "#42be65"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {},
+        "fontFamily": {
+          "headline": [
+            "IBM Plex Sans"
+          ],
+          "display": [
+            "IBM Plex Sans"
+          ],
+          "body": [
+            "IBM Plex Sans"
+          ],
+          "label": [
+            "IBM Plex Sans"
+          ]
+        },
+        "fontSize": {}
+      },
+    },
+  }</script></head><body class="bg-surface-container-low font-body text-on-surface antialiased min-h-screen"><header class="fixed top-0 left-0 right-0 h-14 bg-surface z-50 shadow-[0_1px_8px_rgba(0,0,0,0.06)]"><div class="h-14 w-full px-4 flex items-center justify-between gap-4"><div class="flex items-center gap-4 min-w-max"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WHui6EMlZ8nLYWhqM7Pt8xyBgk9V73SUi-O3GdU4QWAqyQOCDKLbzOxctZ7wZ3QiylxrmLuvQW71vVeBAssOJflzXXy76a1cXn6KwfL0JJAaxblaCy7MdqZr0BlEsQ4wKHJbGszn7p9AWkNF0LUcgBdjCcr0hKtytcRr-r3cFvcYm7_2Y7GIXLfg8IT-5Ta8t6TCqSLvT87qdOBISwCYI__NdVWoRNkfVnnJ30-vqAo6u2jU06N36Q89g_"/><div class="flex items-center gap-2"><span class="text-sm font-semibold tracking-tight text-on-surface">Semilla</span><span class="text-xs text-on-surface-variant">|</span><span class="text-xs font-normal text-on-surface-variant uppercase tracking-wider">Triaje Clínico &amp; Campañas</span></div></div><div class="flex items-center gap-3"><div class="hidden md:flex items-center bg-surface-container px-2.5 py-1 gap-2"><span class="material-symbols-outlined text-[16px] text-primary">local_hospital</span><span class="text-xs font-medium text-on-surface">Campaña Activa: Cusco - Valle Sagrado 2025</span><button aria-label="Cambiar campaña activa" class="text-primary hover:text-on-primary-fixed-variant flex items-center" type="button"><span class="material-symbols-outlined text-[16px]">expand_more</span></button></div><div class="flex items-center bg-tertiary-container text-on-tertiary-container px-2 py-0.5 gap-1.5"><span class="material-symbols-outlined text-[14px] text-tertiary">cloud_done</span><span class="text-xs font-medium tracking-tight">Sincronizado / Offline-ready</span></div></div><div class="flex items-center gap-4 min-w-max"><div class="relative flex items-center justify-center p-1.5 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1 right-1 flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span></span></div><div class="text-right hidden sm:block"><div class="text-xs font-medium text-on-surface leading-none">Dr. M. Huamán</div><div class="text-[11px] text-on-surface-variant leading-tight mt-0.5">Enfermería Triaje</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><aside class="fixed left-0 top-14 bottom-0 w-64 bg-surface z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)] flex flex-col justify-between overflow-y-auto"><div class="py-3"><div class="px-4 pb-2 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Operaciones de Campaña</div><nav class="space-y-0.5 px-2" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="registro-de-pacientes" href="#"><span class="material-symbols-outlined text-[18px] mr-3">person_add</span>Registro de Pacientes</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="triaje-clinico" href="#"><span class="material-symbols-outlined text-[18px] mr-3">vital_signs</span>Triaje Clínico</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="cola-de-espera-medica" href="#"><span class="material-symbols-outlined text-[18px] mr-3">hourglass_empty</span>Cola de Espera Médica</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="consulta-medica" href="#"><span class="material-symbols-outlined text-[18px] mr-3">clinical_notes</span>Consulta Médica</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="ticket-termico" href="#"><span class="material-symbols-outlined text-[18px] mr-3">receipt_long</span>Ticket Térmico</a></nav><div class="px-4 pt-6 pb-2 text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Administración</div><nav class="space-y-0.5 px-2" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="gestion-de-usuarios-y-permisos" href="#"><span class="material-symbols-outlined text-[18px] mr-3">manage_accounts</span>Gestión de Usuarios</a><a class="flex items-center px-3 py-2 text-xs text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="integraciones-api-y-webhooks" href="#"><span class="material-symbols-outlined text-[18px] mr-3">hub</span>Integraciones (API &amp; Webhooks)</a></nav></div><div class="p-3 bg-surface-container-low m-2"><div class="flex items-center justify-between text-[11px] text-on-surface-variant mb-1"><span class="font-medium">Terminal Local</span><span class="text-tertiary font-semibold">Activo</span></div><div class="text-[11px] text-on-surface-variant truncate">Nodo: CUS-VALLE-04</div></div></aside><div class="pl-64"><main class="w-full pt-14 px-8 min-h-screen bg-surface-container-low text-on-surface"><div class="flex flex-col w-full">
+<!-- Notification Toast (Carbon Notification Style) -->
+<div class="fixed top-16 right-6 z-50 flex items-start bg-error-container text-on-error-container p-4 shadow-md max-w-md transition-all duration-300" id="carbonToast">
+<span class="material-symbols-outlined text-error mr-3 text-[20px] shrink-0">emergency</span>
+<div class="flex-1 pr-4">
+<div class="flex items-center gap-2">
+<span class="text-xs font-semibold uppercase tracking-wider text-error">Alerta Roja Inmediata</span>
+<span class="text-[11px] text-on-surface-variant font-mono">09:15:02</span>
+</div>
+<p class="text-xs font-medium text-on-surface mt-1 leading-snug">
+        Paciente pediátrico derivado con T° 39.8°C (Ticket #T-102). Prioridad 1 Manchester asignada a Consultorio 2.
+      </p>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface flex items-center p-1" onclick="document.getElementById('carbonToast').classList.add('hidden')">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Operational Metrics Section: IBM Carbon KPI Bento -->
+<section class="mb-6">
+<div class="flex flex-wrap items-end justify-between mb-3 gap-2">
+<div>
+<div class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-primary">monitoring</span>
+          Control de Flujo de Atención Médica en Tiempo Real
+        </div>
+<h1 class="text-xl font-semibold text-on-surface tracking-tight">Cola de Espera Activa</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 bg-surface-container px-2.5 py-1 text-xs text-on-surface font-mono">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+          ACTUALIZACIÓN AUTOMÁTICA (5s)
+        </span>
+<button class="flex items-center gap-1 bg-surface-container px-3 py-1.5 text-xs font-medium text-on-surface hover:bg-surface-container-high transition-colors" id="btnRefresh">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">sync</span>
+          Refrescar
+        </button>
+</div>
+</div>
+<!-- Carbon Data Metric Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2">
+<!-- Total en Cola -->
+<div class="bg-surface p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+<span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Total en Cola</span>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-3xl font-light text-on-surface tracking-tight" id="countTotal">28</span>
+<span class="text-xs text-on-surface-variant font-mono">Pacientes</span>
+</div>
+<div class="mt-2 h-1 w-full bg-surface-container">
+<div class="h-1 bg-primary" style="width: 100%"></div>
+</div>
+</div>
+<!-- Prioridad Roja (Crítico) -->
+<div class="bg-surface p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-[11px] uppercase tracking-wider text-error font-semibold flex items-center gap-1">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span>
+</span>
+            P1 - Emergencia
+          </span>
+<span class="text-[10px] bg-error-container text-on-error-container font-mono px-1">INMEDIATO</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-3xl font-semibold text-error tracking-tight" id="countRed">02</span>
+<span class="text-xs text-error font-mono">&lt; 5 min</span>
+</div>
+<div class="mt-2 h-1 w-full bg-surface-container">
+<div class="h-1 bg-error" style="width: 15%"></div>
+</div>
+</div>
+<!-- Prioridad Amarilla (Urgente) -->
+<div class="bg-surface p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-[11px] uppercase tracking-wider text-on-surface font-semibold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+            P2 - Urgencia
+          </span>
+<span class="text-[10px] bg-secondary-fixed text-on-secondary-fixed font-mono px-1">10-15m</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-3xl font-light text-on-surface tracking-tight" id="countYellow">07</span>
+<span class="text-xs text-on-surface-variant font-mono">25.0%</span>
+</div>
+<div class="mt-2 h-1 w-full bg-surface-container">
+<div class="h-1 bg-amber-500" style="width: 25%"></div>
+</div>
+</div>
+<!-- Prioridad Verde (Estable) -->
+<div class="bg-surface p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-[11px] uppercase tracking-wider text-tertiary font-semibold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+            P3 - Estable
+          </span>
+<span class="text-[10px] bg-tertiary-container text-on-tertiary-container font-mono px-1">Estándar</span>
+</div>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-3xl font-light text-on-surface tracking-tight" id="countGreen">19</span>
+<span class="text-xs text-on-surface-variant font-mono">67.8%</span>
+</div>
+<div class="mt-2 h-1 w-full bg-surface-container">
+<div class="h-1 bg-tertiary" style="width: 68%"></div>
+</div>
+</div>
+<!-- Tiempo Promedio Espera -->
+<div class="bg-surface p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+<span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">T. Promedio Espera</span>
+<div class="mt-2 flex items-baseline justify-between">
+<span class="text-3xl font-light text-primary tracking-tight">14<span class="text-lg font-normal ml-0.5">m</span></span>
+<span class="text-xs text-tertiary font-mono flex items-center">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>-2m
+          </span>
+</div>
+<div class="mt-2 text-[11px] text-on-surface-variant truncate">Meta de campaña: ≤ 20m</div>
+</div>
+<!-- Consultorios Activos -->
+<div class="bg-surface p-4 flex flex-col justify-between shadow-sm hover:shadow transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Consultorios</span>
+<span class="inline-flex items-center text-[10px] bg-primary-container text-on-primary-container px-1 font-mono font-medium">2 ACTIVOS</span>
+</div>
+<div class="mt-2 space-y-1">
+<div class="flex items-center justify-between text-xs">
+<span class="font-medium truncate text-on-surface">C1: Dr. Huamán</span>
+<span class="text-[10px] bg-tertiary-container text-on-tertiary-container px-1 font-mono">Ocupado</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="font-medium truncate text-on-surface">C2: Dra. Ramos</span>
+<span class="text-[10px] bg-primary-container text-on-primary-container px-1 font-mono">Llamando</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Carbon Main Container: Toolbar + Table -->
+<section class="bg-surface shadow-sm mb-8 flex flex-col">
+<!-- Carbon DataTable Action Header & Search Toolbar -->
+<div class="bg-surface-container-low p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+<!-- Search input (Carbon styled: solid background, distinct bottom accent) -->
+<div class="relative flex-1 max-w-md">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">search</span>
+</div>
+<input class="w-full bg-surface text-on-surface pl-10 pr-4 py-2.5 text-xs placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary shadow-sm" id="tableSearch" placeholder="Buscar por DNI, Apellidos, Nombres o # Ticket (ej: T-101)..." type="text"/>
+</div>
+<!-- Filter Controls & Segmented Buttons -->
+<div class="flex flex-wrap items-center gap-2">
+<!-- Triage Level Filters -->
+<div class="flex bg-surface p-1 shadow-sm" role="group">
+<button class="filter-btn active px-3 py-1.5 text-xs font-semibold bg-primary text-on-primary transition-colors" data-filter="all">
+            Todos (28)
+          </button>
+<button class="filter-btn px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-1.5" data-filter="rojo">
+<span class="w-2 h-2 rounded-full bg-error"></span> Rojo (2)
+          </button>
+<button class="filter-btn px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-1.5" data-filter="amarillo">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span> Amarillo (7)
+          </button>
+<button class="filter-btn px-3 py-1.5 text-xs font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors flex items-center gap-1.5" data-filter="verde">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Verde (19)
+          </button>
+</div>
+<!-- Consultorio Filter Select -->
+<div class="relative">
+<select class="bg-surface text-xs text-on-surface py-2.5 px-3 pr-8 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm appearance-none cursor-pointer font-medium" id="consultorioFilter">
+<option value="all">Todos los Consultorios</option>
+<option value="c1">Consultorio 1 (Med. General)</option>
+<option value="c2">Consultorio 2 (Pediatría)</option>
+<option value="unassigned">Sin Consultorio Asignado</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-2.5 pointer-events-none text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+<!-- Thermal Print Batch / Quick Actions -->
+<button class="bg-surface text-on-surface hover:bg-surface-container-high px-3 py-2 text-xs font-medium flex items-center gap-1.5 shadow-sm transition-colors" onclick="openThermalModal('T-101', 'Mamani Quispe, Rosa', '02817462', 'ROJO - EMERGENCIA', 'Consultorio 1')" title="Reimpresión rápida">
+<span class="material-symbols-outlined text-[16px] text-primary">print</span>
+<span class="hidden sm:inline">Reimprimir Ticket</span>
+</button>
+</div>
+</div>
+<!-- Active Filter Chips / Status bar -->
+<div class="px-4 py-2 bg-surface flex items-center justify-between text-xs text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="font-medium text-on-surface">Mostrando:</span>
+<span class="font-mono text-primary font-semibold" id="showingCount">6 de 28 pacientes filtrados</span>
+<span class="text-surface-container-highest">|</span>
+<span class="text-[11px]">Ordenado por: <strong class="text-on-surface font-semibold">Prioridad Manchester + Tiempo de Espera</strong></span>
+</div>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1 text-[11px]"><span class="w-2 h-2 bg-error"></span> Prioridad I (&lt;10m)</span>
+<span class="flex items-center gap-1 text-[11px]"><span class="w-2 h-2 bg-amber-500"></span> Prioridad II (&lt;30m)</span>
+<span class="flex items-center gap-1 text-[11px]"><span class="w-2 h-2 bg-tertiary"></span> Prioridad III (&lt;60m)</span>
+</div>
+</div>
+<!-- IBM Carbon Data Table (Dense Grid Layout) -->
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left text-xs border-collapse">
+<thead class="bg-surface-container text-on-surface-variant uppercase text-[11px] tracking-wider font-semibold">
+<tr>
+<th class="p-3 font-semibold">Ticket #</th>
+<th class="p-3 font-semibold">Nivel Urgencia</th>
+<th class="p-3 font-semibold">Triaje / Espera</th>
+<th class="p-3 font-semibold">Paciente</th>
+<th class="p-3 font-semibold">Signos Vitales Alerta</th>
+<th class="p-3 font-semibold">Motivo Principal</th>
+<th class="p-3 font-semibold">Destino</th>
+<th class="p-3 font-semibold text-right pr-4">Acción Operativa</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high font-normal text-on-surface" id="queueTableBody">
+<!-- ROW 1: ROJO CRITICO (Crisis Hipertensiva) -->
+<tr class="hover:bg-error-container/40 transition-colors bg-surface group" data-priority="rojo" data-room="c1">
+<td class="p-3 font-mono font-bold text-sm text-error flex items-center gap-1.5">
+<span class="w-1.5 h-6 bg-error inline-block shrink-0"></span>
+              T-101
+            </td>
+<td class="p-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-error text-on-error font-semibold text-[10px] tracking-wider uppercase">
+<span class="material-symbols-outlined text-[12px] animate-pulse">priority_high</span>
+                Rojo - Emergencia
+              </span>
+</td>
+<td class="p-3">
+<div class="font-mono text-xs font-semibold text-on-surface">09:12 hrs</div>
+<div class="text-[11px] text-error font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">timer</span> Espera: 3 min
+              </div>
+</td>
+<td class="p-3 min-w-[180px]">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer" onclick="openDetailsModal('T-101', 'Mamani Quispe, Rosa', '67 años', 'DNI: 02817462', 'Crisis hipertensiva y disnea severa en reposo', 'PA: 180/110 mmHg, FC: 104 lpm, SpO2: 84%, T°: 36.8°C', 'Consultorio 1 - Dr. M. Huamán', 'ROJO')">
+                Mamani Quispe, Rosa
+              </div>
+<div class="text-[11px] text-on-surface-variant font-mono">67 años | DNI: 02817462</div>
+</td>
+<td class="p-3">
+<div class="flex flex-wrap gap-1">
+<span class="bg-error-container text-on-error-container font-mono text-[11px] font-semibold px-1.5 py-0.5">PA: 180/110</span>
+<span class="bg-error-container text-on-error-container font-mono text-[11px] font-semibold px-1.5 py-0.5">SpO2: 84%</span>
+</div>
+</td>
+<td class="p-3 max-w-xs">
+<p class="truncate font-medium text-error leading-snug">Crisis hipertensiva y disnea severa</p>
+<p class="text-[11px] text-on-surface-variant truncate">Cianosis distal, dolor torácico opresivo</p>
+</td>
+<td class="p-3 whitespace-nowrap">
+<span class="bg-surface-container px-2 py-1 font-mono text-xs font-medium text-on-surface">Consultorio 1</span>
+</td>
+<td class="p-3 text-right pr-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary px-3 py-1.5 font-medium text-xs flex items-center gap-1 transition-colors shadow-sm active:scale-95" onclick="callPatient('T-101', 'Rosa Mamani Quispe', 'Consultorio 1')">
+<span class="material-symbols-outlined text-[16px]">campaign</span>
+                  Llamar a Consulta
+                </button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="openThermalModal('T-101', 'Mamani Quispe, Rosa', '02817462', 'ROJO - EMERGENCIA', 'Consultorio 1')" title="Imprimir Ticket">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 2: ROJO CRITICO (Pediátrico con convulsión) -->
+<tr class="hover:bg-error-container/40 transition-colors bg-surface group" data-priority="rojo" data-room="c2">
+<td class="p-3 font-mono font-bold text-sm text-error flex items-center gap-1.5">
+<span class="w-1.5 h-6 bg-error inline-block shrink-0"></span>
+              T-102
+            </td>
+<td class="p-3">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-error text-on-error font-semibold text-[10px] tracking-wider uppercase">
+<span class="material-symbols-outlined text-[12px] animate-pulse">priority_high</span>
+                Rojo - Emergencia
+              </span>
+</td>
+<td class="p-3">
+<div class="font-mono text-xs font-semibold text-on-surface">09:15 hrs</div>
+<div class="text-[11px] text-error font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">timer</span> Espera: 5 min
+              </div>
+</td>
+<td class="p-3 min-w-[180px]">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer" onclick="openDetailsModal('T-102', 'Flores Laura, Mateo', '3 años', 'DNI: 78912341', 'Convulsión febril tónico-clónica previa en domicilio', 'T°: 39.8°C axilar, FC: 142 lpm, SpO2: 96%', 'Consultorio 2 - Pediatría', 'ROJO')">
+                Flores Laura, Mateo
+              </div>
+<div class="text-[11px] text-on-surface-variant font-mono">3 años | DNI: 78912341 (Pediatría)</div>
+</td>
+<td class="p-3">
+<div class="flex flex-wrap gap-1">
+<span class="bg-error text-on-error font-mono text-[11px] font-semibold px-1.5 py-0.5">Temp: 39.8°C</span>
+<span class="bg-surface-container font-mono text-[11px] px-1.5 py-0.5">FC: 142 bpm</span>
+</div>
+</td>
+<td class="p-3 max-w-xs">
+<p class="truncate font-medium text-error leading-snug">Convulsión febril previa, somnoliento</p>
+<p class="text-[11px] text-on-surface-variant truncate">Madre refiere episodio tónico de 2 min</p>
+</td>
+<td class="p-3 whitespace-nowrap">
+<span class="bg-primary-container text-on-primary-container px-2 py-1 font-mono text-xs font-medium">Consultorio 2 (Ped)</span>
+</td>
+<td class="p-3 text-right pr-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="bg-primary hover:bg-on-primary-fixed-variant text-on-primary px-3 py-1.5 font-medium text-xs flex items-center gap-1 transition-colors shadow-sm active:scale-95" onclick="callPatient('T-102', 'Mateo Flores Laura', 'Consultorio 2 (Pediatría)')">
+<span class="material-symbols-outlined text-[16px]">campaign</span>
+                  Llamar a Consulta
+                </button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="openThermalModal('T-102', 'Flores Laura, Mateo', '78912341', 'ROJO - EMERGENCIA', 'Consultorio 2 (Pediatría)')" title="Imprimir Ticket">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 3: AMARILLO URGENTE (Fiebre persistente) -->
+<tr class="hover:bg-surface-container transition-colors bg-surface group" data-priority="amarillo" data-room="c1">
+<td class="p-3 font-mono font-semibold text-sm text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-6 bg-amber-500 inline-block shrink-0"></span>
+              T-104
+            </td>
+<td class="p-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed font-semibold text-[10px] tracking-wider uppercase">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                Amarillo - Urgente
+              </span>
+</td>
+<td class="p-3">
+<div class="font-mono text-xs font-semibold text-on-surface">09:20 hrs</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">schedule</span> Espera: 12 min
+              </div>
+</td>
+<td class="p-3 min-w-[180px]">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer" onclick="openDetailsModal('T-104', 'Quispe Condori, Juan', '54 años', 'DNI: 42918274', 'Síndrome febril prolongado (3 días), malestar osteomuscular y tos', 'PA: 145/95 mmHg, T°: 38.6°C, SpO2: 93%, FC: 98 lpm', 'Consultorio 1 - Dr. M. Huamán', 'AMARILLO')">
+                Quispe Condori, Juan
+              </div>
+<div class="text-[11px] text-on-surface-variant font-mono">54 años | DNI: 42918274</div>
+</td>
+<td class="p-3">
+<div class="flex flex-wrap gap-1">
+<span class="bg-secondary-fixed font-mono text-[11px] font-semibold px-1.5 py-0.5">Temp: 38.6°C</span>
+<span class="bg-secondary-fixed font-mono text-[11px] px-1.5 py-0.5">PA: 145/95</span>
+</div>
+</td>
+<td class="p-3 max-w-xs">
+<p class="truncate font-medium text-on-surface leading-snug">Fiebre persistente 3 días con tos seca</p>
+<p class="text-[11px] text-on-surface-variant truncate">Cefalea holocraneana moderada</p>
+</td>
+<td class="p-3 whitespace-nowrap">
+<span class="bg-surface-container px-2 py-1 font-mono text-xs font-medium text-on-surface">Consultorio 1</span>
+</td>
+<td class="p-3 text-right pr-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-3 py-1.5 font-medium text-xs flex items-center gap-1 transition-colors shadow-sm" onclick="assignRoom('T-104', 'Consultorio 1')">
+<span class="material-symbols-outlined text-[16px] text-primary">swap_horiz</span>
+                  Reasignar
+                </button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="openThermalModal('T-104', 'Quispe Condori, Juan', '42918274', 'AMARILLO - URGENTE', 'Consultorio 1')" title="Imprimir Ticket">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 4: AMARILLO URGENTE (Dolor abdominal agudo) -->
+<tr class="hover:bg-surface-container transition-colors bg-surface group" data-priority="amarillo" data-room="c1">
+<td class="p-3 font-mono font-semibold text-sm text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-6 bg-amber-500 inline-block shrink-0"></span>
+              T-105
+            </td>
+<td class="p-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed font-semibold text-[10px] tracking-wider uppercase">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                Amarillo - Urgente
+              </span>
+</td>
+<td class="p-3">
+<div class="font-mono text-xs font-semibold text-on-surface">09:22 hrs</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">schedule</span> Espera: 10 min
+              </div>
+</td>
+<td class="p-3 min-w-[180px]">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer" onclick="openDetailsModal('T-105', 'Condori Mendoza, Elena', '29 años', 'DNI: 45678912', 'Sospecha apendicitis vs proceso ginecológico agudo', 'PA: 115/75 mmHg, FC: 90 lpm, T°: 37.8°C, SpO2: 98%', 'Consultorio 1 - Dr. M. Huamán', 'AMARILLO')">
+                Condori Mendoza, Elena
+              </div>
+<div class="text-[11px] text-on-surface-variant font-mono">29 años | DNI: 45678912</div>
+</td>
+<td class="p-3">
+<div class="flex flex-wrap gap-1">
+<span class="bg-secondary-fixed font-mono text-[11px] px-1.5 py-0.5">EVA: 8/10</span>
+<span class="bg-secondary-fixed font-mono text-[11px] px-1.5 py-0.5">T°: 37.8°C</span>
+</div>
+</td>
+<td class="p-3 max-w-xs">
+<p class="truncate font-medium text-on-surface leading-snug">Dolor abdominal agudo fosa iliaca der.</p>
+<p class="text-[11px] text-on-surface-variant truncate">Náuseas presentes, defensa involuntaria leve</p>
+</td>
+<td class="p-3 whitespace-nowrap">
+<span class="bg-surface-container px-2 py-1 font-mono text-xs font-medium text-on-surface">Consultorio 1</span>
+</td>
+<td class="p-3 text-right pr-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-3 py-1.5 font-medium text-xs flex items-center gap-1 transition-colors shadow-sm" onclick="assignRoom('T-105', 'Consultorio 1')">
+<span class="material-symbols-outlined text-[16px] text-primary">swap_horiz</span>
+                  Reasignar
+                </button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="openThermalModal('T-105', 'Condori Mendoza, Elena', '45678912', 'AMARILLO - URGENTE', 'Consultorio 1')" title="Imprimir Ticket">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 5: VERDE ESTABLE (Control crónico) -->
+<tr class="hover:bg-surface-container transition-colors bg-surface group" data-priority="verde" data-room="unassigned">
+<td class="p-3 font-mono font-semibold text-sm text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-6 bg-tertiary inline-block shrink-0"></span>
+              T-106
+            </td>
+<td class="p-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-tertiary-container text-on-tertiary-container font-semibold text-[10px] tracking-wider uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Verde - Estable
+              </span>
+</td>
+<td class="p-3">
+<div class="font-mono text-xs font-semibold text-on-surface">09:25 hrs</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">schedule</span> Espera: 15 min
+              </div>
+</td>
+<td class="p-3 min-w-[180px]">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer" onclick="openDetailsModal('T-106', 'Huallpa Cusi, Carlos', '41 años', 'DNI: 10293847', 'Control preventivo de hipertensión y chequeo metabólico anual', 'PA: 125/82 mmHg, T°: 36.5°C, SpO2: 95%, FC: 72 lpm', 'En espera de asignación', 'VERDE')">
+                Huallpa Cusi, Carlos
+              </div>
+<div class="text-[11px] text-on-surface-variant font-mono">41 años | DNI: 10293847</div>
+</td>
+<td class="p-3">
+<div class="flex flex-wrap gap-1">
+<span class="bg-surface-container font-mono text-[11px] text-on-surface-variant px-1.5 py-0.5">SpO2: 95%</span>
+<span class="bg-surface-container font-mono text-[11px] text-on-surface-variant px-1.5 py-0.5">Afebril</span>
+</div>
+</td>
+<td class="p-3 max-w-xs">
+<p class="truncate font-medium text-on-surface leading-snug">Control crónico / chequeo general</p>
+<p class="text-[11px] text-on-surface-variant truncate">Renovación de medicación losartán</p>
+</td>
+<td class="p-3 whitespace-nowrap">
+<span class="bg-surface-container text-on-surface-variant px-2 py-1 font-mono text-[11px]">Por Asignar</span>
+</td>
+<td class="p-3 text-right pr-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-3 py-1.5 font-medium text-xs flex items-center gap-1 transition-colors shadow-sm" onclick="assignRoom('T-106', 'Consultorio 1')">
+<span class="material-symbols-outlined text-[16px] text-primary">add_link</span>
+                  Asignar Box
+                </button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="openThermalModal('T-106', 'Huallpa Cusi, Carlos', '10293847', 'VERDE - ESTABLE', 'Por Asignar')" title="Imprimir Ticket">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- ROW 6: VERDE ESTABLE (Pediatría Niño Sano) -->
+<tr class="hover:bg-surface-container transition-colors bg-surface group" data-priority="verde" data-room="c2">
+<td class="p-3 font-mono font-semibold text-sm text-on-surface flex items-center gap-1.5">
+<span class="w-1.5 h-6 bg-tertiary inline-block shrink-0"></span>
+              T-107
+            </td>
+<td class="p-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-tertiary-container text-on-tertiary-container font-semibold text-[10px] tracking-wider uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                Verde - Estable
+              </span>
+</td>
+<td class="p-3">
+<div class="font-mono text-xs font-semibold text-on-surface">09:28 hrs</div>
+<div class="text-[11px] text-on-surface-variant flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">schedule</span> Espera: 12 min
+              </div>
+</td>
+<td class="p-3 min-w-[180px]">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors cursor-pointer" onclick="openDetailsModal('T-107', 'Vilca Ttito, Lucía', '8 años', 'DNI: 91827364', 'Evaluación CRED escolar, dosaje de hemoglobina y antiparasitario', 'Peso: 24.5kg, Talla: 121cm, Hb: 11.8 g/dL, T°: 36.4°C', 'Consultorio 2 - Pediatría', 'VERDE')">
+                Vilca Ttito, Lucía
+              </div>
+<div class="text-[11px] text-on-surface-variant font-mono">8 años | DNI: 91827364 (Pediatría)</div>
+</td>
+<td class="p-3">
+<div class="flex flex-wrap gap-1">
+<span class="bg-surface-container font-mono text-[11px] text-on-surface-variant px-1.5 py-0.5">T°: 36.4°C</span>
+<span class="bg-surface-container font-mono text-[11px] text-on-surface-variant px-1.5 py-0.5">SpO2: 97%</span>
+</div>
+</td>
+<td class="p-3 max-w-xs">
+<p class="truncate font-medium text-on-surface leading-snug">Control CRED / desparasitación</p>
+<p class="text-[11px] text-on-surface-variant truncate">Campaña preventiva escolar comunitaria</p>
+</td>
+<td class="p-3 whitespace-nowrap">
+<span class="bg-primary-container text-on-primary-container px-2 py-1 font-mono text-xs font-medium">Consultorio 2 (Ped)</span>
+</td>
+<td class="p-3 text-right pr-4 whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="bg-surface-container hover:bg-surface-container-high text-on-surface px-3 py-1.5 font-medium text-xs flex items-center gap-1 transition-colors shadow-sm" onclick="callPatient('T-107', 'Lucía Vilca Ttito', 'Consultorio 2 (Pediatría)')">
+<span class="material-symbols-outlined text-[16px] text-primary">campaign</span>
+                  Llamar
+                </button>
+<button class="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="openThermalModal('T-107', 'Vilca Ttito, Lucía', '91827364', 'VERDE - ESTABLE', 'Consultorio 2 (Pediatría)')" title="Imprimir Ticket">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Carbon Data Table Footer / Pagination Controls -->
+<div class="p-4 bg-surface flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span>Filas por página:</span>
+<select class="bg-surface-container text-xs px-2 py-1 focus:outline-none focus:ring-1 focus:ring-primary font-medium">
+<option>10</option>
+<option selected="">20</option>
+<option>50</option>
+</select>
+<span>1 - 6 de 28 elementos</span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high disabled:opacity-40 transition-colors" disabled="">
+<span class="material-symbols-outlined text-[16px]">first_page</span>
+</button>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high disabled:opacity-40 transition-colors" disabled="">
+<span class="material-symbols-outlined text-[16px]">chevron_left</span>
+</button>
+<span class="px-3 font-mono font-medium text-on-surface">Página 1 de 5</span>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+<button class="p-1.5 bg-surface-container hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[16px]">last_page</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Split Panel Section: Quick Auditing & Camp Telemetry (Visual Richness) -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+<!-- Box Capacity Gauge -->
+<div class="bg-surface p-5 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-sm font-semibold text-on-surface tracking-tight uppercase">Capacidad de Consultorios</h2>
+<span class="text-[11px] font-mono text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Flujo Óptimo
+        </span>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="font-medium text-on-surface">Consultorio 1 - Medicina General</span>
+<span class="font-mono text-on-surface font-semibold">82% carga</span>
+</div>
+<div class="w-full h-2 bg-surface-container">
+<div class="h-2 bg-primary" style="width: 82%"></div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant mt-1">
+<span>Dr. M. Huamán</span>
+<span>14 atendidos / 3 en espera</span>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="font-medium text-on-surface">Consultorio 2 - Pediatría</span>
+<span class="font-mono text-on-surface font-semibold">65% carga</span>
+</div>
+<div class="w-full h-2 bg-surface-container">
+<div class="h-2 bg-tertiary" style="width: 65%"></div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant mt-1">
+<span>Dra. S. Ramos</span>
+<span>11 atendidos / 2 en espera</span>
+</div>
+</div>
+</div>
+<!-- Compact Sparkline Visualization -->
+<div class="mt-6 pt-4 bg-surface-container-low p-3">
+<div class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
+          Afluencia horaria de ingresos a triaje
+        </div>
+<div class="flex items-end gap-1.5 h-14 w-full">
+<div class="flex-1 bg-primary/30 hover:bg-primary transition-colors h-[25%]" title="07:00 - 4 pac"></div>
+<div class="flex-1 bg-primary/40 hover:bg-primary transition-colors h-[45%]" title="08:00 - 8 pac"></div>
+<div class="flex-1 bg-primary/70 hover:bg-primary transition-colors h-[80%]" title="08:30 - 15 pac"></div>
+<div class="flex-1 bg-primary hover:bg-primary transition-colors h-[100%]" title="09:00 - 19 pac (Pico)"></div>
+<div class="flex-1 bg-primary/90 hover:bg-primary transition-colors h-[85%]" title="09:30 - 16 pac"></div>
+<div class="flex-1 bg-primary/40 hover:bg-primary transition-colors h-[40%]" title="10:00 (Estimado)"></div>
+<div class="flex-1 bg-surface-container-high h-[20%]" title="10:30 (Proyección)"></div>
+</div>
+<div class="flex justify-between text-[10px] font-mono text-on-surface-variant mt-1">
+<span>07:00</span>
+<span>09:00 (Pico)</span>
+<span>11:00</span>
+</div>
+</div>
+</div>
+<!-- Community Context & Satellite Camp Telemetry -->
+<div class="bg-surface p-5 shadow-sm lg:col-span-2 flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div>
+<span class="text-[11px] font-semibold uppercase tracking-wider text-primary">Operación en Terreno</span>
+<h2 class="text-sm font-semibold text-on-surface tracking-tight mt-0.5">Sede: Ollantaytambo - Salón Comunal Rumichaca</h2>
+<p class="text-xs text-on-surface-variant mt-1">Sincronización local vía Mesh Peer-to-Peer sobre red de baja latencia con servidor móvil.</p>
+</div>
+<span class="material-symbols-outlined text-primary text-[28px]">hub</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
+<div class="bg-surface-container-low p-3">
+<span class="text-[10px] uppercase font-mono text-on-surface-variant">Batería Nodo Local</span>
+<div class="text-lg font-mono font-semibold text-on-surface mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-tertiary">battery_charging_full</span>
+            94% (6h 20m)
+          </div>
+<div class="text-[11px] text-on-surface-variant mt-0.5">Panel Solar Conectado</div>
+</div>
+<div class="bg-surface-container-low p-3">
+<span class="text-[10px] uppercase font-mono text-on-surface-variant">Impresora Térmica</span>
+<div class="text-lg font-mono font-semibold text-tertiary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]">print_connect</span>
+            En Línea (BT)
+          </div>
+<div class="text-[11px] text-on-surface-variant mt-0.5">Papel restante: ~180 tickets</div>
+</div>
+<div class="bg-surface-container-low p-3">
+<span class="text-[10px] uppercase font-mono text-on-surface-variant">Cola de Sincronía Cloud</span>
+<div class="text-lg font-mono font-semibold text-on-surface mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px] text-primary">cloud_sync</span>
+            0 pendientes
+          </div>
+<div class="text-[11px] text-on-surface-variant mt-0.5">Enlace Starlink: Activo (42ms)</div>
+</div>
+</div>
+<div class="flex items-center justify-between text-xs pt-3 bg-surface-container-low px-4 py-2">
+<span class="text-on-surface-variant font-mono">ID Operativo: PER-CUS-2025-088</span>
+<button class="text-primary hover:underline font-semibold flex items-center gap-1">
+<span>Ver Protocolo Manchester de Campaña</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+<!-- MODAL: Clinical Snapshot & Quick Triage Details -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden" id="detailsModal">
+<div class="bg-surface max-w-2xl w-full p-6 shadow-xl m-4 animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-start justify-between pb-3 bg-surface-container-low p-4 -m-6 mb-6">
+<div>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 text-xs font-mono font-bold bg-error text-on-error" id="modalTicketTag">T-101</span>
+<span class="text-xs font-semibold uppercase tracking-wider text-error" id="modalPriorityBadge">ROJO - EMERGENCIA</span>
+</div>
+<h3 class="text-lg font-semibold text-on-surface mt-1" id="modalPatientName">Mamani Quispe, Rosa</h3>
+<p class="text-xs font-mono text-on-surface-variant" id="modalPatientMeta">67 años | DNI: 02817462</p>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1" onclick="closeDetailsModal()">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="space-y-4">
+<div>
+<label class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Signos Vitales Registrados en Triaje</label>
+<div class="mt-1 p-3 bg-surface-container font-mono text-xs font-medium text-on-surface" id="modalVitals">
+            PA: 180/110 mmHg | FC: 104 lpm | SpO2: 84% | T°: 36.8°C
+          </div>
+</div>
+<div>
+<label class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Motivo de Consulta y Hallazgos Manchester</label>
+<div class="mt-1 p-3 bg-surface-container text-xs text-on-surface" id="modalReason">
+            Crisis hipertensiva sintomática con cefalea opresiva intensa y sensación de falta de aire en reposo.
+          </div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Destino Asignado</label>
+<div class="mt-1 font-semibold text-xs text-primary font-mono" id="modalRoom">Consultorio 1 - Dr. M. Huamán</div>
+</div>
+<div>
+<label class="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">Enfermero de Triaje Responsable</label>
+<div class="mt-1 text-xs text-on-surface">Lic. D. Choque (Triaje Puesto 2)</div>
+</div>
+</div>
+</div>
+<div class="mt-6 pt-4 flex items-center justify-between">
+<button class="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface transition-colors" onclick="closeDetailsModal()">
+          Cerrar Vista
+        </button>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 bg-surface-container hover:bg-surface-container-high text-xs font-medium text-on-surface flex items-center gap-1.5 transition-colors" id="modalPrintBtn">
+<span class="material-symbols-outlined text-[16px] text-primary">print</span>
+            Imprimir Hoja Triaje
+          </button>
+<button class="px-5 py-2 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm" id="modalCallBtn">
+<span class="material-symbols-outlined text-[16px]">campaign</span>
+            Llamar a Box Ahora
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL: Thermal Ticket Simulator (ESC/POS Style) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden" id="thermalModal">
+<div class="bg-surface max-w-sm w-full p-5 shadow-2xl m-4 font-mono text-on-surface">
+<div class="flex items-center justify-between pb-2 bg-surface-container-low p-2 mb-3">
+<span class="text-xs font-semibold text-on-surface-variant uppercase flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">receipt</span>
+          Vista Previa Ticket Térmico 58mm
+        </span>
+<button class="text-on-surface-variant hover:text-on-surface" onclick="closeThermalModal()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Thermal Paper Emulation -->
+<div class="bg-surface-container-lowest p-4 text-center shadow-inner space-y-2 text-xs">
+<div class="font-bold text-sm tracking-tight text-black">ONG SEMILLA SALUD</div>
+<div class="text-[10px] text-on-surface-variant">CAMPAÑA VALLE SAGRADO 2025</div>
+<div class="text-[10px] text-on-surface-variant">********************************</div>
+<div class="py-1">
+<div class="text-3xl font-extrabold text-black" id="thermalTicketNumber">T-101</div>
+<div class="text-[11px] font-bold mt-1 text-black" id="thermalTicketPriority">ROJO - EMERGENCIA</div>
+</div>
+<div class="text-[10px] text-on-surface-variant">--------------------------------</div>
+<div class="text-left text-[11px] space-y-1">
+<div><strong class="text-black">PACIENTE:</strong> <span class="text-black" id="thermalPatientName">Mamani Quispe, Rosa</span></div>
+<div><strong class="text-black">DNI:</strong> <span class="text-black" id="thermalPatientDni">02817462</span></div>
+<div><strong class="text-black">HORA:</strong> <span class="text-black">09:12 hrs | 24-OCT-2025</span></div>
+<div><strong class="text-black">DESTINO:</strong> <span class="text-black" id="thermalRoom">Consultorio 1</span></div>
+</div>
+<div class="text-[10px] text-on-surface-variant">--------------------------------</div>
+<div class="text-[9px] leading-tight text-on-surface-variant">
+          Conserve este ticket. Esté atento a los altavoces y pantallas de llamado.
+        </div>
+</div>
+<div class="mt-4 flex gap-2">
+<button class="flex-1 py-2 bg-surface-container text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors" onclick="closeThermalModal()">
+          Cancelar
+        </button>
+<button class="flex-1 py-2 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center gap-1 hover:bg-on-primary-fixed-variant transition-colors shadow-sm" onclick="executePrint()">
+<span class="material-symbols-outlined text-[16px]">print</span>
+          Emitir Ticket
+        </button>
+</div>
+</div>
+</div>
+<!-- Audio call feedback snackbar -->
+<div class="fixed bottom-6 right-6 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-3 shadow-lg flex items-center gap-3 transition-opacity duration-300 opacity-0 pointer-events-none" id="audioFeedback">
+<span class="material-symbols-outlined text-primary-fixed-dim text-[20px]">volume_up</span>
+<div class="text-xs">
+<span class="font-semibold block" id="audioCallText">Llamando a Box...</span>
+<span class="text-[11px] text-surface-container-highest">Emisión enviada al parlante de sala y pantalla exterior</span>
+</div>
+</div>
+</div>
+<script>
+  // DOM Elements
+  const searchInput = document.getElementById('tableSearch');
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const roomFilter = document.getElementById('consultorioFilter');
+  const tableRows = document.querySelectorAll('#queueTableBody tr');
+  const showingCount = document.getElementById('showingCount');
+  const audioFeedback = document.getElementById('audioFeedback');
+  const audioCallText = document.getElementById('audioCallText');
+
+  let currentPriority = 'all';
+  let currentRoom = 'all';
+
+  // Search & Filter Handler
+  function filterTable() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    let visibleCount = 0;
+
+    tableRows.forEach(row => {
+      const priority = row.getAttribute('data-priority');
+      const room = row.getAttribute('data-room');
+      const textContent = row.textContent.toLowerCase();
+
+      const matchesSearch = textContent.includes(searchTerm);
+      const matchesPriority = currentPriority === 'all' || priority === currentPriority;
+      const matchesRoom = currentRoom === 'all' || room === currentRoom;
+
+      if (matchesSearch && matchesPriority && matchesRoom) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    showingCount.textContent = `${visibleCount} de 28 pacientes filtrados`;
+  }
+
+  // Filter Buttons Interaction
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => {
+        b.classList.remove('active', 'bg-primary', 'text-on-primary', 'font-semibold');
+        b.classList.add('text-on-surface-variant', 'font-medium');
+      });
+      btn.classList.add('active', 'bg-primary', 'text-on-primary', 'font-semibold');
+      btn.classList.remove('text-on-surface-variant');
+
+      currentPriority = btn.getAttribute('data-filter');
+      filterTable();
+    });
+  });
+
+  // Search Input Event
+  searchInput.addEventListener('input', filterTable);
+
+  // Room Select Event
+  roomFilter.addEventListener('change', (e) => {
+    currentRoom = e.target.value;
+    filterTable();
+  });
+
+  // Refresh Micro-Interaction
+  document.getElementById('btnRefresh').addEventListener('click', function() {
+    const icon = this.querySelector('.material-symbols-outlined');
+    icon.classList.add('animate-spin');
+    setTimeout(() => {
+      icon.classList.remove('animate-spin');
+      triggerCallFeedback('Datos sincronizados con nodo local');
+    }, 600);
+  });
+
+  // Call Patient Action
+  function callPatient(ticket, name, room) {
+    triggerCallFeedback(`Llamando: ${ticket} - ${name} a ${room}`);
+  }
+
+  function assignRoom(ticket, room) {
+    triggerCallFeedback(`${ticket} asignado a ${room}`);
+  }
+
+  function triggerCallFeedback(message) {
+    audioCallText.textContent = message;
+    audioFeedback.classList.remove('opacity-0', 'pointer-events-none');
+    audioFeedback.classList.add('opacity-100');
+    setTimeout(() => {
+      audioFeedback.classList.remove('opacity-100');
+      audioFeedback.classList.add('opacity-0', 'pointer-events-none');
+    }, 3200);
+  }
+
+  // Details Modal
+  function openDetailsModal(ticket, name, age, dni, reason, vitals, room, priority) {
+    document.getElementById('modalTicketTag').textContent = ticket;
+    document.getElementById('modalPriorityBadge').textContent = priority === 'ROJO' ? 'ROJO - EMERGENCIA' : (priority === 'AMARILLO' ? 'AMARILLO - URGENTE' : 'VERDE - ESTABLE');
+    document.getElementById('modalPatientName').textContent = name;
+    document.getElementById('modalPatientMeta').textContent = `${age} | ${dni}`;
+    document.getElementById('modalVitals').textContent = vitals;
+    document.getElementById('modalReason').textContent = reason;
+    document.getElementById('modalRoom').textContent = room;
+
+    document.getElementById('modalCallBtn').onclick = () => {
+      callPatient(ticket, name, room);
+      closeDetailsModal();
+    };
+
+    document.getElementById('detailsModal').classList.remove('hidden');
+  }
+
+  function closeDetailsModal() {
+    document.getElementById('detailsModal').classList.add('hidden');
+  }
+
+  // Thermal Modal
+  function openThermalModal(ticket, name, dni, priority, room) {
+    document.getElementById('thermalTicketNumber').textContent = ticket;
+    document.getElementById('thermalTicketPriority').textContent = priority;
+    document.getElementById('thermalPatientName').textContent = name;
+    document.getElementById('thermalPatientDni').textContent = dni;
+    document.getElementById('thermalRoom').textContent = room;
+    document.getElementById('thermalModal').classList.remove('hidden');
+  }
+
+  function closeThermalModal() {
+    document.getElementById('thermalModal').classList.add('hidden');
+  }
+
+  function executePrint() {
+    closeThermalModal();
+    triggerCallFeedback('Comando ESC/POS enviado a impresora térmica');
+  }
+</script></main></div></body></html>

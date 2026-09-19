@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#ffffff;}body{overscroll-behavior:none;font-family:'IBM Plex Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary-container":"#044317","on-primary-container":"#161616","inverse-on-surface":"#f4f4f4","tertiary":"#198038","error-container":"#fff1f1","surface":"#ffffff","surface-dim":"#e0e0e0","on-primary-fixed-variant":"#0043ce","surface-container-highest":"#c6c6c6","surface-tint":"#0f62fe","surface-container":"#f4f4f4","on-surface-variant":"#525252","on-secondary-container":"#525252","surface-container-low":"#f4f4f4","on-tertiary":"#ffffff","on-tertiary-fixed-variant":"#044317","surface-container-lowest":"#ffffff","primary":"#0f62fe","secondary-container":"#e0e0e0","primary-container":"#d0e2ff","on-primary":"#ffffff","error":"#da1e28","on-tertiary-fixed":"#022d0d","on-error-container":"#750e13","on-surface":"#161616","surface-bright":"#ffffff","on-secondary-fixed-variant":"#525252","tertiary-fixed":"#a7f0ba","primary-fixed-dim":"#78a9ff","secondary-fixed-dim":"#c6c6c6","on-primary-fixed":"#001d6c","tertiary-fixed-dim":"#42be65","surface-container-high":"#e0e0e0","background":"#ffffff","inverse-primary":"#78a9ff","on-secondary":"#ffffff","secondary-fixed":"#e0e0e0","tertiary-container":"#a7f0ba","on-background":"#161616","on-error":"#ffffff","outline-variant":"#e0e0e0","surface-variant":"#f4f4f4","inverse-surface":"#393939","secondary":"#6f6f6f","primary-fixed":"#d0e2ff","on-secondary-fixed":"#161616","outline":"#8d8d8d"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"fontFamily":{"headline":["IBM Plex Sans"],"display":["IBM Plex Sans"],"body":["IBM Plex Sans"],"label":["IBM Plex Sans"]}}}};</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body text-on-surface min-h-screen flex flex-col"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-3 flex items-center justify-between gap-2"><div class="flex items-center gap-2 min-w-0 flex-1"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1WZ0tE2OVs5Sheyc4hORQ0oGj271jvC10KhuNWKN1dg5zIqDxV7G-A7uAlo05HPtzIkVbqgyemo4dRRGPbfdkGxo6aQrrKFjPQ7xIccQx8klvnBNRNPpsibPhkHx5XYAJ2HK5ZrAmfuqejPoxEsriVD84qCOv1n4wuo4x9p_qVw4BA17-e0mGJupmkTuWM5DDoVqIrv2hP_BAqGfrBHTMMhrO_vKhumJiQEyQ-oiRRi1lEDdTH5vXQOKGkS"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-1.5"><span class="text-xs font-semibold tracking-tight text-on-surface truncate">Semilla Salud</span><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-medium leading-none flex-shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Sync</span></div><span class="text-[11px] text-on-surface-variant truncate font-normal leading-tight">Más</span></div></div><div class="flex items-center gap-1 flex-shrink-0"><button aria-label="Notificaciones" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors relative"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface"><div class="flex flex-col w-full bg-surface pb-8">
+<!-- Subheader Informativo de Nodo Terreno -->
+<section class="bg-surface-container-low px-4 py-3.5 flex items-center justify-between shadow-sm">
+<div class="flex flex-col min-w-0">
+<span class="text-[10px] uppercase tracking-wider font-semibold text-on-surface-variant leading-none mb-1">
+        Administración Técnica • Nodo Terreno
+      </span>
+<div class="flex items-center gap-1.5">
+<span class="text-sm font-semibold text-on-surface tracking-tight truncate">CUS-VALLE-04 (Mini PC Solar)</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-tertiary-container rounded text-on-tertiary-container shrink-0">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+</span>
+<span class="text-[11px] font-medium leading-none">Mesh Activo • 6 nodos</span>
+</div>
+</section>
+<!-- Métricas Rápidas de Telemetría (Carbon Edge Gauges) -->
+<section class="p-4 grid grid-cols-3 gap-2">
+<!-- UPS Telemetry Card -->
+<div class="bg-surface-container p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="text-[11px] font-medium uppercase tracking-tight">UPS Solar</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary">battery_charging_full</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-xl font-semibold text-on-surface tracking-tight">94%</span>
+<span class="text-[10px] text-tertiary font-medium">13.8V</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 mt-2">
+<div class="bg-tertiary h-1 w-[94%]"></div>
+</div>
+</div>
+<!-- Uplink Status Card -->
+<div class="bg-surface-container p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="text-[11px] font-medium uppercase tracking-tight">Enlace Sat</span>
+<span class="material-symbols-outlined text-[16px] text-primary">satellite_alt</span>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface tracking-tight">Starlink</span>
+<span class="text-[10px] text-on-surface-variant leading-none font-medium mt-0.5">Intermitente</span>
+</div>
+<div class="flex items-center gap-1 mt-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] font-label text-on-surface-variant">Lat: 68ms</span>
+</div>
+</div>
+<!-- Offline Sync Queue -->
+<div class="bg-surface-container p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant mb-1">
+<span class="text-[11px] font-medium uppercase tracking-tight">Cola Off</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary">cloud_done</span>
+</div>
+<div class="flex items-baseline gap-1">
+<span class="text-xl font-semibold text-tertiary tracking-tight">0</span>
+<span class="text-[10px] text-on-surface-variant">pend.</span>
+</div>
+<span class="text-[10px] text-tertiary font-medium mt-2 truncate">Sincronizado</span>
+</div>
+</section>
+<!-- Servicios Externos e Integraciones -->
+<section class="px-4 mb-5">
+<div class="flex items-center justify-between mb-2.5">
+<h2 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Servicios Externos &amp; APIs</h2>
+<span class="text-[11px] text-primary font-medium cursor-pointer hover:underline" id="refresh-all-apis">Verificar todas</span>
+</div>
+<div class="space-y-2">
+<!-- RENIEC Card -->
+<div class="bg-surface-container p-3 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-sm font-semibold text-on-surface">RENIEC Consulta DNI</span>
+<span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold bg-tertiary-container text-on-tertiary-container rounded">ONLINE</span>
+</div>
+<p class="text-[11px] text-on-surface-variant">Caché local activo • 142 validaciones en campaña</p>
+</div>
+</div>
+<button class="px-2.5 py-1.5 bg-surface text-primary text-xs font-medium hover:bg-surface-container-high transition-colors flex items-center gap-1 shadow-sm shrink-0" id="ping-reniec-btn">
+<span class="material-symbols-outlined text-[14px]">sensors</span>
+<span>Test Ping</span>
+</button>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant bg-surface px-2 py-1">
+<span class="font-mono text-[10px]">Endpoint: /api/v2/reniec/dni</span>
+<span class="text-tertiary font-medium">RTT: 14ms (Caché hit)</span>
+</div>
+</div>
+<!-- SIS Card -->
+<div class="bg-surface-container p-3 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-surface-container-high flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-sm font-semibold text-on-surface">SIS Acreditación</span>
+<span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold bg-secondary-container text-on-secondary-container rounded">CACHÉ LOCAL</span>
+</div>
+<p class="text-[11px] text-on-surface-variant">Base nominal local actualizada (1,280 asegurados)</p>
+</div>
+</div>
+<button class="px-2.5 py-1.5 bg-surface text-on-surface text-xs font-medium hover:bg-surface-container-high transition-colors flex items-center gap-1 shadow-sm shrink-0" id="retry-sis-btn">
+<span class="material-symbols-outlined text-[14px]">sync_problem</span>
+<span>Reintentar</span>
+</button>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant bg-surface px-2 py-1">
+<span class="font-mono text-[10px]">Frecuencia: Fallback a SQLite Edge</span>
+<span class="text-on-surface-variant">Sin enlace directo</span>
+</div>
+</div>
+<!-- DIRESA Cusco Epidemiología -->
+<div class="bg-surface-container p-3 flex flex-col gap-2">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="text-sm font-semibold text-on-surface">DIRESA Epidemiología</span>
+<span class="inline-flex items-center px-1.5 py-0.5 text-[9px] font-semibold bg-primary-container text-on-primary-fixed-variant rounded">MODO BATCH</span>
+</div>
+<p class="text-[11px] text-on-surface-variant">28 atenciones listas para paquete HIS-MINSA</p>
+</div>
+</div>
+<button class="px-2.5 py-1.5 bg-surface text-primary text-xs font-medium hover:bg-surface-container-high transition-colors flex items-center gap-1 shadow-sm shrink-0">
+<span class="material-symbols-outlined text-[14px]">archive</span>
+<span>Ver Lote</span>
+</button>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant bg-surface px-2 py-1">
+<span class="font-mono text-[10px]">Formato: JSON-FHIR / VEP-Cusco</span>
+<span class="text-primary font-medium">Auto-envío programado</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Malla Local P2P de Campaña -->
+<section class="px-4 mb-5">
+<div class="flex items-center justify-between mb-2.5">
+<div>
+<h2 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Terminales en Red Mesh P2P</h2>
+<span class="text-[11px] text-on-surface-variant">Pabellón Principal • Carpa Sanitaria Comunal</span>
+</div>
+<span class="text-xs font-mono font-medium text-tertiary">4 Activos</span>
+</div>
+<div class="space-y-1.5">
+<!-- Consultorio 1 -->
+<div class="bg-surface-container p-3 flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 bg-surface-container-highest text-on-surface flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">laptop_mac</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<p class="text-xs font-semibold text-on-surface truncate">Consultorio 1</p>
+<span class="text-[10px] text-on-surface-variant font-mono">(ThinkPad T480)</span>
+</div>
+<p class="text-[11px] text-on-surface-variant truncate">Dra. M. Paredes • Medicina General</p>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0 text-right">
+<div class="flex flex-col items-end">
+<span class="text-[11px] font-semibold text-tertiary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">wifi</span> 98%
+            </span>
+<span class="text-[10px] text-on-surface-variant">Sync OK • 1s</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+</div>
+<!-- Consultorio 2 -->
+<div class="bg-surface-container p-3 flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 bg-surface-container-highest text-on-surface flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">tablet_android</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<p class="text-xs font-semibold text-on-surface truncate">Consultorio 2</p>
+<span class="text-[10px] text-on-surface-variant font-mono">(Galaxy Tab S6)</span>
+</div>
+<p class="text-[11px] text-on-surface-variant truncate">Lic. J. Quispe • Triaje y Control</p>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0 text-right">
+<div class="flex flex-col items-end">
+<span class="text-[11px] font-semibold text-tertiary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">wifi</span> 84%
+            </span>
+<span class="text-[10px] text-on-surface-variant">Sync OK • 3s</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+</div>
+<!-- Mesa de Admisión -->
+<div class="bg-surface-container p-3 flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 bg-surface-container-highest text-on-surface flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">smartphone</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<p class="text-xs font-semibold text-on-surface truncate">Mesa Admisión 01</p>
+<span class="text-[10px] text-on-surface-variant font-mono">(Redmi Note 11)</span>
+</div>
+<p class="text-[11px] text-on-surface-variant truncate">Adm. R. Huamán • Filtro Entrada</p>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0 text-right">
+<div class="flex flex-col items-end">
+<span class="text-[11px] font-semibold text-tertiary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">wifi</span> 92%
+            </span>
+<span class="text-[10px] text-on-surface-variant">Sync OK • 0s</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+</div>
+<!-- Impresora Térmica -->
+<div class="bg-surface-container p-3 flex items-center justify-between">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-7 h-7 bg-surface-container-highest text-on-surface flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">print</span>
+</div>
+<div class="min-w-0">
+<div class="flex items-center gap-1.5">
+<p class="text-xs font-semibold text-on-surface truncate">Impresora Epson BT-P80</p>
+</div>
+<p class="text-[11px] text-on-surface-variant truncate">Tickets de Cola y Recetas Rápidas</p>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0 text-right">
+<div class="flex flex-col items-end">
+<span class="text-[11px] font-semibold text-on-surface flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px] text-primary">bluetooth</span> BLE
+            </span>
+<span class="text-[10px] text-tertiary font-medium">Vinculado</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+</div>
+</div>
+</section>
+<!-- Acciones y Herramientas Técnicas de Campaña -->
+<section class="px-4 mb-5 flex flex-col gap-2.5">
+<h2 class="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-0.5">Acciones Críticas de Terreno</h2>
+<!-- Botón Sincronizar Inmediata -->
+<button class="w-full h-12 bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-medium text-sm px-4 flex items-center justify-between transition-colors shadow-sm" id="btn-force-sync">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" id="sync-icon">sync</span>
+<span>Forzar Sincronización Inmediata Nube</span>
+</div>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+<!-- Botón Generar Paquete USB Respaldo Cifrado -->
+<button class="w-full h-12 bg-surface-container hover:bg-surface-container-high text-on-surface font-medium text-sm px-4 flex items-center justify-between transition-colors shadow-sm" id="btn-usb-backup">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">usb</span>
+<div class="flex flex-col text-left">
+<span>Generar Respaldo Cifrado USB</span>
+<span class="text-[10px] text-on-surface-variant font-normal">Para extracción manual sin conectividad (AES-256)</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">file_download</span>
+</button>
+<!-- Botón Toggle de Logs -->
+<button class="w-full h-10 bg-transparent hover:bg-surface-container text-on-surface font-medium text-xs px-3 flex items-center justify-between transition-colors" id="toggle-logs-btn">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">terminal</span>
+<span>Consola de Diagnósticos y Registro de Eventos</span>
+</div>
+<span class="material-symbols-outlined text-[18px] transition-transform" id="logs-chevron">expand_more</span>
+</button>
+</section>
+<!-- Consola Técnica de Logs en Terreno -->
+<section class="px-4 mb-2" id="terminal-section">
+<div class="bg-[#161616] text-[#f4f4f4] font-mono text-[11px] p-3 shadow-md">
+<div class="flex items-center justify-between pb-2 mb-2 border-b border-[#393939] text-[#c6c6c6]">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error inline-block"></span>
+<span class="w-2 h-2 rounded-full bg-[#f1c21b] inline-block"></span>
+<span class="w-2 h-2 rounded-full bg-tertiary inline-block"></span>
+<span class="ml-2 font-semibold text-[10px] uppercase text-[#a7f0ba]">nodo-edge-cusco:~$</span>
+</div>
+<span class="text-[10px] text-[#8d8d8d]">Últimos 3 eventos</span>
+</div>
+<div class="space-y-1.5 leading-relaxed text-[#c6c6c6]" id="log-entries">
+<div class="flex items-start gap-2">
+<span class="text-[#78a9ff] shrink-0">11:42:09</span>
+<span class="text-[#a7f0ba] font-bold">[MESH-OK]</span>
+<span class="truncate">Beacon recibido de 'Mesa Admisión 01' (-48 dBm)</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-[#78a9ff] shrink-0">11:41:55</span>
+<span class="text-[#f1c21b] font-bold">[RENIEC]</span>
+<span class="truncate">Consulta local DNI 74829104 resuelta desde caché (11ms)</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-[#78a9ff] shrink-0">11:39:12</span>
+<span class="text-[#78a9ff] font-bold">[UPLINK]</span>
+<span class="truncate">Starlink dish repositioned. Snr: 9.2 dB. Enlace reanudado</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Toast de Notificación Micro-interacción -->
+<div class="fixed bottom-20 left-4 right-4 bg-[#161616] text-surface px-4 py-3 shadow-lg flex items-center justify-between transition-opacity duration-300 opacity-0 pointer-events-none z-40" id="toast">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-tertiary text-[20px]" id="toast-icon">check_circle</span>
+<span class="text-xs font-body tracking-tight" id="toast-message">Operación completada con éxito.</span>
+</div>
+<span class="text-[10px] text-[#8d8d8d] font-mono">SEDE-04</span>
+</div>
+</div>
+<script>
+  (function() {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toast-message');
+    const toastIcon = document.getElementById('toast-icon');
+    let toastTimeout = null;
+
+    function showToast(message, icon = 'check_circle', isSuccess = true) {
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastMsg.textContent = message;
+      toastIcon.textContent = icon;
+      toastIcon.className = `material-symbols-outlined text-[20px] ${isSuccess ? 'text-tertiary' : 'text-primary'}`;
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3200);
+    }
+
+    // Ping RENIEC Micro-interaction
+    const pingBtn = document.getElementById('ping-reniec-btn');
+    if (pingBtn) {
+      pingBtn.addEventListener('click', function() {
+        this.disabled = true;
+        this.classList.add('opacity-60');
+        setTimeout(() => {
+          this.disabled = false;
+          this.classList.remove('opacity-60');
+          showToast('Ping a RENIEC Caché completado: 12ms (Estado Saludable)', 'speed', true);
+        }, 600);
+      });
+    }
+
+    // Retry SIS Micro-interaction
+    const retrySisBtn = document.getElementById('retry-sis-btn');
+    if (retrySisBtn) {
+      retrySisBtn.addEventListener('click', function() {
+        this.disabled = true;
+        this.classList.add('opacity-60');
+        setTimeout(() => {
+          this.disabled = false;
+          this.classList.remove('opacity-60');
+          showToast('SIS enlazado a base nominal sinóptica local.', 'storage', true);
+        }, 800);
+      });
+    }
+
+    // Force Sync micro-interaction
+    const forceSyncBtn = document.getElementById('btn-force-sync');
+    const syncIcon = document.getElementById('sync-icon');
+    if (forceSyncBtn && syncIcon) {
+      forceSyncBtn.addEventListener('click', function() {
+        syncIcon.classList.add('animate-spin');
+        forceSyncBtn.disabled = true;
+        setTimeout(() => {
+          syncIcon.classList.remove('animate-spin');
+          forceSyncBtn.disabled = false;
+          showToast('Sincronización P2P & Nube finalizada. 0 cambios pendientes.', 'cloud_done', true);
+        }, 1500);
+      });
+    }
+
+    // USB Backup micro-interaction
+    const usbBtn = document.getElementById('btn-usb-backup');
+    if (usbBtn) {
+      usbBtn.addEventListener('click', function() {
+        usbBtn.disabled = true;
+        showToast('Generando bundle cifrado "BACKUP_CUSCO_2025.enc"...', 'lock', false);
+        setTimeout(() => {
+          usbBtn.disabled = false;
+          showToast('Paquete USB listo en /mnt/pendrive (AES-256 OK)', 'usb', true);
+        }, 1800);
+      });
+    }
+
+    // Check all micro-interaction
+    const refreshAll = document.getElementById('refresh-all-apis');
+    if (refreshAll) {
+      refreshAll.addEventListener('click', function() {
+        showToast('Comprobando latencias de enlace satelital y nodos...', 'wifi_tethering', false);
+      });
+    }
+
+    // Toggle log container
+    const toggleLogsBtn = document.getElementById('toggle-logs-btn');
+    const logsChevron = document.getElementById('logs-chevron');
+    const terminalSection = document.getElementById('terminal-section');
+    if (toggleLogsBtn && logsChevron && terminalSection) {
+      let isVisible = true;
+      toggleLogsBtn.addEventListener('click', function() {
+        isVisible = !isVisible;
+        terminalSection.style.display = isVisible ? 'block' : 'none';
+        logsChevron.style.transform = isVisible ? 'rotate(0deg)' : 'rotate(-90deg)';
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/95 backdrop-blur-xl shadow-[0_-2px_10px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-semibold"><div class="flex justify-between items-center h-16 px-1"><a class="flex-1 flex flex-col items-center justify-center h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="registro" href="#"><span class="material-symbols-outlined text-[20px] mb-0.5">how_to_reg</span><span class="text-[11px] font-label leading-tight tracking-tight">Registro</span></a><a class="flex-1 flex flex-col items-center justify-center h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="triaje" href="#"><span class="material-symbols-outlined text-[20px] mb-0.5">vital_signs</span><span class="text-[11px] font-label leading-tight tracking-tight">Triaje</span></a><a class="flex-1 flex flex-col items-center justify-center h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="cola" href="#"><span class="material-symbols-outlined text-[20px] mb-0.5">groups</span><span class="text-[11px] font-label leading-tight tracking-tight">Cola</span></a><a class="flex-1 flex flex-col items-center justify-center h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="consulta" href="#"><span class="material-symbols-outlined text-[20px] mb-0.5">stethoscope</span><span class="text-[11px] font-label leading-tight tracking-tight">Consulta</span></a><a class="flex-1 flex flex-col items-center justify-center h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="mas" href="#"><span class="material-symbols-outlined text-[20px] mb-0.5">more_horiz</span><span class="text-[11px] font-label leading-tight tracking-tight">Más</span></a></div></nav></body></html>

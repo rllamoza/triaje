@@ -1,0 +1,106 @@
+/* ================================================================
+   SISTEMA DE TRIAJE MÉDICO - SEMILLA MÉDICA
+   Design System — IBM Carbon Clinical Theme
+   ================================================================ */
+
+:root {
+  /* Carbon Primary & Surface */
+  --primary: #0f62fe;
+  --primary-hover: #0043ce;
+  --primary-container: #d0e2ff;
+  --on-primary: #ffffff;
+  --on-primary-container: #161616;
+
+  --surface: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f4f4f4;
+  --surface-container: #f4f4f4;
+  --surface-container-high: #e0e0e0;
+  --surface-container-highest: #c6c6c6;
+
+  --on-surface: #161616;
+  --on-surface-variant: #525252;
+  --secondary: #6f6f6f;
+  --outline: #8d8d8d;
+
+  /* Priority & Clinical Alerts */
+  --tertiary: #198038;
+  --tertiary-container: #a7f0ba;
+  --on-tertiary-container: #044317;
+
+  --warning: #f1c21b;
+  --warning-dark: #b28600;
+
+  --error: #da1e28;
+  --error-container: #fff1f1;
+  --on-error-container: #750e13;
+
+  /* Typography */
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Micro-radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background-color: #f4f4f4;
+  color: #161616;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c6c6c6;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8d8d8d;
+}
+
+/* Material Symbols alignment helper */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* IBM Carbon Form Elements */
+input, select, textarea {
+  font-family: var(--font-sans);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #0f62fe !important;
+  outline-offset: -1px;
+}
+
+/* Monospace Helpers */
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

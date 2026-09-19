@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-lowest":"#ffffff","surface-container-low":"#f4f4f4","on-primary-container":"#161616","inverse-primary":"#78a9ff","on-background":"#161616","error-container":"#fff1f1","outline-variant":"#e0e0e0","tertiary-container":"#a7f0ba","surface-container-highest":"#c6c6c6","surface-tint":"#0f62fe","primary-container":"#d0e2ff","on-error-container":"#750e13","on-secondary-container":"#525252","surface-dim":"#e0e0e0","tertiary":"#198038","tertiary-fixed-dim":"#42be65","surface-bright":"#ffffff","background":"#ffffff","surface":"#ffffff","primary-fixed":"#d0e2ff","on-surface":"#161616","inverse-on-surface":"#f4f4f4","on-primary-fixed-variant":"#0043ce","secondary-container":"#e0e0e0","on-tertiary-fixed":"#022d0d","secondary":"#6f6f6f","on-tertiary":"#ffffff","on-primary-fixed":"#001d6c","tertiary-fixed":"#a7f0ba","primary":"#0f62fe","secondary-fixed":"#e0e0e0","on-surface-variant":"#525252","secondary-fixed-dim":"#c6c6c6","on-tertiary-fixed-variant":"#044317","inverse-surface":"#393939","on-error":"#ffffff","outline":"#8d8d8d","surface-container":"#f4f4f4","on-secondary":"#ffffff","surface-container-high":"#e0e0e0","on-secondary-fixed-variant":"#525252","on-tertiary-container":"#044317","on-primary":"#ffffff","surface-variant":"#f4f4f4","primary-fixed-dim":"#78a9ff","on-secondary-fixed":"#161616","error":"#da1e28"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{},"fontFamily":{"headline":["IBM Plex Sans"],"display":["IBM Plex Sans"],"body":["IBM Plex Sans"],"label":["IBM Plex Sans"]},"fontSize":{}}}};</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#ffffff;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 pt-safe bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-4 flex items-center justify-between"><div class="flex items-center gap-2"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WZ0tE2OVs5Sheyc4hORQ0oGj271jvC10KhuNWKN1dg5zIqDxV7G-A7uAlo05HPtzIkVbqgyemo4dRRGPbfdkGxo6aQrrKFjPQ7xIccQx8klvnBNRNPpsibPhkHx5XYAJ2HK5ZrAmfuqejPoxEsriVD84qCOv1n4wuo4x9p_qVw4BA17-e0mGJupmkTuWM5DDoVqIrv2hP_BAqGfrBHTMMhrO_vKhumJiQEyQ-oiRRi1lEDdTH5vXQOKGkS"/><div class="flex flex-col"><span class="font-headline font-bold text-xs tracking-wider uppercase text-on-surface leading-tight">Semilla Salud</span><span class="font-label text-[10px] text-on-surface-variant font-medium leading-none truncate max-w-[120px]">Mas</span></div></div><div class="flex items-center gap-2"><div class="flex items-center gap-1 px-2 py-1 rounded-full bg-surface-container text-tertiary text-[11px] font-semibold tracking-wide"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span>Sinc</span></div><button aria-label="Notificaciones" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full pt-16 pb-20 bg-surface flex-grow min-h-screen"><div class="flex flex-col w-full">
+<!-- Sub-header Bar: Status & Telemetry Strip -->
+<div class="px-4 py-3 bg-surface-container flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">receipt_long</span>
+<span class="font-headline font-bold text-xs uppercase tracking-wider text-on-surface">TICKET TÉRMICO • DISPENSACIÓN RÁPIDA</span>
+</div>
+<span class="text-[11px] font-semibold text-tertiary bg-tertiary-container text-on-tertiary-container px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+        BT Activo
+      </span>
+</div>
+<!-- Bluetooth printer pill badge -->
+<div class="flex items-center justify-between bg-surface-container-lowest px-3 py-2 rounded-lg shadow-sm">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">print</span>
+<div class="flex flex-col min-w-0">
+<span class="text-xs font-semibold text-on-surface truncate" id="printerName">Epson BT-P80 (Cinturón #04)</span>
+<span class="text-[10px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-tertiary">bluetooth_connected</span> En línea • RSSI -52 dBm
+          </span>
+</div>
+</div>
+<div class="flex items-center gap-1.5 bg-surface-container px-2 py-1 rounded shrink-0">
+<span class="material-symbols-outlined text-tertiary text-[16px]">battery_5_bar</span>
+<span class="text-xs font-bold text-on-surface">92%</span>
+</div>
+</div>
+</div>
+<!-- Format Switcher: 80mm vs 58mm -->
+<div class="px-4 pt-3 pb-2">
+<div class="bg-surface-container p-1 rounded-lg flex items-center">
+<button class="flex-1 py-2 text-xs font-semibold rounded bg-surface text-primary shadow-sm flex items-center justify-center gap-1.5 transition-all" id="tab80" onclick="switchFormat('80')" type="button">
+<span class="material-symbols-outlined text-[16px]">straighten</span>
+        80mm Estándar
+      </button>
+<button class="flex-1 py-2 text-xs font-semibold rounded text-on-surface-variant flex items-center justify-center gap-1.5 transition-all" id="tab58" onclick="switchFormat('58')" type="button">
+<span class="material-symbols-outlined text-[16px]">crop_portrait</span>
+        58mm Portátil
+      </button>
+</div>
+</div>
+<!-- Thermal Paper Preview Stage -->
+<div class="px-4 py-3 bg-surface-container-low flex flex-col items-center">
+<div class="w-full flex items-center justify-between text-xs text-on-surface-variant font-medium pb-2 px-1">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">visibility</span>
+        Vista previa de impresión térmica
+      </span>
+<span class="text-[10px] font-mono uppercase bg-surface-container-high px-1.5 py-0.5 rounded text-on-surface" id="previewTag">Formato: 80mm</span>
+</div>
+<!-- The Thermal Ticket Physical Mockup -->
+<div class="w-full max-w-[340px] bg-surface-container-lowest text-on-surface shadow-md relative transition-all duration-300 font-mono select-none overflow-hidden" id="ticketContainer">
+<!-- Serrated Top Edge -->
+<div class="w-full h-2.5 flex overflow-hidden opacity-30 text-surface-dim">
+<svg class="w-full h-full" fill="currentColor" preserveaspectratio="repeat-x" viewbox="0 0 200 10">
+<polygon points="0,10 5,0 10,10 15,0 20,10 25,0 30,10 35,0 40,10 45,0 50,10 55,0 60,10 65,0 70,10 75,0 80,10 85,0 90,10 95,0 100,10 105,0 110,10 115,0 120,10 125,0 130,10 135,0 140,10 145,0 150,10 155,0 160,10 165,0 170,10 175,0 180,10 185,0 190,10 195,0 200,10"></polygon>
+</svg>
+</div>
+<div class="px-5 py-4 flex flex-col items-center text-center">
+<!-- Logo Stamp & Institution Header -->
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center mb-1">
+<span class="material-symbols-outlined text-[20px] text-on-surface">local_hospital</span>
+</div>
+<p class="text-[13px] font-bold tracking-tight text-on-surface leading-tight">ONG SEMILLA SALUD • CUSCO</p>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-wider">Brigada Andina 2025 • Chinchero</p>
+<p class="text-[9px] text-on-surface-variant mt-0.5">24/FEB/2025 • 08:42:15 HRS • OP#08</p>
+<!-- Thermal Divider Dash -->
+<div class="w-full my-2 text-center text-on-surface-variant text-[10px] overflow-hidden tracking-[3px] select-none">
+          ----------------------------------------
+        </div>
+<!-- Token Number -->
+<div class="w-full py-1">
+<p class="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest">TICKET DE ATENCIÓN</p>
+<p class="text-4xl font-black text-on-surface tracking-tighter my-0.5" id="ticketNumber">#T-104</p>
+<div class="inline-block px-2.5 py-0.5 bg-error-container text-on-error-container text-[11px] font-bold rounded">
+            PRIORIDAD II • URGENCIA RELATIVA
+          </div>
+</div>
+<!-- Thermal Divider Dash -->
+<div class="w-full my-2 text-center text-on-surface-variant text-[10px] overflow-hidden tracking-[3px] select-none">
+          ----------------------------------------
+        </div>
+<!-- Patient Block -->
+<div class="w-full text-left text-xs leading-tight space-y-1">
+<div class="flex justify-between items-baseline">
+<span class="font-bold uppercase text-[10px] text-on-surface-variant">PACIENTE:</span>
+<span class="text-[10px] font-bold bg-surface-container-high px-1 rounded">DNI 42918274</span>
+</div>
+<p class="text-[13px] font-bold text-on-surface uppercase">Juan Quispe Condori</p>
+<div class="flex justify-between text-[11px] text-on-surface-variant">
+<span>Edad: <strong class="text-on-surface">54 años</strong></span>
+<span>Sexo: <strong class="text-on-surface">Masc.</strong></span>
+<span>Seguro: <strong class="text-on-surface">SIS</strong></span>
+</div>
+</div>
+<!-- Thermal Divider Dash -->
+<div class="w-full my-2 text-center text-on-surface-variant text-[10px] overflow-hidden tracking-[3px] select-none">
+          ----------------------------------------
+        </div>
+<!-- Compact Vitals Grid -->
+<div class="w-full bg-surface-container-low p-2 rounded text-left">
+<div class="text-[9px] font-bold uppercase text-on-surface-variant mb-1 flex items-center justify-between">
+<span>Signos Vitales Triaje</span>
+<span class="text-error font-bold">Alerta Cifras</span>
+</div>
+<div class="grid grid-cols-3 gap-1 text-center text-[10px]">
+<div class="bg-surface-container-lowest p-1 rounded">
+<span class="block text-[8px] text-on-surface-variant">P. ARTERIAL</span>
+<span class="font-bold text-error text-[11px]">145/95</span>
+</div>
+<div class="bg-surface-container-lowest p-1 rounded">
+<span class="block text-[8px] text-on-surface-variant">TEMPERATURA</span>
+<span class="font-bold text-error text-[11px]">38.6 °C</span>
+</div>
+<div class="bg-surface-container-lowest p-1 rounded">
+<span class="block text-[8px] text-on-surface-variant">SATURACIÓN</span>
+<span class="font-bold text-on-surface text-[11px]">92% SpO2</span>
+</div>
+</div>
+</div>
+<!-- High-contrast Black Reverse Alert Block -->
+<div class="w-full mt-2.5 py-1.5 px-2 bg-on-surface text-surface-container-lowest font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-1 rounded-sm">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+<span>ALERTA: ALERGIA A PENICILINA</span>
+</div>
+<!-- Target Office / Specialty Destination -->
+<div class="w-full my-3 p-2 bg-surface-container rounded flex items-center justify-between">
+<div class="text-left">
+<span class="block text-[9px] font-bold uppercase text-on-surface-variant">Destino Asignado</span>
+<span class="text-[13px] font-black text-primary">CONSULTORIO 1</span>
+</div>
+<div class="text-right">
+<span class="inline-block text-[11px] font-bold text-on-surface">MEDICINA GENERAL</span>
+<span class="block text-[9px] text-on-surface-variant">Dr. R. Huamán</span>
+</div>
+</div>
+<!-- High-density QR Code graphic -->
+<div class="my-2 p-2 bg-surface-container-lowest inline-flex flex-col items-center">
+<svg class="w-28 h-28 text-on-surface" fill="currentColor" viewbox="0 0 100 100">
+<!-- Position Markers Top-Left -->
+<rect fill="black" height="26" width="26" x="5" y="5"></rect>
+<rect fill="white" height="20" width="20" x="8" y="8"></rect>
+<rect fill="black" height="12" width="12" x="12" y="12"></rect>
+<!-- Position Markers Top-Right -->
+<rect fill="black" height="26" width="26" x="69" y="5"></rect>
+<rect fill="white" height="20" width="20" x="72" y="8"></rect>
+<rect fill="black" height="12" width="12" x="76" y="12"></rect>
+<!-- Position Markers Bottom-Left -->
+<rect fill="black" height="26" width="26" x="5" y="69"></rect>
+<rect fill="white" height="20" width="20" x="8" y="72"></rect>
+<rect fill="black" height="12" width="12" x="12" y="76"></rect>
+<!-- High density sync pattern dots -->
+<rect height="4" width="4" x="36" y="8"></rect>
+<rect height="4" width="4" x="44" y="8"></rect>
+<rect height="4" width="4" x="52" y="8"></rect>
+<rect height="4" width="4" x="60" y="8"></rect>
+<rect height="4" width="4" x="8" y="36"></rect>
+<rect height="4" width="4" x="8" y="44"></rect>
+<rect height="4" width="4" x="8" y="52"></rect>
+<rect height="4" width="4" x="8" y="60"></rect>
+<rect height="4" width="8" x="36" y="20"></rect>
+<rect height="8" width="4" x="48" y="16"></rect>
+<rect height="4" width="8" x="56" y="24"></rect>
+<rect height="6" width="6" x="36" y="36"></rect>
+<rect height="4" width="4" x="46" y="36"></rect>
+<rect height="4" width="10" x="54" y="38"></rect>
+<rect height="8" width="8" x="68" y="36"></rect>
+<rect height="4" width="4" x="80" y="40"></rect>
+<rect height="4" width="6" x="16" y="48"></rect>
+<rect height="8" width="4" x="28" y="44"></rect>
+<rect height="4" width="10" x="38" y="48"></rect>
+<rect height="6" width="6" x="52" y="46"></rect>
+<rect height="4" width="12" x="62" y="48"></rect>
+<rect height="6" width="6" x="78" y="48"></rect>
+<rect height="4" width="12" x="36" y="60"></rect>
+<rect height="6" width="8" x="52" y="58"></rect>
+<rect height="6" width="6" x="66" y="62"></rect>
+<rect height="4" width="10" x="78" y="60"></rect>
+<rect height="6" width="6" x="36" y="72"></rect>
+<rect height="4" width="6" x="46" y="68"></rect>
+<rect height="4" width="8" x="56" y="74"></rect>
+<rect height="8" width="4" x="68" y="72"></rect>
+<rect height="4" width="8" x="76" y="70"></rect>
+<rect height="6" width="4" x="88" y="74"></rect>
+<rect height="4" width="8" x="36" y="84"></rect>
+<rect height="8" width="4" x="48" y="80"></rect>
+<rect height="4" width="6" x="58" y="84"></rect>
+<rect height="4" width="10" x="70" y="84"></rect>
+<rect height="6" width="6" x="84" y="82"></rect>
+</svg>
+<span class="text-[8px] text-on-surface-variant uppercase mt-1 tracking-widest font-sans font-semibold">TKT-SYNC: 42918274-104-MED</span>
+</div>
+<!-- Quechua Greeting and Social Mission Footer -->
+<div class="w-full pt-2 text-center transition-all" id="quechuaSection">
+<p class="text-[11px] font-bold text-on-surface italic">“Allillanchu kashanki • Posta Comunal”</p>
+<p class="text-[9px] text-on-surface-variant font-sans">Presente este boleto cuando anuncien su número en sala.</p>
+</div>
+<p class="text-[8px] text-on-surface-variant mt-2 font-mono">** FIN DEL TICKET • NO BOTAR EN VÍA PÚBLICA **</p>
+</div>
+<!-- Serrated Bottom Edge -->
+<div class="w-full h-2.5 flex overflow-hidden opacity-30 text-surface-dim rotate-180">
+<svg class="w-full h-full" fill="currentColor" preserveaspectratio="repeat-x" viewbox="0 0 200 10">
+<polygon points="0,10 5,0 10,10 15,0 20,10 25,0 30,10 35,0 40,10 45,0 50,10 55,0 60,10 65,0 70,10 75,0 80,10 85,0 90,10 95,0 100,10 105,0 110,10 115,0 120,10 125,0 130,10 135,0 140,10 145,0 150,10 155,0 160,10 165,0 170,10 175,0 180,10 185,0 190,10 195,0 200,10"></polygon>
+</svg>
+</div>
+</div>
+</div>
+<!-- Primary Mobile Quick Action Buttons -->
+<div class="px-4 py-3 bg-surface flex flex-col gap-2.5">
+<button class="w-full h-14 bg-primary active:bg-primary/90 text-on-primary font-headline font-bold text-sm tracking-wide rounded-lg flex items-center justify-center gap-2 shadow-md transition-transform active:scale-[0.98]" id="btnPrint" onclick="triggerPrintProcess()" type="button">
+<span class="material-symbols-outlined text-[24px]">print</span>
+<span id="btnPrintLabel">IMPRIMIR TICKET VIA BLUETOOTH (80mm)</span>
+</button>
+<!-- Secondary Row Actions -->
+<div class="grid grid-cols-2 gap-2">
+<button class="h-11 bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-colors" onclick="toastAction('Reimprimiendo ticket #T-104 en cola local')" type="button">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Reimprimir Último</span>
+</button>
+<button class="h-11 bg-surface-container hover:bg-surface-container-high text-on-surface font-semibold text-xs rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-colors" onclick="toastAction('Generando enlace cifrado PDF para WhatsApp / SMS')" type="button">
+<span class="material-symbols-outlined text-[18px]">share</span>
+<span>Compartir PDF Digital</span>
+</button>
+</div>
+</div>
+<!-- Field Printing Quick Toggles -->
+<div class="px-4 py-2 bg-surface">
+<div class="bg-surface-container-lowest p-3 rounded-lg shadow-sm space-y-3">
+<span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant block">Opciones de Despacho Inmediato</span>
+<!-- Toggle 1: Quechua -->
+<label class="flex items-center justify-between cursor-pointer">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">translate</span>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-on-surface">Incluir mensaje en Quechua</span>
+<span class="text-[10px] text-on-surface-variant">Frase de cortesía e instrucción comunitaria</span>
+</div>
+</div>
+<input checked="" class="w-5 h-5 accent-primary rounded cursor-pointer" id="chkQuechua" onchange="toggleQuechua(this.checked)" type="checkbox"/>
+</label>
+<!-- Toggle 2: Physical Chart Duplicate -->
+<label class="flex items-center justify-between cursor-pointer pt-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">content_copy</span>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-on-surface">Duplicado para historia física</span>
+<span class="text-[10px] text-on-surface-variant">Corte automático en 2 copias consecutivas</span>
+</div>
+</div>
+<input class="w-5 h-5 accent-primary rounded cursor-pointer" id="chkDuplicate" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Bluetooth & Hardware Telemetry Details -->
+<div class="px-4 py-3 bg-surface mb-2">
+<div class="bg-surface-container p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">settings_bluetooth</span>
+          EPSON_TM_P80_4918
+        </span>
+<span class="text-[10px] font-bold text-tertiary bg-tertiary-container text-on-tertiary-container px-1.5 py-0.5 rounded">
+          SEÑAL ÓPTIMA
+        </span>
+</div>
+<div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-on-surface-variant">Protocolo ESC/POS</span>
+<span class="font-semibold text-on-surface">Thermal BT 4.2 LE</span>
+</div>
+<div class="flex flex-col bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-on-surface-variant">Auto-Corte Térmico</span>
+<span class="font-semibold text-on-surface">Habilitado • 100%</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-[10px] text-on-surface-variant px-1 pt-1">
+<span>Papel restante estimado: ~14.2 m</span>
+<button class="text-primary font-bold hover:underline" onclick="toastAction('Enviando alimentación de 3 líneas...')" type="button">
+          Avanzar Papel (Feed)
+        </button>
+</div>
+</div>
+</div>
+<!-- Micro Notification Toast Container -->
+<div class="fixed bottom-20 left-4 right-4 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-lg shadow-xl flex items-center justify-between gap-2 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none" id="toastBanner">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed-dim" id="toastIcon">check_circle</span>
+<span class="text-xs font-medium" id="toastMessage">Acción procesada con éxito</span>
+</div>
+</div>
+</div>
+<script>
+  let currentFormat = '80';
+
+  function switchFormat(format) {
+    currentFormat = format;
+    const tab80 = document.getElementById('tab80');
+    const tab58 = document.getElementById('tab58');
+    const container = document.getElementById('ticketContainer');
+    const previewTag = document.getElementById('previewTag');
+    const printBtnLabel = document.getElementById('btnPrintLabel');
+    const printerName = document.getElementById('printerName');
+
+    if (format === '58') {
+      tab58.className = 'flex-1 py-2 text-xs font-semibold rounded bg-surface text-primary shadow-sm flex items-center justify-center gap-1.5 transition-all';
+      tab80.className = 'flex-1 py-2 text-xs font-semibold rounded text-on-surface-variant flex items-center justify-center gap-1.5 transition-all';
+      container.style.maxWidth = '260px';
+      previewTag.innerText = 'Formato: 58mm';
+      printBtnLabel.innerText = 'IMPRIMIR TICKET VIA BLUETOOTH (58mm)';
+      printerName.innerText = 'Epson BT-P60 (Clip Portátil 58mm)';
+    } else {
+      tab80.className = 'flex-1 py-2 text-xs font-semibold rounded bg-surface text-primary shadow-sm flex items-center justify-center gap-1.5 transition-all';
+      tab58.className = 'flex-1 py-2 text-xs font-semibold rounded text-on-surface-variant flex items-center justify-center gap-1.5 transition-all';
+      container.style.maxWidth = '340px';
+      previewTag.innerText = 'Formato: 80mm';
+      printBtnLabel.innerText = 'IMPRIMIR TICKET VIA BLUETOOTH (80mm)';
+      printerName.innerText = 'Epson BT-P80 (Cinturón #04)';
+    }
+  }
+
+  function toggleQuechua(isVisible) {
+    const sec = document.getElementById('quechuaSection');
+    if (isVisible) {
+      sec.style.display = 'block';
+    } else {
+      sec.style.display = 'none';
+    }
+  }
+
+  function triggerPrintProcess() {
+    const btn = document.getElementById('btnPrint');
+    const originalText = document.getElementById('btnPrintLabel').innerText;
+    const isDupl = document.getElementById('chkDuplicate').checked;
+
+    btn.disabled = true;
+    btn.classList.add('opacity-75');
+    document.getElementById('btnPrintLabel').innerText = isDupl ? 'TRANSMITIENDO 2 COPIAS VIA BT...' : 'TRANSMITIENDO VIA BLUETOOTH...';
+
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.classList.remove('opacity-75');
+      document.getElementById('btnPrintLabel').innerText = originalText;
+      toastAction(isDupl ? '¡Ticket #T-104 impreso (2 copias) correctamente!' : '¡Ticket #T-104 dispensado vía BT!');
+    }, 1200);
+  }
+
+  function toastAction(msg) {
+    const banner = document.getElementById('toastBanner');
+    const label = document.getElementById('toastMessage');
+    label.innerHTML = msg;
+    banner.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+    banner.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      banner.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+      banner.classList.remove('translate-y-0', 'opacity-100');
+    }, 2800);
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-semibold"><div class="flex items-center justify-around h-16 px-1"><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="registro" href="#"><span class="material-symbols-outlined text-[20px]">person_add</span><span class="font-label text-[10px] tracking-tight mt-0.5">Registro</span></a><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="triaje" href="#"><span class="material-symbols-outlined text-[20px]">ecg_heart</span><span class="font-label text-[10px] tracking-tight mt-0.5">Triaje</span></a><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="cola-de-atencion" href="#"><span class="material-symbols-outlined text-[20px]">format_list_numbered</span><span class="font-label text-[10px] tracking-tight mt-0.5">Cola</span></a><a class="flex flex-col items-center justify-center w-14 h-12 text-on-surface-variant transition-colors" data-path="consulta" href="#"><span class="material-symbols-outlined text-[20px]">stethoscope</span><span class="font-label text-[10px] tracking-tight mt-0.5">Consulta</span></a><a aria-current="page" class="flex flex-col items-center justify-center w-14 h-12 transition-colors text-primary font-semibold" data-path="mas" href="#"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span class="font-label text-[10px] tracking-tight mt-0.5">Más</span></a></div></nav></body></html>

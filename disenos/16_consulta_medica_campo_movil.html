@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;font-family:'IBM Plex Sans',sans-serif;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-bright": "#ffffff", "error": "#da1e28", "surface": "#ffffff", "on-primary-container": "#161616", "on-tertiary-fixed": "#022d0d", "secondary-fixed-dim": "#c6c6c6", "on-background": "#161616", "on-secondary-fixed": "#161616", "tertiary-container": "#a7f0ba", "surface-tint": "#0f62fe", "outline-variant": "#e0e0e0", "tertiary": "#198038", "inverse-on-surface": "#f4f4f4", "primary-fixed": "#d0e2ff", "secondary-container": "#e0e0e0", "surface-dim": "#e0e0e0", "surface-container-lowest": "#ffffff", "tertiary-fixed-dim": "#42be65", "surface-container": "#f4f4f4", "primary-fixed-dim": "#78a9ff", "primary-container": "#d0e2ff", "on-secondary": "#ffffff", "on-surface-variant": "#525252", "on-error-container": "#750e13", "on-secondary-container": "#525252", "inverse-primary": "#78a9ff", "on-error": "#ffffff", "surface-variant": "#f4f4f4", "surface-container-high": "#e0e0e0", "on-primary": "#ffffff", "on-tertiary-fixed-variant": "#044317", "error-container": "#fff1f1", "on-secondary-fixed-variant": "#525252", "on-tertiary": "#ffffff", "on-surface": "#161616", "on-primary-fixed-variant": "#0043ce", "secondary-fixed": "#e0e0e0", "tertiary-fixed": "#a7f0ba", "surface-container-highest": "#c6c6c6", "background": "#ffffff", "inverse-surface": "#393939", "surface-container-low": "#f4f4f4", "on-primary-fixed": "#001d6c", "primary": "#0f62fe", "on-tertiary-container": "#044317", "secondary": "#6f6f6f", "outline": "#8d8d8d" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, spacing: {}, fontFamily: { "headline": ["IBM Plex Sans"], "display": ["IBM Plex Sans"], "body": ["IBM Plex Sans"], "label": ["IBM Plex Sans"] }, fontSize: {} } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-3 flex items-center justify-between gap-2"><div class="flex items-center gap-2 min-w-0 flex-1"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1WHui6EMlZ8nLYWhqM7Pt8xyBgk9V73SUi-O3GdU4QWAqyQOCDKLbzOxctZ7wZ3QiylxrmLuvQW71vVeBAssOJflzXXy76a1cXn6KwfL0JJAaxblaCy7MdqZr0BlEsQ4wKHJbGszn7p9AWkNF0LUcgBdjCcr0hKtytcRr-r3cFvcYm7_2Y7GIXLfg8IT-5Ta8t6TCqSLvT87qdOBISwCYI__NdVWoRNkfVnnJ30-vqAo6u2jU06N36Q89g_"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-1.5"><span class="text-xs font-semibold tracking-tight text-on-surface uppercase truncate font-headline">Semilla Salud</span><span class="flex items-center gap-1 text-[11px] font-medium text-tertiary bg-tertiary-container/40 px-1.5 py-0.5 rounded-sm flex-shrink-0"><span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>Online</span></div><span class="text-[11px] text-on-surface-variant truncate flex items-center gap-1 font-label"><span class="material-symbols-outlined text-[13px] text-primary flex-shrink-0">location_on</span>Cusco - Valle Sagrado</span></div></div><div class="flex items-center gap-1 flex-shrink-0"><button aria-label="Sincronización" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface active:bg-surface-container rounded-sm"><span class="material-symbols-outlined text-[20px]">sync</span></button><button aria-label="Notificaciones" class="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface active:bg-surface-container rounded-sm relative"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2.5 right-2.5 w-2 h-2 bg-error rounded-full"></span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 ml-1"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div><div class="h-6 px-3 bg-surface-container flex items-center justify-between"><span class="text-[11px] font-medium text-on-surface-variant uppercase tracking-wider font-label">Cola De Espera</span><span class="text-[11px] font-mono text-on-surface-variant font-medium">Camp. #2024-CUS</span></div></header><main class="flex flex-col relative w-full pt-16 pb-20 bg-surface flex-grow"><div class="flex flex-col w-full pb-32">
+<!-- Patient Header Compact Bar -->
+<div class="bg-surface-container px-3 py-2.5 flex items-center justify-between">
+<div class="min-w-0 pr-2">
+<div class="flex items-center gap-1.5">
+<span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-[11px] font-semibold text-primary uppercase tracking-wider">Consultorio 1 • En Consulta</span>
+</div>
+<h1 class="text-sm font-semibold text-on-surface truncate">#T-104 Juan Quispe Condori (54a)</h1>
+<p class="text-[11px] text-on-surface-variant font-mono">DNI 42918274 • Quechuahablante preferente</p>
+</div>
+<div class="flex flex-col items-end flex-shrink-0">
+<span class="text-[10px] font-medium bg-primary-container text-on-primary-container px-1.5 py-0.5 rounded-sm">Triaje OK</span>
+<span class="text-[10px] text-on-surface-variant mt-0.5">Hace 14 min</span>
+</div>
+</div>
+<!-- Critical Clinical Alert Banner (Red) -->
+<div class="bg-error text-on-error px-3 py-2.5 flex items-center gap-2 shadow-sm animate-pulse">
+<span class="material-symbols-outlined text-lg flex-shrink-0" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="min-w-0 flex-1">
+<div class="text-xs font-bold uppercase tracking-wide">⚠️ Alergia Confirmada: Penicilina y Betalactámicos</div>
+<div class="text-[11px] opacity-95 leading-tight">Shock anafiláctico reportado en 2019. Restricción estricta de prescripción.</div>
+</div>
+</div>
+<!-- Triage Vitals Bento / Quick Glance -->
+<div class="p-3 bg-surface">
+<div class="bg-surface-container-low p-2.5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-semibold text-on-surface uppercase tracking-wide flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[15px]">vital_signs</span> Signos Vitales Triaje
+        </span>
+<button class="text-[11px] text-primary font-medium flex items-center hover:underline" id="btn-toggle-triage">
+<span id="triage-toggle-text">Ver detalle</span>
+<span class="material-symbols-outlined text-[14px]" id="triage-toggle-icon">expand_more</span>
+</button>
+</div>
+<!-- Quick Metrics Strip -->
+<div class="grid grid-cols-5 gap-1 text-center">
+<div class="bg-error-container p-1 rounded-sm">
+<span class="block text-[9px] font-bold text-on-error-container">PA</span>
+<span class="block text-xs font-bold text-error">145/95</span>
+<span class="text-[8px] text-on-error-container">mmHg</span>
+</div>
+<div class="bg-surface-container p-1 rounded-sm">
+<span class="block text-[9px] font-medium text-on-surface-variant">FC</span>
+<span class="block text-xs font-semibold text-on-surface">88</span>
+<span class="text-[8px] text-on-surface-variant">lpm</span>
+</div>
+<div class="bg-error-container p-1 rounded-sm">
+<span class="block text-[9px] font-bold text-on-error-container">T°</span>
+<span class="block text-xs font-bold text-error">38.6°</span>
+<span class="text-[8px] text-on-error-container">°C Febril</span>
+</div>
+<div class="bg-surface-container p-1 rounded-sm">
+<span class="block text-[9px] font-medium text-on-surface-variant">SpO2</span>
+<span class="block text-xs font-semibold text-on-surface">92%</span>
+<span class="text-[8px] text-on-surface-variant">Ambiente</span>
+</div>
+<div class="bg-surface-container p-1 rounded-sm">
+<span class="block text-[9px] font-medium text-on-surface-variant">EVA</span>
+<span class="block text-xs font-semibold text-on-surface">5/10</span>
+<span class="text-[8px] text-on-surface-variant">Dolor mod.</span>
+</div>
+</div>
+<!-- Collapsible Detailed Sheet -->
+<div class="hidden mt-2 pt-2 bg-surface p-2 text-xs" id="triage-expanded">
+<div class="grid grid-cols-2 gap-2 text-on-surface-variant">
+<div><span class="font-medium text-on-surface">Peso:</span> 64.2 kg</div>
+<div><span class="font-medium text-on-surface">Talla:</span> 1.58 m</div>
+<div><span class="font-medium text-on-surface">IMC:</span> 25.7 (Sobrepeso leve)</div>
+<div><span class="font-medium text-on-surface">Glucosa rápida:</span> 108 mg/dL</div>
+</div>
+<p class="mt-1.5 text-[11px] text-on-surface-variant italic bg-surface-container p-1.5 rounded-sm">
+          "Refiere tos con expectoración verdosa de 4 días, cefalea intensa y decaimiento en labores agrícolas."
+        </p>
+</div>
+</div>
+</div>
+<!-- Medical Consultation Accordion Sections -->
+<div class="flex flex-col gap-2 px-3">
+<!-- 1. Anamnesis / Observación -->
+<div class="bg-surface-container p-3 rounded-none">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 bg-primary text-on-primary text-xs font-bold flex items-center justify-center rounded-sm">1</span>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider font-headline">Anamnesis y Evolución Clínica</span>
+</div>
+<button class="flex items-center gap-1 bg-surface text-primary px-2 py-1 text-[11px] font-medium rounded-sm active:bg-primary active:text-on-primary shadow-sm" id="btn-voice-dictation">
+<span class="material-symbols-outlined text-[14px]">mic</span>
+<span id="voice-label">Dictar</span>
+</button>
+</div>
+<div class="relative">
+<textarea class="w-full bg-surface text-on-surface text-xs p-2.5 focus:outline-none focus:bg-surface-bright placeholder:text-outline resize-none shadow-sm" id="anamnesis-text" placeholder="Registrar sintomatología, tiempo de enfermedad, examen físico de tórax, auscultación..." rows="3">Paciente acude por fiebre continua de 38.5C, tos productiva, crépitos bibasales en hemitórax derecho. Murmullo vesicular disminuido.</textarea>
+</div>
+<div class="flex justify-between items-center mt-1.5 text-[10px] text-on-surface-variant">
+<span>Sugerencia: Traducir sintomatología de dolor torácico en quechua</span>
+<span class="font-mono">112 car.</span>
+</div>
+</div>
+<!-- 2. Diagnóstico CIE-10 -->
+<div class="bg-surface-container p-3 rounded-none">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 bg-primary text-on-primary text-xs font-bold flex items-center justify-center rounded-sm">2</span>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider font-headline">Diagnóstico (CIE-10)</span>
+</div>
+<span class="text-[10px] bg-tertiary-container text-on-tertiary-container font-semibold px-1.5 py-0.5 rounded-sm">Patologías Campaña</span>
+</div>
+<!-- Quick Fast Selector Tags -->
+<div class="flex flex-wrap gap-1 mb-2.5" id="cie-quick-tags">
+<button class="cie-chip px-2 py-1 bg-primary text-on-primary text-[11px] font-medium rounded-sm flex items-center gap-1 shadow-sm" data-code="J18.9" data-desc="Neumonía no especificada" type="button">
+<span>IRA / Neumonía (J18.9)</span>
+<span class="material-symbols-outlined text-[13px]">check</span>
+</button>
+<button class="cie-chip px-2 py-1 bg-surface text-on-surface text-[11px] font-medium rounded-sm hover:bg-surface-container-high active:bg-primary active:text-on-primary shadow-sm" data-code="A09" data-desc="Diarrea y gastroenteritis infecciosa" type="button">
+          EDA (A09)
+        </button>
+<button class="cie-chip px-2 py-1 bg-surface text-on-surface text-[11px] font-medium rounded-sm hover:bg-surface-container-high shadow-sm" data-code="M19.9" data-desc="Artrosis no especificada" type="button">
+          Osteoartrosis (M19.9)
+        </button>
+<button class="cie-chip px-2 py-1 bg-surface text-on-surface text-[11px] font-medium rounded-sm hover:bg-surface-container-high shadow-sm" data-code="I10" data-desc="Hipertensión esencial" type="button">
+          Hipertensión (I10)
+        </button>
+<button class="cie-chip px-2 py-1 bg-surface text-on-surface text-[11px] font-medium rounded-sm hover:bg-surface-container-high shadow-sm" data-code="B89" data-desc="Parasitosis intestinal" type="button">
+          Parasitosis (B89)
+        </button>
+</div>
+<!-- Selected Diagnostics Container -->
+<div class="flex flex-col gap-1" id="selected-diagnostics">
+<div class="bg-surface p-2 flex items-center justify-between text-xs shadow-sm">
+<div class="flex items-center gap-1.5 min-w-0">
+<span class="font-mono font-bold text-primary text-[11px]">J18.9</span>
+<span class="text-on-surface truncate">Infección Respiratoria Aguda Baja / Neumonía</span>
+</div>
+<span class="text-[10px] bg-secondary-container text-on-secondary-container px-1 py-0.5 rounded-sm">Presuntivo</span>
+</div>
+</div>
+</div>
+<!-- 3. Prescripción Farmacéutica con Botiquín y Filtro Antialergia -->
+<div class="bg-surface-container p-3 rounded-none">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 bg-primary text-on-primary text-xs font-bold flex items-center justify-center rounded-sm">3</span>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider font-headline">Botiquín de Campaña y Prescripción</span>
+</div>
+<span class="text-[10px] text-tertiary font-medium">Stock Valle Sagrado: Disp.</span>
+</div>
+<!-- Quick Add Medication Trigger Search Simulator -->
+<div class="mb-2">
+<div class="relative">
+<input class="w-full bg-surface text-on-surface text-xs pl-7 pr-2 py-2 focus:outline-none placeholder:text-outline shadow-sm" id="med-search-input" placeholder="Buscar fármaco (ej. Claritromicina, Paracetamol, Amoxicilina...)" type="text"/>
+<span class="material-symbols-outlined text-[16px] text-outline absolute left-2 top-2">medication</span>
+</div>
+</div>
+<!-- Dynamic Danger Alert Simulation for Penicillin derivatives -->
+<div class="hidden mb-2 p-2 bg-error-container text-on-error-container rounded-sm flex items-start gap-1.5 shadow-sm" id="penicillin-warning-box">
+<span class="material-symbols-outlined text-error text-[18px] flex-shrink-0 mt-0.5">block</span>
+<div class="text-[11px] leading-tight">
+<span class="font-bold text-error block">¡PRESCRIPCIÓN BLOQUEADA!</span>
+          El paciente tiene alergia mortal a penicilinas y derivados betalactámicos. Se sugiere macrólido o fluoroquinolona.
+        </div>
+</div>
+<!-- Prescribed Medications List -->
+<div class="flex flex-col gap-1.5" id="prescribed-list">
+<!-- Item 1 Safe Alternative -->
+<div class="bg-surface p-2.5 shadow-sm flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-on-surface">Claritromicina 500mg Tab</span>
+<span class="text-[10px] font-semibold bg-tertiary-container text-on-tertiary-container px-1 py-0.2 rounded-sm">Alternativa Segura</span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Dosis: 1 tab cada 12h x 7 días</span>
+<span class="font-mono text-on-surface font-semibold">Total: 14 tabs</span>
+</div>
+<div class="flex items-center gap-2 mt-1 pt-1 bg-surface-container-low px-1.5 py-1 text-[10px]">
+<span class="text-tertiary font-medium">En stock: 48 cajas</span>
+<span class="text-outline">•</span>
+<span class="text-on-surface-variant">Vía Oral post-alimentos</span>
+</div>
+</div>
+<!-- Item 2 Antipyretic -->
+<div class="bg-surface p-2.5 shadow-sm flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-on-surface">Paracetamol 500mg Tab</span>
+<span class="text-[10px] font-mono text-on-surface-variant">Lote #2024A</span>
+</div>
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+<span>Dosis: 1 tab cada 8h condicional a fiebre &gt;38°C</span>
+<span class="font-mono text-on-surface font-semibold">Total: 10 tabs</span>
+</div>
+</div>
+</div>
+<!-- Quick Add Drug Suggestions Bar -->
+<div class="mt-2 pt-2 flex items-center justify-between text-[11px]">
+<span class="text-on-surface-variant">Frecuentes:</span>
+<div class="flex gap-1">
+<button class="px-1.5 py-0.5 bg-error/10 text-error text-[10px] font-medium rounded-sm hover:bg-error hover:text-on-error transition-colors" id="btn-add-penicillin">
+            + Amoxicilina (Test Alergia)
+          </button>
+<button class="px-1.5 py-0.5 bg-surface text-primary text-[10px] font-medium rounded-sm hover:bg-surface-container-high" id="btn-add-ibuprofeno">
+            + Ibuprofeno 400
+          </button>
+</div>
+</div>
+</div>
+<!-- 4. Indicaciones al Paciente en Quechua / Castellano -->
+<div class="bg-surface-container p-3 rounded-none">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 bg-primary text-on-primary text-xs font-bold flex items-center justify-center rounded-sm">4</span>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider font-headline">Indicaciones &amp; Lengua Originaria</span>
+</div>
+<span class="text-[10px] font-medium text-primary bg-primary-container/60 px-1.5 py-0.5 rounded-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">translate</span> Quechua Collao
+        </span>
+</div>
+<!-- Bilingual Prompt Card -->
+<div class="bg-surface p-2.5 mb-2 shadow-sm space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-bold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-tertiary text-[14px]">record_voice_over</span> Guía de Signos de Alarma
+          </span>
+<button class="text-[10px] bg-tertiary text-on-tertiary px-1.5 py-0.5 rounded-sm flex items-center gap-1 active:opacity-80" id="btn-audio-guide">
+<span class="material-symbols-outlined text-[12px]">volume_up</span> Reproducir Audio
+          </button>
+</div>
+<p class="text-[11px] text-on-surface font-medium italic bg-surface-container-low p-1.5 rounded-sm">
+          "Sichus mana allinchakunkichu, wayrallata samayta sasa kaptinqa, utqaylla postaman hamuy."
+        </p>
+<p class="text-[10px] text-on-surface-variant">
+          (Castellano: Si siente falta de aire o ahogo, acudir de inmediato al puesto de salud más cercano).
+        </p>
+</div>
+<!-- Custom notes for Community Health Worker -->
+<div class="bg-surface p-2 shadow-sm">
+<label class="block text-[10px] font-semibold uppercase text-on-surface-variant mb-1">Encargo a Promotora Comunal / Familiar:</label>
+<input class="w-full bg-surface-container-low text-xs text-on-surface p-1.5 focus:outline-none" type="text" value="Acompañar ingesta completa de antibiótico con alimentos tibios."/>
+</div>
+</div>
+<!-- 5. Destino Final / Disposición del Paciente -->
+<div class="bg-surface-container p-3 rounded-none">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 bg-primary text-on-primary text-xs font-bold flex items-center justify-center rounded-sm">5</span>
+<span class="text-xs font-bold text-on-surface uppercase tracking-wider font-headline">Destino y Cierre Clínico</span>
+</div>
+<span class="text-[10px] text-on-surface-variant">Seleccionar disposición</span>
+</div>
+<!-- Segmented Control Buttons for Disposition -->
+<div class="grid grid-cols-3 gap-1.5" id="disposition-selector">
+<button class="dispo-btn py-2 px-1 text-center bg-surface text-on-surface rounded-sm hover:bg-surface-container-high flex flex-col items-center gap-1 shadow-sm" data-dest="alta" type="button">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="text-[10px] font-semibold uppercase leading-tight">Alta de Campaña</span>
+</button>
+<button class="dispo-btn py-2 px-1 text-center bg-primary text-on-primary rounded-sm flex flex-col items-center gap-1 shadow-sm" data-dest="posta" type="button">
+<span class="material-symbols-outlined text-[18px]">local_hospital</span>
+<span class="text-[10px] font-semibold uppercase leading-tight">Control en Posta</span>
+</button>
+<button class="dispo-btn py-2 px-1 text-center bg-surface text-on-surface rounded-sm hover:bg-surface-container-high flex flex-col items-center gap-1 shadow-sm" data-dest="referencia" type="button">
+<span class="material-symbols-outlined text-[18px]">emergency</span>
+<span class="text-[10px] font-semibold uppercase leading-tight">Derivar Hospital</span>
+</button>
+</div>
+<div class="mt-2 text-[11px] text-on-surface-variant flex items-center gap-1 bg-surface p-1.5">
+<span class="material-symbols-outlined text-primary text-[14px]">event</span>
+<span>Cita de seguimiento agendada en Posta Pisac: <strong>En 72 horas</strong></span>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Actions Bar -->
+<div class="fixed bottom-16 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md px-3 py-2 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<!-- Secondary Action -->
+<button class="flex-1 h-11 bg-secondary-container text-on-secondary-container hover:bg-surface-container-high active:bg-outline-variant font-medium text-xs flex items-center justify-center gap-1.5 rounded-sm transition-colors" id="btn-print-rx">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span class="truncate">Imprimir Receta</span>
+</button>
+<!-- Primary Action -->
+<button class="flex-[1.8] h-11 bg-primary text-on-primary hover:bg-on-primary-fixed-variant active:bg-on-primary-fixed font-semibold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 rounded-sm shadow-md transition-colors" id="btn-finalize-consult">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+<span>Finalizar Consulta</span>
+</button>
+</div>
+<div class="flex items-center justify-between text-[10px] text-on-surface-variant px-1">
+<span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Auto-guardado local activo</span>
+<span class="font-mono">Paciente sig: #T-105 Rosa C.</span>
+</div>
+</div>
+<!-- Toast Notification Overlay -->
+<div class="fixed top-20 left-4 right-4 z-50 transform -translate-y-10 opacity-0 pointer-events-none transition-all duration-300 bg-inverse-surface text-inverse-on-surface px-3 py-2.5 rounded-sm text-xs flex items-center justify-between shadow-lg" id="app-toast">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary-container text-[18px]" id="toast-icon">info</span>
+<span id="toast-msg">Notificación</span>
+</div>
+<span class="text-[10px] font-mono opacity-70">Semilla Salud</span>
+</div>
+</div>
+<script>
+  (function() {
+    // 1. Triage Collapse Interaction
+    const btnToggleTriage = document.getElementById('btn-toggle-triage');
+    const triageExpanded = document.getElementById('triage-expanded');
+    const triageToggleIcon = document.getElementById('triage-toggle-icon');
+    const triageToggleText = document.getElementById('triage-toggle-text');
+
+    btnToggleTriage.addEventListener('click', () => {
+      const isHidden = triageExpanded.classList.contains('hidden');
+      if (isHidden) {
+        triageExpanded.classList.remove('hidden');
+        triageToggleIcon.textContent = 'expand_less';
+        triageToggleText.textContent = 'Ocultar';
+      } else {
+        triageExpanded.classList.add('hidden');
+        triageToggleIcon.textContent = 'expand_more';
+        triageToggleText.textContent = 'Ver detalle';
+      }
+    });
+
+    // 2. Voice Dictation Micro-interaction
+    const btnVoice = document.getElementById('btn-voice-dictation');
+    const voiceLabel = document.getElementById('voice-label');
+    const anamnesisText = document.getElementById('anamnesis-text');
+    let isRecording = false;
+
+    btnVoice.addEventListener('click', () => {
+      isRecording = !isRecording;
+      if (isRecording) {
+        voiceLabel.textContent = 'Escuchando...';
+        btnVoice.classList.add('bg-error', 'text-on-error');
+        btnVoice.classList.remove('bg-surface', 'text-primary');
+        showToast('Micrófono activado: Dictado clínico en curso...', 'mic');
+      } else {
+        voiceLabel.textContent = 'Dictar';
+        btnVoice.classList.remove('bg-error', 'text-on-error');
+        btnVoice.classList.add('bg-surface', 'text-primary');
+        anamnesisText.value += " Saturación mejora levemente con reposo guiado.";
+        showToast('Dictado añadido a la anamnesis.', 'done');
+      }
+    });
+
+    // 3. Quick CIE-10 Selector Interaction
+    const cieChips = document.querySelectorAll('.cie-chip');
+    cieChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const isSelected = chip.classList.contains('bg-primary');
+        if (isSelected) {
+          chip.classList.remove('bg-primary', 'text-on-primary');
+          chip.classList.add('bg-surface', 'text-on-surface');
+          const checkIcon = chip.querySelector('.material-symbols-outlined');
+          if (checkIcon) checkIcon.remove();
+        } else {
+          chip.classList.remove('bg-surface', 'text-on-surface');
+          chip.classList.add('bg-primary', 'text-on-primary');
+          const icon = document.createElement('span');
+          icon.className = 'material-symbols-outlined text-[13px]';
+          icon.textContent = 'check';
+          chip.appendChild(icon);
+          showToast(`Añadido: ${chip.dataset.desc}`, 'bookmark_add');
+        }
+      });
+    });
+
+    // 4. Penicillin Contraindication Alarm Trigger
+    const btnAddPenicillin = document.getElementById('btn-add-penicillin');
+    const penWarningBox = document.getElementById('penicillin-warning-box');
+    const medSearchInput = document.getElementById('med-search-input');
+
+    btnAddPenicillin.addEventListener('click', () => {
+      penWarningBox.classList.remove('hidden');
+      penWarningBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      showToast('¡ADVERTENCIA: Paciente alérgico a Penicilina!', 'warning', true);
+    });
+
+    medSearchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      if (query.includes('peni') || query.includes('amoxi') || query.includes('ampici')) {
+        penWarningBox.classList.remove('hidden');
+      } else {
+        penWarningBox.classList.add('hidden');
+      }
+    });
+
+    // Add safe Ibuprofeno micro-action
+    const btnAddIbu = document.getElementById('btn-add-ibuprofeno');
+    const prescribedList = document.getElementById('prescribed-list');
+    btnAddIbu.addEventListener('click', () => {
+      const card = document.createElement('div');
+      card.className = 'bg-surface p-2.5 shadow-sm flex flex-col gap-1';
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-on-surface">Ibuprofeno 400mg Tab</span>
+          <span class="text-[10px] bg-tertiary-container text-on-tertiary-container font-semibold px-1 py-0.2 rounded-sm">Agregado</span>
+        </div>
+        <div class="flex items-center justify-between text-[11px] text-on-surface-variant">
+          <span>Dosis: 1 tab cada 8h x 3 días c/alimentos</span>
+          <span class="font-mono text-on-surface font-semibold">Total: 9 tabs</span>
+        </div>
+      `;
+      prescribedList.appendChild(card);
+      showToast('Ibuprofeno 400mg prescrito.', 'medication');
+    });
+
+    // 5. Quechua Audio playback simulation
+    const btnAudio = document.getElementById('btn-audio-guide');
+    btnAudio.addEventListener('click', () => {
+      btnAudio.innerHTML = '<span class="material-symbols-outlined text-[12px] animate-spin">sync</span> Reproduciendo...';
+      showToast('Audio en Quechua Collao: Explicando signos de alarma', 'volume_up');
+      setTimeout(() => {
+        btnAudio.innerHTML = '<span class="material-symbols-outlined text-[12px]">volume_up</span> Reproducir Audio';
+      }, 3000);
+    });
+
+    // 6. Disposition Buttons selection
+    const dispoBtns = document.querySelectorAll('.dispo-btn');
+    dispoBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        dispoBtns.forEach(b => {
+          b.classList.remove('bg-primary', 'text-on-primary');
+          b.classList.add('bg-surface', 'text-on-surface');
+        });
+        btn.classList.remove('bg-surface', 'text-on-surface');
+        btn.classList.add('bg-primary', 'text-on-primary');
+        showToast(`Destino fijado: ${btn.textContent.trim()}`, 'done_all');
+      });
+    });
+
+    // 7. Print and Finalize Bottom Actions
+    const btnPrintRx = document.getElementById('btn-print-rx');
+    btnPrintRx.addEventListener('click', () => {
+      showToast('Generando Receta Térmica Móvil (Bluetooth)...', 'print');
+    });
+
+    const btnFinalize = document.getElementById('btn-finalize-consult');
+    btnFinalize.addEventListener('click', () => {
+      btnFinalize.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Finalizando...';
+      setTimeout(() => {
+        showToast('Consulta #T-104 guardada exitosamente.', 'check_circle');
+        btnFinalize.innerHTML = '<span class="material-symbols-outlined text-[18px]">task_alt</span> Consulta Cerrada';
+        btnFinalize.classList.remove('bg-primary');
+        btnFinalize.classList.add('bg-tertiary');
+      }, 900);
+    });
+
+    // Helper Toast Display
+    function showToast(msg, iconName = 'info', isDanger = false) {
+      const toast = document.getElementById('app-toast');
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = msg;
+      toastIcon.textContent = iconName;
+      if (isDanger) {
+        toast.classList.add('bg-error', 'text-on-error');
+        toast.classList.remove('bg-inverse-surface', 'text-inverse-on-surface');
+      } else {
+        toast.classList.remove('bg-error', 'text-on-error');
+        toast.classList.add('bg-inverse-surface', 'text-inverse-on-surface');
+      }
+
+      toast.classList.remove('-translate-y-10', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('-translate-y-10', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2600);
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_10px_rgba(0,0,0,0.05)]" data-active-classes="text-primary font-semibold border-t-2 border-primary bg-primary-container/20"><div class="flex justify-between items-center h-16 px-1"><a class="flex flex-col items-center justify-center min-w-[60px] flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="registro-pacientes" href="#"><span class="material-symbols-outlined text-[22px]">person_add</span><span class="text-[10px] font-medium mt-0.5 tracking-tight truncate w-full text-center">Registro</span></a><a class="flex flex-col items-center justify-center min-w-[60px] flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="triaje-clinico" href="#"><span class="material-symbols-outlined text-[22px]">vital_signs</span><span class="text-[10px] font-medium mt-0.5 tracking-tight truncate w-full text-center">Triaje</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[60px] flex-1 h-full transition-colors py-1 relative text-primary font-semibold border-t-2 border-primary bg-primary-container/20" data-path="cola-de-espera" href="#"><span class="material-symbols-outlined text-[22px]">format_list_bulleted</span><span class="text-[10px] font-medium mt-0.5 tracking-tight truncate w-full text-center">Cola</span></a><a class="flex flex-col items-center justify-center min-w-[60px] flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="consulta-medica" href="#"><span class="material-symbols-outlined text-[22px]">stethoscope</span><span class="text-[10px] font-medium mt-0.5 tracking-tight truncate w-full text-center">Consulta</span></a><a class="flex flex-col items-center justify-center min-w-[60px] flex-1 h-full text-on-surface-variant hover:text-on-surface transition-colors py-1" data-path="menu-operativo" href="#"><span class="material-symbols-outlined text-[22px]">more_horiz</span><span class="text-[10px] font-medium mt-0.5 tracking-tight truncate w-full text-center">Más</span></a></div></nav></body></html>

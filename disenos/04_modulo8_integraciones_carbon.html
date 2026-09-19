@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Semilla Salud - Integraciones y Telemetría</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-container":"#044317","on-primary-container":"#161616","inverse-on-surface":"#f4f4f4","tertiary":"#198038","error-container":"#fff1f1","surface":"#ffffff","surface-dim":"#e0e0e0","on-primary-fixed-variant":"#0043ce","surface-container-highest":"#c6c6c6","surface-tint":"#0f62fe","surface-container":"#f4f4f4","on-surface-variant":"#525252","on-secondary-container":"#525252","surface-container-low":"#f4f4f4","on-tertiary":"#ffffff","on-tertiary-fixed-variant":"#044317","surface-container-lowest":"#ffffff","primary":"#0f62fe","secondary-container":"#e0e0e0","primary-container":"#d0e2ff","on-primary":"#ffffff","error":"#da1e28","on-tertiary-fixed":"#022d0d","on-error-container":"#750e13","on-surface":"#161616","surface-bright":"#ffffff","on-secondary-fixed-variant":"#525252","tertiary-fixed":"#a7f0ba","primary-fixed-dim":"#78a9ff","secondary-fixed-dim":"#c6c6c6","on-primary-fixed":"#001d6c","tertiary-fixed-dim":"#42be65","surface-container-high":"#e0e0e0","background":"#ffffff","inverse-primary":"#78a9ff","on-secondary":"#ffffff","secondary-fixed":"#e0e0e0","tertiary-container":"#a7f0ba","on-background":"#161616","on-error":"#ffffff","outline-variant":"#e0e0e0","surface-variant":"#f4f4f4","inverse-surface":"#393939","secondary":"#6f6f6f","primary-fixed":"#d0e2ff","on-secondary-fixed":"#161616","outline":"#8d8d8d"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{},fontFamily:{headline:["IBM Plex Sans"],display:["IBM Plex Sans"],body:["IBM Plex Sans"],label:["IBM Plex Sans"]},fontSize:{}}}}</script></head><body class="bg-background font-body text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 h-14 z-50 bg-surface/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.06)] flex items-center justify-between px-4"><div class="flex items-center gap-4"><img alt="Logotipo institucional para ONG de salud Semilla en azul marino. Isotipo con cruz médica estilizada combinada con una semilla / brote central y un pin de ubicación comunitaria en tono azul marino profundo y azul médico vibrante.. Brand logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WZ0tE2OVs5Sheyc4hORQ0oGj271jvC10KhuNWKN1dg5zIqDxV7G-A7uAlo05HPtzIkVbqgyemo4dRRGPbfdkGxo6aQrrKFjPQ7xIccQx8klvnBNRNPpsibPhkHx5XYAJ2HK5ZrAmfuqejPoxEsriVD84qCOv1n4wuo4x9p_qVw4BA17-e0mGJupmkTuWM5DDoVqIrv2hP_BAqGfrBHTMMhrO_vKhumJiQEyQ-oiRRi1lEDdTH5vXQOKGkS"/><div class="h-5 w-[1px] bg-outline-variant"></div><span class="text-xs font-semibold tracking-wider uppercase text-on-surface">SEMILLA SALUD <span class="text-outline font-normal">|</span> INTEGRACIONES &amp; TELEMETRÍA</span></div><div class="flex items-center gap-3"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-medium tracking-wide"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span>Nodo Local Edge: Activo v2.4.1</span></div><div class="flex items-center gap-2 bg-surface-container px-2.5 py-1 text-on-surface-variant text-[11px]"><span class="material-symbols-outlined text-[15px] text-tertiary">satellite_alt</span><span class="font-medium text-on-surface">Starlink OK</span><span class="text-outline-variant">•</span><span class="material-symbols-outlined text-[15px] text-tertiary">hub</span><span class="font-medium text-on-surface">Mesh P2P (8 n)</span><span class="text-outline-variant">•</span><span class="material-symbols-outlined text-[15px] text-tertiary">battery_charging_full</span><span class="font-medium text-on-surface">98%</span></div><div class="h-5 w-[1px] bg-outline-variant mx-1"></div><div class="flex items-center gap-2.5 pl-1"><div class="flex flex-col text-right hidden sm:flex"><span class="text-xs font-semibold text-on-surface leading-none">Ing. C. Morales</span><span class="text-[10px] text-on-surface-variant leading-tight">Operador de Campo</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><aside class="fixed left-0 top-14 bottom-0 w-64 bg-surface-container-low z-40 flex flex-col justify-between overflow-y-auto"><div class="py-4"><div class="px-4 mb-2 text-[10px] font-bold tracking-widest uppercase text-on-surface-variant">Operaciones</div><nav class="space-y-0.5 px-2 mb-6" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="registro-pacientes" href="#"><span class="material-symbols-outlined text-[18px]">how_to_reg</span><span>Registro</span></a><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="triaje-clinico" href="#"><span class="material-symbols-outlined text-[18px]">vital_signs</span><span>Triaje</span></a><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="gestion-cola" href="#"><span class="material-symbols-outlined text-[18px]">format_list_bulleted</span><span>Cola de Atención</span></a><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="consulta-medica" href="#"><span class="material-symbols-outlined text-[18px]">stethoscope</span><span>Consulta Médica</span></a><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="ticket-termico" href="#"><span class="material-symbols-outlined text-[18px]">receipt_long</span><span>Ticket Térmico</span></a></nav><div class="px-4 mb-2 text-[10px] font-bold tracking-widest uppercase text-on-surface-variant">Administración</div><nav class="space-y-0.5 px-2" data-active-classes="bg-primary-container text-on-primary-container font-semibold"><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="gestion-usuarios" href="#"><span class="material-symbols-outlined text-[18px]">manage_accounts</span><span>Gestión de Usuarios</span></a><a class="flex items-center gap-3 px-3 py-2 text-xs font-normal text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="integraciones-webhooks" href="#"><span class="material-symbols-outlined text-[18px]">sync_alt</span><span>Integraciones y Webhooks</span></a></nav></div><div class="p-3 bg-surface-container m-2 border-t border-outline-variant"><div class="flex items-center justify-between text-[11px] text-on-surface-variant"><span class="font-medium text-on-surface">Sincronización Cloud</span><span class="text-tertiary font-semibold">100%</span></div><div class="w-full bg-surface-container-highest h-1 mt-1.5"><div class="bg-tertiary h-1 w-full"></div></div><p class="text-[10px] text-on-surface-variant mt-1.5 flex items-center gap-1"><span class="material-symbols-outlined text-[12px] text-tertiary">check_circle</span>Último push: Hace 12s</p></div></aside><div class="pl-64"><main class="w-full pt-14 bg-background px-8 min-h-screen"><div class="flex flex-col w-full">
+<!-- Breadcrumb and Page Header -->
+<div class="pt-4 pb-6">
+<div class="flex items-center gap-2 text-[11px] font-semibold tracking-widest text-on-surface-variant uppercase mb-2">
+<span>ADMINISTRACIÓN</span>
+<span>/</span>
+<span class="text-primary font-bold">INTEGRACIONES &amp; APIS</span>
+</div>
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-on-surface">Consola de Integraciones, Webhooks y Sincronización P2P</h1>
+<p class="text-xs text-on-surface-variant mt-1 max-w-4xl">
+          Monitoreo de APIs gubernamentales (RENIEC / SIS), colas de replicación CouchDB/PouchDB Mesh offline-first y endpoints salientes de auditoría clínica en despliegue móvil.
+        </p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="h-10 px-4 bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-semibold flex items-center gap-2 transition-all active:scale-95 shadow-sm" id="btn-sync-all">
+<span class="material-symbols-outlined text-[16px] text-tertiary">sync</span>
+<span>Sincronizar Delta Ahora</span>
+</button>
+<button class="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold flex items-center gap-2 transition-all active:scale-95 shadow-sm" id="btn-new-hook">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>+ NUEVO WEBHOOK O CONECTOR</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Telemetry / KPIs Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+<!-- Card 1: Edge Node -->
+<div class="bg-surface-container p-4 shadow-sm relative overflow-hidden flex flex-col justify-between">
+<div class="flex items-start justify-between mb-3">
+<div>
+<span class="text-[10px] font-bold tracking-wider uppercase text-on-surface-variant block mb-1">ESTADO NODO EDGE LOCAL</span>
+<span class="text-base font-bold text-on-surface">192.168.4.1</span>
+<span class="text-[11px] text-on-surface-variant block">Mini PC Campaña CUS-VALLE-04</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">dns</span>
+</div>
+</div>
+<div class="space-y-2 text-xs">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span>Batería Respaldo UPS:</span>
+<span class="font-semibold text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">battery_charging_full</span> 94% (6h 15m)
+          </span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 overflow-hidden">
+<div class="bg-tertiary h-full w-[94%] transition-all duration-500"></div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant pt-1">
+<span>CPU: <strong class="text-on-surface font-semibold">18%</strong></span>
+<span>RAM: <strong class="text-on-surface font-semibold">3.2 / 8 GB</strong></span>
+</div>
+<div class="bg-surface-container-highest/60 px-2 py-1 text-[10px] text-on-surface flex items-center justify-between">
+<span class="truncate">Mesh Local + Starlink Mini</span>
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-tertiary animate-ping"></span>
+</div>
+</div>
+</div>
+<!-- Card 2: Offline Replication Queue -->
+<div class="bg-surface-container p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between mb-3">
+<div>
+<span class="text-[10px] font-bold tracking-wider uppercase text-on-surface-variant block mb-1">COLA DE REPLICACIÓN OFFLINE</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface">0</span>
+<span class="text-[11px] font-medium text-tertiary">Pendientes nube</span>
+</div>
+<span class="text-[11px] text-on-surface-variant">Sincronizado hace 3 min</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-fixed-variant">
+<span class="material-symbols-outlined text-[18px]">cloud_done</span>
+</div>
+</div>
+<div class="bg-surface p-2.5 space-y-1.5">
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Fichas clínicas replicadas:</span>
+<span class="font-bold text-on-surface">142</span>
+</div>
+<div class="flex justify-between text-xs">
+<span class="text-on-surface-variant">Tickets térmicos validados:</span>
+<span class="font-bold text-on-surface">104</span>
+</div>
+<div class="text-[10px] text-on-surface-variant flex items-center gap-1 pt-1">
+<span class="material-symbols-outlined text-[13px] text-tertiary">devices</span>
+<span>Distribuido en 6 terminales de campo</span>
+</div>
+</div>
+</div>
+<!-- Card 3: RENIEC / SIS Consultations -->
+<div class="bg-surface-container p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between mb-3">
+<div>
+<span class="text-[10px] font-bold tracking-wider uppercase text-on-surface-variant block mb-1">CONSULTAS RENIEC / SIS</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface">142</span>
+<span class="text-[11px] text-on-surface-variant">peticiones hoy</span>
+</div>
+<span class="text-[11px] text-tertiary font-medium">98.6% tasa de éxito</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+</div>
+</div>
+<div class="space-y-1.5 text-xs">
+<div class="flex justify-between text-on-surface-variant">
+<span>Latencia promedio:</span>
+<span class="font-semibold text-on-surface">420 ms</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Aciertos SQLite Local:</span>
+<span class="font-semibold text-tertiary">85% (121 req)</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 overflow-hidden">
+<div class="bg-primary h-full w-[85%]"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant block truncate">Ahorro de ancho de banda satelital: ~14.8 MB</span>
+</div>
+</div>
+<!-- Card 4: Dispatched Webhooks -->
+<div class="bg-surface-container p-4 shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between mb-3">
+<div>
+<span class="text-[10px] font-bold tracking-wider uppercase text-on-surface-variant block mb-1">WEBHOOKS DISPATCHADOS</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-bold text-on-surface">312</span>
+<span class="text-[11px] text-on-surface-variant">eventos push</span>
+</div>
+<span class="text-[11px] text-on-surface-variant">Tasa de fallo: 0.0%</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">send_and_archive</span>
+</div>
+</div>
+<div class="space-y-1 text-xs">
+<div class="flex justify-between items-center">
+<span class="text-[11px] text-on-surface-variant">DIRESA Cusco Epidemiología:</span>
+<span class="px-1.5 py-0.5 text-[10px] font-bold bg-surface text-on-surface">142</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[11px] text-on-surface-variant">Almacén Farmacia Central:</span>
+<span class="px-1.5 py-0.5 text-[10px] font-bold bg-surface text-on-surface">28</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-[11px] text-on-surface-variant">Backups cifrados S3:</span>
+<span class="px-1.5 py-0.5 text-[10px] font-bold bg-surface text-on-surface">142</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Interactive Table: Endpoints API & Webhooks -->
+<div class="bg-surface shadow-sm mb-6">
+<div class="p-4 bg-surface-container flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="text-sm font-bold tracking-wider uppercase text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">api</span>
+          Endpoints API &amp; Webhooks Activos
+        </h2>
+<p class="text-xs text-on-surface-variant">Matriz de transporte de interoperabilidad HL7/FHIR, REST Gubernamental y colas de contingencia.</p>
+</div>
+<div class="flex items-center gap-2">
+<div class="relative">
+<input class="h-8 pl-8 pr-3 bg-surface text-xs text-on-surface placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary w-48 transition-all" placeholder="Filtrar servicios..." type="text"/>
+<span class="material-symbols-outlined absolute left-2 top-2 text-[16px] text-outline">search</span>
+</div>
+<button class="h-8 px-3 bg-surface hover:bg-surface-container-high text-xs font-semibold text-on-surface flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">tune</span> Filtros
+        </button>
+</div>
+</div>
+<!-- Carbon Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs text-on-surface">
+<thead class="bg-surface-container-high text-[11px] font-bold tracking-wider uppercase text-on-surface-variant select-none">
+<tr>
+<th class="py-3 px-4">Servicio / Destino</th>
+<th class="py-3 px-4">Tipo &amp; Protocolo</th>
+<th class="py-3 px-4">Estado Operativo</th>
+<th class="py-3 px-4">Endpoint URI</th>
+<th class="py-3 px-4">Autenticación / Evento</th>
+<th class="py-3 px-4 text-right">Acciones Directas</th>
+</tr>
+</thead>
+<tbody class="divide-none">
+<!-- Row 1 -->
+<tr class="bg-surface hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-4">
+<div class="font-bold text-on-surface">RENIEC - Consulta DNI v2</div>
+<div class="text-[10px] text-on-surface-variant">Validación de identidad biométrica / padrón civil</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 font-semibold text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary"></span> REST Client
+              </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-tertiary-container text-on-tertiary-container font-semibold text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> OPERATIVO (ONLINE)
+              </span>
+</td>
+<td class="py-3 px-4 font-mono text-[11px] text-on-surface-variant group-hover:text-primary transition-colors">
+              https://api.reniec.gob.pe/v2/dni
+            </td>
+<td class="py-3 px-4">
+<div class="text-[11px] font-medium text-on-surface">Bearer Token</div>
+<div class="text-[10px] text-tertiary">Expira en 48h (Auto-renovación)</div>
+</td>
+<td class="py-3 px-4 text-right space-x-1">
+<button class="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-[11px] transition-colors" onclick="simulatePing(this, 'RENIEC API OK - Latencia: 340ms')">
+                Probar Ping
+              </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-[11px] transition-colors">
+                Ver Logs
+              </button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="bg-surface-container-low/50 hover:bg-surface-container transition-colors group">
+<td class="py-3 px-4">
+<div class="font-bold text-on-surface">MINSA / SIS - Acreditación de Cobertura</div>
+<div class="text-[10px] text-on-surface-variant">Verificación plan gratuito subsidiado / Fissal</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 font-semibold text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary"></span> REST Client
+              </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-secondary-container text-on-surface font-semibold text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> DEGRADADO (CACHÉ LOCAL)
+              </span>
+</td>
+<td class="py-3 px-4 font-mono text-[11px] text-on-surface-variant group-hover:text-primary transition-colors">
+              https://ws.sis.gob.pe/afiliacion
+            </td>
+<td class="py-3 px-4">
+<div class="text-[11px] font-medium text-on-surface">Certificado Mutual TLS</div>
+<div class="text-[10px] text-on-surface-variant">Key ID: SIS-2024-CUSCO</div>
+</td>
+<td class="py-3 px-4 text-right space-x-1">
+<button class="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-[11px] transition-colors" onclick="simulatePing(this, 'MINSA SIS Timeout 504. Fallback Caché activado')">
+                Probar Ping
+              </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-[11px] transition-colors">
+                Ver Logs
+              </button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="bg-surface hover:bg-surface-container-low transition-colors group">
+<td class="py-3 px-4">
+<div class="font-bold text-on-surface">DIRESA Cusco - Exportación HIS Epidemiológica</div>
+<div class="text-[10px] text-on-surface-variant">Reporte estadístico diario CIE-10 para posta cabecera</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 font-semibold text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span> Webhook Saliente
+              </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-primary-container text-on-primary-fixed font-semibold text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span> EN COLA (OFFLINE BATCH)
+              </span>
+</td>
+<td class="py-3 px-4 font-mono text-[11px] text-on-surface-variant group-hover:text-primary transition-colors">
+              https://diresacusco.gob.pe/api/v1/campanas/his
+            </td>
+<td class="py-3 px-4">
+<div class="text-[11px] font-mono text-on-surface font-semibold">on_patient_consultation_closed</div>
+<div class="text-[10px] text-on-surface-variant">HMAC SHA-256 Signature</div>
+</td>
+<td class="py-3 px-4 text-right space-x-1">
+<button class="px-2.5 py-1 bg-primary text-on-primary font-semibold text-[11px] hover:bg-on-primary-fixed-variant transition-colors" onclick="triggerWebhook(this)">
+                Forzar Disparo
+              </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-[11px] transition-colors">
+                Configurar
+              </button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="bg-surface-container-low/50 hover:bg-surface-container transition-colors group">
+<td class="py-3 px-4">
+<div class="font-bold text-on-surface">Almacén Farmacia Regional - Alerta Stock Crítico</div>
+<div class="text-[10px] text-on-surface-variant">Reposición de antibióticos pediátricos y analgésicos</div>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1 font-semibold text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span> Webhook Saliente
+              </span>
+</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-tertiary-container text-on-tertiary-container font-semibold text-[11px]">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ACTIVO
+              </span>
+</td>
+<td class="py-3 px-4 font-mono text-[11px] text-on-surface-variant group-hover:text-primary transition-colors">
+              https://botiquin.semilla.org.pe/hooks/stock
+            </td>
+<td class="py-3 px-4">
+<div class="text-[11px] font-mono text-on-surface font-semibold">on_medication_low_stock</div>
+<div class="text-[10px] text-on-surface-variant">Umbral: &lt; 5 unidades</div>
+</td>
+<td class="py-3 px-4 text-right space-x-1">
+<button class="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-[11px] transition-colors" onclick="simulatePing(this, 'Payload de prueba JSON 200 OK enviado')">
+                Test Payload
+              </button>
+<button class="px-2 py-1 bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface text-[11px] transition-colors">
+                Editar
+              </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Action Toolbar footer -->
+<div class="p-3 bg-surface-container flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-on-surface-variant">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Replicador CouchDB local escucha en puerto seguro: <code class="font-mono bg-surface px-1.5 py-0.5 text-on-surface">5984 (TLSv1.3)</code></span>
+</div>
+<div class="flex items-center gap-2">
+<span>Mostrando 4 conectores activos</span>
+<button class="px-2 py-1 bg-surface text-on-surface font-semibold hover:bg-surface-container-high">Exportar Spec OpenAPI</button>
+</div>
+</div>
+</div>
+<!-- Split Grid: Mesh P2P Diagram & Terminal Logs -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-8">
+<!-- Left Column: Mesh P2P Topology (7 cols) -->
+<div class="xl:col-span-7 bg-surface-container p-5 shadow-sm flex flex-col justify-between">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 bg-surface-container">
+<div>
+<h2 class="text-sm font-bold tracking-wider uppercase text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary">hub</span>
+            Topología Mesh P2P Campamento Rural
+          </h2>
+<span class="text-xs text-on-surface-variant">Conexiones activas en la red ad-hoc Wi-Fi 6 de campaña sin dependencia de Internet</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="h-8 px-3 bg-surface hover:bg-surface-container-high text-xs font-semibold text-on-surface flex items-center gap-1.5 transition-colors shadow-sm" id="btn-export-p2p">
+<span class="material-symbols-outlined text-[16px] text-primary">download</span>
+<span>Descargar Dump Cifrado (.tar.enc)</span>
+</button>
+</div>
+</div>
+<!-- Network Topology Diagram (Inline Vector Graph) -->
+<div class="bg-surface p-4 relative overflow-hidden mb-4">
+<!-- Background subtle grid -->
+<div class="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#161616_1px,transparent_1px)] [background-size:16px_16px]"></div>
+<div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-3 items-center">
+<!-- Column 1: Client Terminals -->
+<div class="space-y-3">
+<div class="bg-surface-container-low p-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">laptop_mac</span>
+<div>
+<div class="font-bold text-xs text-on-surface">Admisión Mesa 01</div>
+<div class="text-[10px] text-on-surface-variant">192.168.4.12 • Ping 3ms</div>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">OK</span>
+</div>
+<div class="bg-surface-container-low p-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">tablet_android</span>
+<div>
+<div class="font-bold text-xs text-on-surface">Box Triaje 01</div>
+<div class="text-[10px] text-on-surface-variant">192.168.4.14 • Ping 5ms</div>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">OK</span>
+</div>
+<div class="bg-surface-container-low p-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">tablet_android</span>
+<div>
+<div class="font-bold text-xs text-on-surface">Box Triaje 02</div>
+<div class="text-[10px] text-on-surface-variant">192.168.4.15 • Ping 4ms</div>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">OK</span>
+</div>
+</div>
+<!-- Column 2: Central Server Node Hub -->
+<div class="flex flex-col items-center justify-center p-4 bg-primary-container text-on-primary-fixed shadow-md my-2 md:my-0">
+<span class="material-symbols-outlined text-[36px] text-primary animate-pulse mb-1">storage</span>
+<div class="font-bold text-xs tracking-wider uppercase text-center">NODO EDGE SERVIDOR</div>
+<div class="text-[11px] font-mono text-on-primary-fixed-variant font-semibold">CUS-VALLE-04</div>
+<div class="mt-2 text-[10px] bg-surface text-on-surface px-2 py-0.5 font-mono">SQLite + CouchDB 3.3</div>
+<!-- Dynamic sync badge -->
+<div class="mt-3 flex items-center gap-1.5 text-[10px] text-on-primary-fixed">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Replicación Bi-direccional P2P</span>
+</div>
+</div>
+<!-- Column 3: Medical Consultancies & Peripherals -->
+<div class="space-y-3">
+<div class="bg-surface-container-low p-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">medical_services</span>
+<div>
+<div class="font-bold text-xs text-on-surface">Consultorio 1 (Med)</div>
+<div class="text-[10px] text-on-surface-variant">192.168.4.21 • Ping 2ms</div>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">OK</span>
+</div>
+<div class="bg-surface-container-low p-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-primary">stethoscope</span>
+<div>
+<div class="font-bold text-xs text-on-surface">Consultorio 2 (Ped)</div>
+<div class="text-[10px] text-on-surface-variant">192.168.4.22 • Ping 3ms</div>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">OK</span>
+</div>
+<div class="bg-surface-container-low p-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-secondary">print</span>
+<div>
+<div class="font-bold text-xs text-on-surface">Impresora Epson BT</div>
+<div class="text-[10px] text-on-surface-variant">Bluetooth BLE • M-30II</div>
+</div>
+</div>
+<span class="px-1.5 py-0.5 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">OK</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Protocol summary status line -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+<div class="bg-surface p-2.5">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant block">Latencia Red Mesh:</span>
+<span class="font-semibold text-on-surface text-sm">3.4 ms <span class="text-[10px] text-tertiary font-normal">(Óptima)</span></span>
+</div>
+<div class="bg-surface p-2.5">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant block">Integridad Criptográfica:</span>
+<span class="font-semibold text-on-surface text-sm">Ed25519 Verified</span>
+</div>
+<div class="bg-surface p-2.5">
+<span class="text-[10px] uppercase font-bold text-on-surface-variant block">Almacenamiento Local:</span>
+<span class="font-semibold text-on-surface text-sm">18.4 GB libres (NVMe)</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Real-time Terminal Log Stream (5 cols) -->
+<div class="xl:col-span-5 bg-inverse-surface text-inverse-on-surface p-4 shadow-sm flex flex-col justify-between font-mono">
+<div>
+<div class="flex items-center justify-between pb-3 bg-inverse-surface mb-3">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-primary-fixed-dim"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-surface-container-highest ml-2">stream_telemetria.log</span>
+</div>
+<div class="flex items-center gap-2 text-[10px] text-surface-container-highest">
+<span class="inline-block w-2 h-2 rounded-full bg-tertiary animate-ping"></span>
+<span>LIVE 1000ms</span>
+</div>
+</div>
+<!-- Terminal Output -->
+<div class="h-80 overflow-y-auto space-y-2 text-[11px] leading-relaxed pr-2 select-text scroll-smooth" id="terminal-stream">
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:28:14]</span>
+<span class="text-primary font-bold">[INFO]</span>
+<span class="text-tertiary-fixed">[P2P-MESH]</span>
+<span>Sincronización delta exitosa con Terminal MED-01 (14 registros actualizados).</span>
+</div>
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:29:02]</span>
+<span class="text-primary font-bold">[INFO]</span>
+<span class="text-tertiary-fixed">[RENIEC]</span>
+<span>DNI 42918274 resuelto desde caché SQLite local (0ms latencia).</span>
+</div>
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:30:11]</span>
+<span class="text-primary-fixed-dim font-bold">[WARN]</span>
+<span class="text-primary-fixed">[STARLINK]</span>
+<span>Latencia incrementada a 240ms por nubosidad densa. Conmutando a modo buffer offline.</span>
+</div>
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:31:45]</span>
+<span class="text-tertiary font-bold">[SUCCESS]</span>
+<span class="text-tertiary-fixed">[WEBHOOK]</span>
+<span>Evento #T-104 despachado a cola local CouchDB para sync posterior.</span>
+</div>
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:32:01]</span>
+<span class="text-primary font-bold">[INFO]</span>
+<span class="text-tertiary-fixed">[BLE-PRINTER]</span>
+<span>Impresión ticket #089 completada vía Bluetooth (Box Triaje 02).</span>
+</div>
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:33:18]</span>
+<span class="text-primary font-bold">[INFO]</span>
+<span class="text-tertiary-fixed">[SIS-WS]</span>
+<span>Validación de asegurado 000492819 exitosa con credencial en caché.</span>
+</div>
+<div class="text-surface-container-highest">
+<span class="text-secondary">[09:34:02]</span>
+<span class="text-primary font-bold">[INFO]</span>
+<span class="text-tertiary-fixed">[HEARTBEAT]</span>
+<span>Consenso Mesh validado: 6 nodos en quórum. Hash raíz: 7a9f2c1b.</span>
+</div>
+</div>
+</div>
+<!-- Terminal Input / Quick Actions -->
+<div class="pt-3 bg-inverse-surface flex items-center justify-between text-xs mt-2">
+<div class="flex items-center gap-2 text-surface-container-highest">
+<span class="text-primary font-bold">&gt;</span>
+<span class="animate-pulse">_</span>
+<span class="text-[10px] text-surface-container-highest">Monitoreo activo daemon v2.4.1</span>
+</div>
+<button class="text-[11px] text-surface-container-highest hover:text-white px-2 py-0.5 bg-surface-variant/20 hover:bg-surface-variant/40 transition-colors" id="btn-clear-logs">
+          Limpiar Vista
+        </button>
+</div>
+</div>
+</div>
+<!-- Operational Alert Box -->
+<div class="bg-primary-container p-4 shadow-sm mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-[24px] mt-0.5 shrink-0">offline_bolt</span>
+<div>
+<h3 class="text-xs font-bold uppercase tracking-wider text-on-primary-fixed">Política Offline-First en Ejecución</h3>
+<p class="text-xs text-on-surface-variant mt-0.5">
+          Si la antena Starlink pierde visión satelital en el valle, la clínica continúa operando sin interrupción. Los registros clínicos, recetas y turnos se guardan en el servidor local Edge y se propagarán a la nube del MINSA en cuanto se restaure la conectividad.
+        </p>
+</div>
+</div>
+<div class="shrink-0 flex items-center gap-2">
+<span class="text-[11px] font-mono text-on-surface-variant">Modo: <strong>Tolerante a Partición (AP)</strong></span>
+</div>
+</div>
+<!-- Footer Technical Verification Line -->
+<div class="bg-surface-container p-4 mb-6 text-xs text-on-surface-variant flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
+<div class="flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-tertiary">verified_user</span>
+<span class="font-semibold text-on-surface">Firma de Nodo:</span>
+<code class="font-mono text-[10px] bg-surface px-1.5 py-0.5">ed25519:8fc72a9e...41b0</code>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">API Gateway:</span>
+<span>Semilla Health Core v4.12.0</span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1.5">
+<span class="font-semibold text-on-surface">Hora Satelital GPS:</span>
+<span class="font-mono text-on-surface font-medium" id="gps-clock">09:34:42 UTC-5</span>
+</div>
+</div>
+<div class="text-[11px] text-on-surface-variant">
+      Iniciativa de Salud Rural Semilla • Cusco, Perú
+    </div>
+</div>
+<!-- Notification Toast Container -->
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none" id="toast-container"></div>
+</div>
+<script>
+  function showToast(message, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'pointer-events-auto px-4 py-2.5 bg-surface text-on-surface shadow-xl text-xs font-medium flex items-center gap-2.5 transition-all duration-300 transform translate-y-2 opacity-0';
+    
+    let icon = 'check_circle';
+    let iconClass = 'text-tertiary';
+    if (type === 'warn') {
+      icon = 'warning';
+      iconClass = 'text-primary';
+    } else if (type === 'error') {
+      icon = 'error';
+      iconClass = 'text-error';
+    }
+
+    toast.innerHTML = `
+      <span class="material-symbols-outlined text-[18px] ${iconClass}">${icon}</span>
+      <span>${message}</span>
+    `;
+
+    container.appendChild(toast);
+    
+    // Animate in
+    setTimeout(() => {
+      toast.classList.remove('translate-y-2', 'opacity-0');
+    }, 10);
+
+    // Remove after 3.5s
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => toast.remove(), 300);
+    }, 3500);
+  }
+
+  function simulatePing(button, msg) {
+    const originalText = button.textContent;
+    button.textContent = 'Probando...';
+    button.disabled = true;
+
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.disabled = false;
+      showToast(msg, 'info');
+
+      // Append log entry
+      appendTerminalLog('INFO', 'PING', msg);
+    }, 600);
+  }
+
+  function triggerWebhook(button) {
+    const originalText = button.textContent;
+    button.textContent = 'Enviando...';
+    button.disabled = true;
+
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.disabled = false;
+      showToast('Lote de 142 registros HIS despachado a DIRESA Cusco', 'info');
+      appendTerminalLog('SUCCESS', 'DIRESA-HIS', 'Disparo forzado manual: Payload 142 registros sincronizado (HTTP 202 Accepted).');
+    }, 800);
+  }
+
+  function appendTerminalLog(level, tag, text) {
+    const stream = document.getElementById('terminal-stream');
+    if (!stream) return;
+
+    const now = new Date();
+    const timeStr = `[${now.toTimeString().split(' ')[0]}]`;
+
+    let levelClass = 'text-primary';
+    if (level === 'WARN') levelClass = 'text-primary-fixed-dim';
+    if (level === 'SUCCESS') levelClass = 'text-tertiary';
+    if (level === 'ERROR') levelClass = 'text-error';
+
+    const item = document.createElement('div');
+    item.className = 'text-surface-container-highest animate-fade-in';
+    item.innerHTML = `
+      <span class="text-secondary">${timeStr}</span> 
+      <span class="${levelClass} font-bold">[${level}]</span> 
+      <span class="text-tertiary-fixed">[${tag}]</span> 
+      <span>${text}</span>
+    `;
+
+    stream.appendChild(item);
+    stream.scrollTop = stream.scrollHeight;
+  }
+
+  // Clear terminal logs
+  const clearBtn = document.getElementById('btn-clear-logs');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      const stream = document.getElementById('terminal-stream');
+      if (stream) stream.innerHTML = '';
+      showToast('Consola de logs limpiada', 'info');
+    });
+  }
+
+  // Backup Export trigger
+  const exportBtn = document.getElementById('btn-export-p2p');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', () => {
+      showToast('Generando bundle cifrado AES-256 de base local...', 'info');
+      setTimeout(() => {
+        showToast('Descarga iniciada: backup-cusco-valle-04.tar.enc (14.2 MB)', 'info');
+      }, 1000);
+    });
+  }
+
+  // Sync Delta Now
+  const syncBtn = document.getElementById('btn-sync-all');
+  if (syncBtn) {
+    syncBtn.addEventListener('click', () => {
+      showToast('Comprobando pares Mesh activos (6 terminales)...', 'info');
+      appendTerminalLog('INFO', 'REPLICATION', 'Disparando sync delta manual contra todos los terminales...');
+      setTimeout(() => {
+        showToast('Todos los terminales sincronizados al quórum más reciente.', 'info');
+        appendTerminalLog('SUCCESS', 'REPLICATION', 'Consenso alcanzado. 0 diferencias detectadas en CouchDB mesh.');
+      }, 1200);
+    });
+  }
+
+  // New Hook button
+  const newHookBtn = document.getElementById('btn-new-hook');
+  if (newHookBtn) {
+    newHookBtn.addEventListener('click', () => {
+      showToast('Abriendo asistente de registro de nuevo webhook...', 'info');
+    });
+  }
+
+  // Clock dynamic updater
+  setInterval(() => {
+    const clock = document.getElementById('gps-clock');
+    if (clock) {
+      const now = new Date();
+      clock.textContent = now.toTimeString().split(' ')[0] + ' UTC-5';
+    }
+  }, 1000);
+</script></main></div></body></html>

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
+import { useScannerStore } from '../../store/scannerStore'
 import { useLogout, useNodeStatus, useCampaigns } from '../../api/hooks'
 
 interface NavbarProps {
@@ -11,6 +12,7 @@ interface NavbarProps {
 export function Navbar({ onOpenMobileMenu }: NavbarProps) {
   const { user, campaignId, logout: logoutStore } = useAuthStore()
   const branding = useBrandingStore()
+  const { openScanner } = useScannerStore()
   const logout = useLogout()
   const navigate = useNavigate()
   const { data: nodeStatus } = useNodeStatus()
@@ -108,8 +110,19 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
           </div>
         </div>
 
-        {/* Notifications & User Profile */}
-        <div className="flex items-center gap-3.5 min-w-max" ref={menuRef}>
+        {/* QR Scanner, Notifications & User Profile */}
+        <div className="flex items-center gap-2 sm:gap-3.5 min-w-max" ref={menuRef}>
+          {/* Quick QR Scanner Button */}
+          <button
+            type="button"
+            onClick={openScanner}
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-primary text-on-primary hover:bg-on-primary-fixed-variant text-[12.5px] font-bold tracking-wide uppercase transition-colors shadow-xs cursor-pointer rounded-none"
+            title="Escanear Código QR de Paciente / Ticket"
+          >
+            <span className="material-symbols-outlined text-[19px]">qr_code_scanner</span>
+            <span className="hidden md:inline">Escanear QR</span>
+          </button>
+
           <div
             className="relative flex items-center justify-center p-2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
             title="Notificaciones de campo"

@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useScannerStore } from '../../store/scannerStore'
+import { PATIENT_DATABASE } from '../../services/patientRegistry'
 
 interface QueuePatient {
   id: number
@@ -106,6 +108,7 @@ const mockPatients: QueuePatient[] = [
 ]
 
 export default function QueuePage() {
+  const { openScanner, showPatientDetail } = useScannerStore()
   const [filterPriority, setFilterPriority] = useState<string>('all')
   const [filterConsultorio, setFilterConsultorio] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
@@ -306,16 +309,27 @@ export default function QueuePage() {
 
       {/* Filter and Command Toolbar */}
       <div className="bg-surface p-3 mb-1 border border-surface-container-high flex flex-col sm:flex-row items-center justify-between gap-3">
-        {/* Search */}
-        <div className="relative w-full sm:w-80">
-          <span className="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">search</span>
-          <input
-            type="text"
-            placeholder="Buscar por DNI, paciente o #Ticket..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 bg-surface-container-low text-xs text-on-surface border border-surface-container-high focus:outline-none focus:border-primary"
-          />
+        {/* Search & Scan */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full sm:w-80">
+            <span className="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">search</span>
+            <input
+              type="text"
+              placeholder="Buscar por DNI, paciente o #Ticket..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-9 pl-9 pr-3 bg-surface-container-low text-xs text-on-surface border border-surface-container-high focus:outline-none focus:border-primary"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={openScanner}
+            className="h-9 px-3 bg-primary text-on-primary hover:bg-on-primary-fixed-variant text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
+            title="Escanear Ticket QR para ver datos completos del paciente"
+          >
+            <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+            <span className="hidden sm:inline">Escanear Ticket</span>
+          </button>
         </div>
 
         {/* Priority Tabs */}
@@ -511,8 +525,19 @@ export default function QueuePage() {
                         <span className="material-symbols-outlined text-[18px]">receipt_long</span>
                       </button>
                       <button
+                        onClick={() => {
+                          const full = PATIENT_DATABASE.find((pt) => pt.ticket === p.ticket)
+                          if (full) showPatientDetail(full)
+                          else setSelectedPatient(p)
+                        }}
+                        title="Ver Ficha Clínica Completa / QR"
+                        className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container border border-surface-container-high transition-colors cursor-pointer rounded-none"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+                      </button>
+                      <button
                         onClick={() => setSelectedPatient(p)}
-                        title="Ver detalles"
+                        title="Ver resumen rápido"
                         className="p-1.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container border border-surface-container-high transition-colors cursor-pointer rounded-none"
                       >
                         <span className="material-symbols-outlined text-[18px]">visibility</span>
@@ -524,6 +549,29 @@ export default function QueuePage() {
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Quick Action Buttons (pulgar derecho) */}
+      <div className="md:hidden grid grid-cols-2 gap-2 my-2">
+        <button
+          type="button"
+          onClick={openScanner}
+          className="h-11 bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-semibold text-xs flex items-center justify-center gap-2 border border-surface-container-high transition-colors cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-xl text-primary">qr_code_scanner</span>
+          <span>Escanear Ticket</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const p = PATIENT_DATABASE[0]
+            if (p) showPatientDetail(p)
+          }}
+          className="h-11 bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-semibold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+        >
+          <span className="material-symbols-outlined text-xl">medical_information</span>
+          <span>Ficha Paciente</span>
+        </button>
       </div>
 
       {/* Mobile Tactile Vertical Cards (from 03_cola_espera_triage_movil.html) */}
@@ -552,19 +600,25 @@ export default function QueuePage() {
                       isRojo ? 'text-error' : isAmarillo ? 'text-[#b28600]' : 'text-tertiary'
                     }`}
                   >
-                    {isRojo ? 'Prioridad I • Emergencia' : isAmarillo ? 'Prioridad II • Urgente' : 'Prioridad III • Normal'}
+                    {isRojo ? 'Emergencia' : isAmarillo ? 'Urgente' : 'Estándar'}
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5">
-                  <span className="material-symbols-outlined text-sm">timer</span>
-                  <span>Espera: {p.espera}</span>
+                <div className="text-right">
+                  <span className="font-mono text-xs text-on-surface-variant flex items-center gap-1">
+                    <span className="material-symbols-outlined text-xs">schedule</span>
+                    {p.hora}
+                  </span>
                 </div>
               </div>
 
               <div className="pl-1.5">
                 <div className="flex items-baseline justify-between">
                   <h2
-                    onClick={() => setSelectedPatient(p)}
+                    onClick={() => {
+                      const full = PATIENT_DATABASE.find((pt) => pt.ticket === p.ticket)
+                      if (full) showPatientDetail(full)
+                      else setSelectedPatient(p)
+                    }}
                     className="text-base font-bold text-on-surface leading-tight cursor-pointer hover:text-primary"
                   >
                     {p.paciente}
@@ -593,6 +647,17 @@ export default function QueuePage() {
                   <span>Destino: <strong>{p.destino}</strong></span>
                 </div>
                 <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      const full = PATIENT_DATABASE.find((pt) => pt.ticket === p.ticket)
+                      if (full) showPatientDetail(full)
+                      else setSelectedPatient(p)
+                    }}
+                    title="Ficha Médica QR"
+                    className="h-9 px-2 bg-surface text-on-surface hover:text-primary border border-surface-container-high text-xs font-mono flex items-center justify-center cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-base">qr_code_2</span>
+                  </button>
                   <button
                     onClick={() => handlePrintSlip(p)}
                     title="Imprimir Ticket"

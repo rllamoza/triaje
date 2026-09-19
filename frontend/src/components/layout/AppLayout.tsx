@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
+import { useScannerStore } from '../../store/scannerStore'
 import { Navbar } from './Navbar'
+import { QrScannerModal } from '../common/QrScannerModal'
+import { PatientDetailModal } from '../common/PatientDetailModal'
 import { useNodeStatus, useLogout } from '../../api/hooks'
 
 interface AppLayoutProps {
@@ -12,6 +15,14 @@ interface AppLayoutProps {
 export function AppLayout({ requiredRoles }: AppLayoutProps) {
   const { isAuthenticated, user, logout: logoutStore } = useAuthStore()
   const branding = useBrandingStore()
+  const {
+    isScannerOpen,
+    closeScanner,
+    handleScannedData,
+    scannedPatient,
+    closePatientDetail,
+    openScanner,
+  } = useScannerStore()
   const logout = useLogout()
   const navigate = useNavigate()
   const location = useLocation()
@@ -204,6 +215,21 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                 </div>
               </div>
 
+              {/* Mobile Quick Action QR Scanner */}
+              <div className="px-3 pt-3 pb-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false)
+                    openScanner()
+                  }}
+                  className="w-full py-2.5 px-3 bg-primary text-on-primary hover:bg-on-primary-fixed-variant font-bold text-[13px] uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs cursor-pointer transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+                  <span>Escanear QR de Paciente</span>
+                </button>
+              </div>
+
               {/* Navigation Links */}
               <div className="py-3">
                 <div className="px-4 pb-2 text-[12.5px] font-bold uppercase tracking-wider text-on-surface-variant">
@@ -287,6 +313,19 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
           <Outlet />
         </main>
       </div>
+
+      {/* Global QR Code Optical Scanner Modal */}
+      <QrScannerModal
+        isOpen={isScannerOpen}
+        onClose={closeScanner}
+        onScan={(scannedText) => handleScannedData(scannedText)}
+      />
+
+      {/* Global Clinical Patient Detail Sheet */}
+      <PatientDetailModal
+        patient={scannedPatient}
+        onClose={closePatientDetail}
+      />
     </div>
   )
 }

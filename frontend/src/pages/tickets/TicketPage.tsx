@@ -1,15 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import QRCode from 'qrcode'
 import { useBrandingStore } from '../../store/brandingStore'
+import { useScannerStore } from '../../store/scannerStore'
+import { PATIENT_DATABASE, generatePatientQrPayload, type DetailedPatient } from '../../services/patientRegistry'
 
 export default function TicketPage() {
   const branding = useBrandingStore()
-  const ticketNumber = 'T-104'
-  const paciente = 'QUISPE CONDORI, JUAN'
-  const dni = '42918274'
-  const edad = '54'
-  const comunidad = 'RUMICHACA SECTOR ALTO'
-  const destino = 'CONSULTORIO 1 (MEDICINA GENERAL)'
-  const medico = 'Dr. M. Huamán Quispe'
+  const { openScanner, showPatientDetail } = useScannerStore()
+
+  // Patient Selection
+  const [currentPatient, setCurrentPatient] = useState<DetailedPatient>(PATIENT_DATABASE[0])
+  const [searchInput, setSearchInput] = useState('42918274')
+  const [qrDataUrl, setQrDataUrl] = useState<string>('')
 
   // Checkboxes
   const [chkQueue, setChkQueue] = useState(true)
@@ -20,13 +22,52 @@ export default function TicketPage() {
 
   const [printStatus, setPrintStatus] = useState<string | null>(null)
 
+  // Generate authentic scannable QR code whenever currentPatient or options change
+  useEffect(() => {
+    const payload = generatePatientQrPayload(currentPatient)
+    QRCode.toDataURL(payload, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      scale: 5,
+      color: {
+        dark: '#111111',
+        light: '#ffffff',
+      },
+    })
+      .then((url) => {
+        setQrDataUrl(url)
+      })
+      .catch((err) => {
+        console.error('Error generating QR code:', err)
+      })
+  }, [currentPatient])
+
+  const handleSearch = () => {
+    const term = searchInput.trim().toLowerCase()
+    if (!term) return
+
+    const match = PATIENT_DATABASE.find(
+      (p) =>
+        p.ticket.toLowerCase().includes(term) ||
+        p.dni.includes(term) ||
+        p.paciente.toLowerCase().includes(term)
+    )
+
+    if (match) {
+      setCurrentPatient(match)
+    }
+  }
+
   const handlePrint = () => {
     setPrintStatus('Enviando comando ESC/POS vía Bluetooth a BT-POS-01...')
     setTimeout(() => {
-      setPrintStatus('¡Ticket impreso y cortado exitosamente!')
-      setTimeout(() => setPrintStatus(null), 3000)
+      setPrintStatus('¡Ticket impreso y cortado exitosamente con código QR de alta fidelidad!')
+      setTimeout(() => setPrintStatus(null), 3500)
     }, 1200)
   }
+
+  const isRojo = currentPatient.prioridad === 'rojo'
+  const isAmarillo = currentPatient.prioridad === 'amarillo'
 
   return (
     <div className="flex flex-col w-full pb-16 text-on-surface">
@@ -47,9 +88,21 @@ export default function TicketPage() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs text-on-surface-variant bg-surface px-3 py-2 border border-surface-container-high">
-          <span className="material-symbols-outlined text-[18px] text-tertiary">print</span>
-          <span>Baudrate: 115200 (8N1) • Papel: 58mm</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={openScanner}
+            className="flex items-center gap-1.5 px-3 py-2 bg-primary text-on-primary hover:bg-on-primary-fixed-variant text-xs font-bold uppercase tracking-wider transition-colors shadow-xs cursor-pointer"
+            title="Escanear cualquier ticket o QR de paciente"
+          >
+            <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+            <span>Escanear QR</span>
+          </button>
+
+          <div className="flex items-center gap-2 font-mono text-xs text-on-surface-variant bg-surface px-3 py-2 border border-surface-container-high">
+            <span className="material-symbols-outlined text-[18px] text-tertiary">print</span>
+            <span>Baudrate: 115200 (8N1) • Papel: 58mm</span>
+          </div>
         </div>
       </div>
 
@@ -67,56 +120,115 @@ export default function TicketPage() {
           {/* Active Patient Selector */}
           <div className="bg-surface p-6 shadow-xs border border-surface-container-high flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-on-surface">
-                1. Paciente Seleccionado
+              <span className="text-xs font-mono uppercase tracking-wider font-semibold text-on-surface flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-primary text-[18px]">person</span>
+                1. Paciente Seleccionado para Emisión
               </span>
               <span className="px-2 py-0.5 bg-tertiary-container text-on-tertiary-container text-[11px] font-mono font-bold">
-                Triaje Completado
+                Triaje Validado
               </span>
             </div>
 
-            {/* Fast Search Bar */}
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">
-                search
-              </span>
-              <input
-                className="w-full h-10 pl-10 pr-20 bg-surface-container-low text-xs font-mono text-on-surface border border-surface-container-high focus:outline-none focus:border-primary"
-                placeholder="Buscar por DNI o #Ticket..."
-                type="text"
-                defaultValue="42918274 - Juan Quispe Condori (#T-104)"
-              />
-              <button className="absolute right-1 top-1 h-8 px-3 bg-surface text-on-surface text-xs font-mono border border-surface-container-high hover:bg-surface-container transition-colors cursor-pointer rounded-none">
+            {/* Fast Search & Scan Bar */}
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <span className="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">
+                  search
+                </span>
+                <input
+                  className="w-full h-10 pl-10 pr-4 bg-surface-container-low text-xs font-mono text-on-surface border border-surface-container-high focus:outline-none focus:border-primary"
+                  placeholder="Buscar por DNI, Nombre o #Ticket..."
+                  type="text"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleSearch}
+                className="h-10 px-4 bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-mono border border-surface-container-high transition-colors cursor-pointer"
+              >
                 Buscar
               </button>
+
+              <button
+                type="button"
+                onClick={openScanner}
+                className="h-10 px-3 bg-primary text-on-primary text-xs font-mono font-bold flex items-center gap-1 hover:bg-on-primary-fixed-variant transition-colors cursor-pointer"
+                title="Escanear ticket para cargarlo"
+              >
+                <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+                <span className="hidden sm:inline">Escanear</span>
+              </button>
+            </div>
+
+            {/* Quick Patient Switcher Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <span className="text-[11px] font-mono text-on-surface-variant mr-1">Rápidos:</span>
+              {PATIENT_DATABASE.map((p) => (
+                <button
+                  key={p.ticket}
+                  type="button"
+                  onClick={() => {
+                    setCurrentPatient(p)
+                    setSearchInput(p.dni)
+                  }}
+                  className={`px-2 py-1 text-[11px] font-mono border transition-colors cursor-pointer ${
+                    currentPatient.ticket === p.ticket
+                      ? 'bg-primary text-on-primary border-primary font-bold'
+                      : 'bg-surface-container-low text-on-surface hover:bg-surface-container border-surface-container-high'
+                  }`}
+                >
+                  #{p.ticket} • {p.paciente.split(',')[0]}
+                </button>
+              ))}
             </div>
 
             {/* Active Loaded Record Card */}
             <div className="bg-surface-container-low p-4 border border-surface-container-high flex flex-col sm:flex-row justify-between gap-4">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-bold text-on-surface">{paciente}</span>
+                  <span className="text-base font-bold text-on-surface">{currentPatient.paciente}</span>
                   <span className="px-2 py-0.5 bg-surface-container-high text-[11px] font-mono font-semibold text-on-surface">
-                    {edad} años
+                    {currentPatient.edad}
                   </span>
                 </div>
                 <div className="text-xs text-on-surface-variant font-mono">
-                  DNI: {dni} • Procedencia: {comunidad}
+                  DNI: {currentPatient.dni} • Procedencia: {currentPatient.comunidad}
                 </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 bg-[#f1c21b] text-[#161616] font-bold">
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <span className={`inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 font-bold ${
+                    isRojo ? 'bg-error text-on-error' : isAmarillo ? 'bg-[#f1c21b] text-[#161616]' : 'bg-tertiary text-on-tertiary'
+                  }`}>
                     <span className="material-symbols-outlined text-[14px]">flag</span>
-                    TRIAGE PRIORIDAD II (URGENCIA)
+                    {currentPatient.prioridadLabel}
                   </span>
-                  <span className="text-[11px] font-mono text-error font-bold">
-                    ALERGIA: Penicilina
-                  </span>
+                  {currentPatient.alergias && currentPatient.alergias.toLowerCase() !== 'ninguna' && (
+                    <span className="text-[11px] font-mono text-error font-bold flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">warning</span>
+                      {currentPatient.alergias}
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col items-end justify-center sm:pl-4">
                 <span className="text-xs font-mono text-secondary">Código Turno</span>
-                <span className="text-3xl font-mono font-bold text-primary">#{ticketNumber}</span>
+                <span className="text-3xl font-mono font-bold text-primary">#{currentPatient.ticket}</span>
               </div>
+            </div>
+
+            {/* Action to view full clinical details */}
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => showPatientDetail(currentPatient)}
+                className="text-xs text-primary hover:underline font-bold flex items-center gap-1 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[16px]">visibility</span>
+                <span>Ver Ficha Médica Completa del Paciente</span>
+              </button>
             </div>
           </div>
 
@@ -187,106 +299,64 @@ export default function TicketPage() {
                   className="mt-0.5 w-4 h-4 accent-primary rounded-none"
                 />
                 <div className="flex flex-col">
-                  <span className="font-bold text-on-surface">Código QR P2P Offline</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-on-surface">Código QR Scannable ISO/IEC 18004</span>
+                    <span className="px-1.5 py-0.2 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold">
+                      Activo &amp; Scannable
+                    </span>
+                  </div>
                   <span className="text-[11px] text-secondary">
-                    Firma digital SHA-256 para validación sin conexión entre estaciones.
+                    Contiene la ficha médica codificada. Al escanearlo abre toda la información del paciente.
                   </span>
                 </div>
               </label>
             </div>
           </div>
 
-          {/* Typography, Density & Language Customization */}
-          <div className="bg-surface p-6 shadow-xs border border-surface-container-high flex flex-col gap-4">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold text-on-surface">
-              3. Tipografía Térmica y Localización
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] text-on-surface-variant font-medium">Idioma de Indicaciones Comunitarias</label>
-                <select className="h-10 px-3 bg-surface-container border border-surface-container-high text-on-surface focus:outline-none focus:border-primary">
-                  <option value="bilingual">Castellano + Quechua Collao</option>
-                  <option value="es">Solo Castellano</option>
-                  <option value="qu">Solo Quechua</option>
-                </select>
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] text-on-surface-variant font-medium">Modo de Fuente Primaria ESC/POS</label>
-                <select className="h-10 px-3 bg-surface-container border border-surface-container-high text-on-surface focus:outline-none focus:border-primary">
-                  <option value="fontA">Font A (12x24 dots - 48 cols estándar)</option>
-                  <option value="fontB">Font B (9x17 dots - 64 cols condensada)</option>
-                </select>
-              </div>
-            </div>
-
-            <label className="inline-flex items-center gap-2 text-xs font-mono cursor-pointer pt-1">
-              <input defaultChecked type="checkbox" className="w-4 h-4 accent-primary rounded-none" />
-              <span className="text-on-surface">Invertir Fondo/Texto en Alertas Críticas (Negativo ESC 45 1)</span>
-            </label>
-          </div>
-
-          {/* Large Primary Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch gap-3">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <button
-              type="button"
               onClick={handlePrint}
-              className="flex-1 h-12 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-mono font-bold flex items-center justify-center gap-2 tracking-wider transition-colors shadow-xs cursor-pointer rounded-none"
+              type="button"
+              className="flex-1 py-3 px-6 bg-primary text-on-primary font-mono font-bold text-sm tracking-wide uppercase hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer rounded-none"
             >
-              <span className="material-symbols-outlined text-[18px]">print</span>
-              <span>IMPRIMIR TICKET TÉRMICO (ENTER)</span>
+              <span className="material-symbols-outlined text-[20px]">print</span>
+              <span>Imprimir Ticket ESC/POS</span>
             </button>
 
             <button
               type="button"
-              onClick={handlePrint}
-              className="h-12 px-4 bg-surface hover:bg-surface-container text-on-surface text-xs font-mono font-semibold flex items-center justify-center gap-2 transition-colors border border-surface-container-high cursor-pointer rounded-none"
+              onClick={() => showPatientDetail(currentPatient)}
+              className="py-3 px-6 bg-surface hover:bg-surface-container text-on-surface font-mono font-bold text-sm border border-surface-container-high transition-colors flex items-center justify-center gap-2 cursor-pointer rounded-none"
             >
-              <span className="material-symbols-outlined text-[18px]">replay</span>
-              <span>Reimprimir #T-103</span>
+              <span className="material-symbols-outlined text-[20px] text-primary">clinical_notes</span>
+              <span>Ver Ficha Detallada</span>
             </button>
-
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="h-12 px-4 bg-surface hover:bg-surface-container text-on-surface text-xs font-mono flex items-center justify-center gap-2 transition-colors border border-surface-container-high cursor-pointer rounded-none"
-            >
-              <span className="material-symbols-outlined text-[18px]">receipt</span>
-              <span>Test Diagnóstico</span>
-            </button>
-          </div>
-
-          {/* Hardware Alert Note */}
-          <div className="p-3 bg-surface-container text-xs font-mono text-on-surface-variant flex items-center gap-3 border border-surface-container-high">
-            <span className="material-symbols-outlined text-primary text-[18px]">info</span>
-            <span>
-              Impresión directa por comandos crudos ESC/POS sin buffer del sistema operativo. Sin retrasos en campo desconectado.
-            </span>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: Real-Time Thermal Receipt Preview */}
+        {/* RIGHT COLUMN: Real-Time Thermal Receipt Preview (58mm Emulation) */}
         <div className="lg:col-span-5 flex flex-col items-center">
-          <div className="w-full max-w-[360px] bg-[#fafafa] text-[#111111] p-6 shadow-lg border border-[#e0e0e0] font-mono select-none">
-            {/* Header */}
-            <div className="text-center flex flex-col items-center">
-              {branding.selectedExportLogo !== 'ninguno' && (
-                <div className="flex justify-center mb-1.5">
-                  {branding.selectedExportLogo === 'ticket_personalizado' && branding.ticketLogoUrl ? (
-                    <img src={branding.ticketLogoUrl} alt="Logo Ticket" className="h-9 w-auto object-contain filter grayscale" />
-                  ) : branding.selectedExportLogo === 'isotipo' && branding.isotipoUrl ? (
-                    <img src={branding.isotipoUrl} alt="Isotipo Ticket" className="h-9 w-auto object-contain filter grayscale" />
-                  ) : branding.logoUrl ? (
-                    <img src={branding.logoUrl} alt="Logo Principal" className="h-8 w-auto object-contain filter grayscale" />
-                  ) : null}
-                </div>
+          <div className="w-full flex items-center justify-between pb-2 mb-2 text-xs font-mono text-on-surface-variant">
+            <span>VISTA PREVIA TÉRMICA (58mm)</span>
+            <span className="text-primary font-semibold">ESCALA 1:1 REAL</span>
+          </div>
+
+          <div className="w-[320px] bg-[#fafafa] text-[#111111] p-5 shadow-2xl border border-[#d0d0d0] font-mono text-xs select-none">
+            {/* Thermal Header */}
+            <div className="text-center flex flex-col items-center gap-1 border-b border-dashed border-[#111111] pb-3">
+              {branding.ticketLogoUrl && (
+                <img
+                  src={branding.ticketLogoUrl}
+                  alt="Logo Ticket"
+                  className="h-10 w-auto max-w-[140px] object-contain mb-1 filter grayscale contrast-200"
+                />
               )}
-              <div className="text-xs font-black tracking-tight uppercase">{branding.exportHeader}</div>
-              <div className="text-[9px] uppercase font-semibold mt-0.5 text-gray-800">
-                {branding.exportSubheader}
+              <div className="font-bold text-sm tracking-tight">{branding.exportHeader}</div>
+              <div className="text-[10px] leading-tight">{branding.exportSubheader}</div>
+              <div className="text-[8px] tracking-widest mt-1 opacity-80">
+                ================================
               </div>
-              <div className="text-[10px]">Puesto Comunal Rumichaca - Urubamba, Cusco</div>
-              <div className="text-[9px] opacity-80 mt-0.5">Nodo Offline: CUS-VALLE-04 • ESC/POS Native</div>
-              <div className="w-full border-b border-dashed border-[#111111] my-2" />
             </div>
 
             {/* Big Ticket Box */}
@@ -294,44 +364,46 @@ export default function TicketPage() {
               <div className="flex flex-col items-center py-2 bg-[#f0f0f0] p-2 my-1">
                 <div className="text-[10px] tracking-widest font-semibold">NÚMERO DE ATENCIÓN EN COLA</div>
                 <div className="text-3xl font-black tracking-tighter my-0.5 text-[#000000]">
-                  # {ticketNumber}
+                  # {currentPatient.ticket}
                 </div>
-                <div className="text-[9px] font-semibold">HORA EMISIÓN: 12/MAY/2025 - 09:20:14</div>
+                <div className="text-[9px] font-semibold">HORA EMISIÓN: 19/SEP/2026 - {currentPatient.hora}</div>
               </div>
             )}
 
             {/* Priority Indicator */}
             <div className="bg-[#111111] text-[#ffffff] px-2 py-1.5 text-center flex flex-col gap-0.5 my-1.5">
               <div className="text-[11px] font-black tracking-widest">
-                *** PRIORIDAD II - URGENCIA ***
+                *** {currentPatient.prioridadLabel.toUpperCase()} ***
               </div>
-              <div className="text-[9px] font-mono opacity-90">TIEMPO ESTIMADO ESPERA: ~12 MINUTOS</div>
+              <div className="text-[9px] font-mono opacity-90">TIEMPO ESTIMADO ESPERA: ~{currentPatient.espera}</div>
             </div>
 
             {/* Patient Demographic */}
             <div className="flex flex-col gap-0.5 text-[10px] my-2">
               <div className="flex justify-between font-semibold">
                 <span>PACIENTE:</span>
-                <span className="font-bold">{paciente}</span>
+                <span className="font-bold">{currentPatient.paciente}</span>
               </div>
               <div className="flex justify-between">
                 <span>DNI / HISTORIA:</span>
-                <span>{dni} / HC-2025-089</span>
+                <span>{currentPatient.dni} / HC-2026-089</span>
               </div>
               <div className="flex justify-between">
                 <span>EDAD / SEXO:</span>
-                <span>{edad} AÑOS / MASCULINO</span>
+                <span>{currentPatient.edad.toUpperCase()} / {currentPatient.sexo === 'M' ? 'MASCULINO' : 'FEMENINO'}</span>
               </div>
               <div className="flex justify-between">
                 <span>COMUNIDAD:</span>
-                <span>{comunidad}</span>
+                <span className="truncate max-w-[180px]">{currentPatient.comunidad}</span>
               </div>
             </div>
 
             {/* Severe Allergy Negative Box */}
-            <div className="bg-[#111111] text-[#ffffff] px-2 py-1 text-center font-bold text-[10px] tracking-tight my-1.5">
-              ! ! ! ALERTA SEVERA: ALERGIA PENICILINA ! ! !
-            </div>
+            {currentPatient.alergias && currentPatient.alergias.toLowerCase() !== 'ninguna' && (
+              <div className="bg-[#111111] text-[#ffffff] px-2 py-1 text-center font-bold text-[10px] tracking-tight my-1.5">
+                ! ! ! ALERTA: {currentPatient.alergias.toUpperCase()} ! ! !
+              </div>
+            )}
 
             {/* Vitals Summary Strip */}
             {chkVitals && (
@@ -340,12 +412,12 @@ export default function TicketPage() {
                   Constantes Vitales de Triaje
                 </div>
                 <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                  <div>PA: <strong className="font-bold">145/95 mmHg</strong></div>
-                  <div>FC: <strong className="font-bold">88 lpm</strong></div>
-                  <div>TEMP: <strong className="font-bold">38.6 °C</strong></div>
-                  <div>SpO2: <strong className="font-bold">92% (Altitud)</strong></div>
-                  <div>FR: <strong className="font-bold">20 rpm</strong></div>
-                  <div>GLUC: <strong className="font-bold">110 mg/dL</strong></div>
+                  <div>PA: <strong className="font-bold">{currentPatient.vitals.pa}</strong></div>
+                  <div>FC: <strong className="font-bold">{currentPatient.vitals.fc}</strong></div>
+                  <div>TEMP: <strong className="font-bold">{currentPatient.vitals.temp}</strong></div>
+                  <div>SpO2: <strong className="font-bold">{currentPatient.vitals.spo2}</strong></div>
+                  <div>FR: <strong className="font-bold">{currentPatient.vitals.fr}</strong></div>
+                  <div>GLUC: <strong className="font-bold">{currentPatient.vitals.gluc}</strong></div>
                 </div>
               </div>
             )}
@@ -354,39 +426,56 @@ export default function TicketPage() {
             {chkDestino && (
               <div className="p-2 border-2 border-[#111111] text-center flex flex-col my-2">
                 <span className="text-[9px] uppercase font-bold tracking-wider">Destino Clínico Asignado</span>
-                <span className="text-sm font-black tracking-tight">{destino}</span>
-                <span className="text-[10px]">Médico Responsable: {medico}</span>
+                <span className="text-sm font-black tracking-tight">{currentPatient.destino}</span>
+                <span className="text-[10px]">Médico Responsable: {currentPatient.medico}</span>
               </div>
             )}
 
             {/* Prescription */}
-            {chkRx && (
+            {chkRx && currentPatient.receta && currentPatient.receta.length > 0 && (
               <div className="flex flex-col gap-1 border-t border-dashed border-[#111111] pt-2 text-[10px] my-1.5">
                 <div className="font-bold text-center uppercase tracking-wider">Receta Médica en Campaña</div>
-                <div className="text-[9px]">1. Paracetamol 500mg - 1 tab c/8h x 3 días.</div>
-                <div className="text-[9px]">2. Naproxeno 550mg - 1 tab c/12h x 4 días.</div>
+                {currentPatient.receta.map((item, i) => (
+                  <div key={i} className="text-[9px]">{item}</div>
+                ))}
               </div>
             )}
 
-            {/* Simulated QR code */}
+            {/* Authentic Scannable QR Code */}
             {chkQr && (
               <div className="flex flex-col items-center justify-center py-2">
-                <div className="w-24 h-24 bg-[#111111] p-1.5 flex items-center justify-center">
-                  <div className="w-full h-full bg-[#fafafa] p-1 grid grid-cols-5 grid-rows-5 gap-0.5">
-                    <div className="bg-[#111111] col-span-2 row-span-2" />
-                    <div className="bg-[#fafafa]" />
-                    <div className="bg-[#111111] col-span-2 row-span-2" />
-                    <div className="bg-[#111111]" />
-                    <div className="bg-[#fafafa]" />
-                    <div className="bg-[#111111]" />
-                    <div className="bg-[#111111] col-span-2 row-span-2" />
-                    <div className="bg-[#111111]" />
-                    <div className="bg-[#fafafa]" />
+                {qrDataUrl ? (
+                  <div
+                    onClick={() => showPatientDetail(currentPatient)}
+                    className="p-1.5 bg-white border-2 border-[#111111] cursor-pointer group relative shadow-xs"
+                    title="Haz clic para ver toda la información detallada del paciente"
+                  >
+                    <img
+                      src={qrDataUrl}
+                      alt={`Código QR Ticket #${currentPatient.ticket}`}
+                      className="w-28 h-28 object-contain transition-transform group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <span className="bg-black/90 text-white text-[9px] font-mono px-1.5 py-0.5 font-bold uppercase">
+                        Ver Ficha
+                      </span>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="w-28 h-28 bg-[#fafafa] border border-dashed border-[#111111] flex items-center justify-center text-[10px] font-mono">
+                    Generando QR...
+                  </div>
+                )}
                 <span className="text-[8px] font-mono tracking-tighter mt-1 opacity-75">
-                  SHA256: 8f92-a1b4-7c3e-90df • DESCONECTADO
+                  SHA256: {currentPatient.hash ?? '8f92-a1b4-7c3e-90df'} • ISO/IEC 18004
                 </span>
+                <button
+                  type="button"
+                  onClick={() => showPatientDetail(currentPatient)}
+                  className="mt-1 text-[9px] text-primary hover:underline font-mono font-bold cursor-pointer"
+                >
+                  [ Ver Ficha Médica Completa ]
+                </button>
               </div>
             )}
 

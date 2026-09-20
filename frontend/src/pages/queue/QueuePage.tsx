@@ -149,14 +149,14 @@ export default function QueuePage() {
     <div className="flex flex-col w-full pb-16 text-on-surface">
       {/* Carbon Emergency Floating Toast (Style 05_cola_espera_triage_carbon.html) */}
       {showToast && (
-        <div className="fixed top-16 right-6 z-50 flex items-start bg-error-container text-on-error-container p-4 shadow-md max-w-md border border-error/30 transition-all duration-300">
-          <span className="material-symbols-outlined text-error mr-3 text-[22px] shrink-0">emergency</span>
-          <div className="flex-1 pr-4">
+        <div className="mb-4 flex items-start bg-error-container text-on-error-container p-3 sm:p-4 shadow-md max-w-full md:max-w-md border border-error/30 transition-all duration-300 relative md:fixed md:top-20 md:right-6 md:z-50">
+          <span className="material-symbols-outlined text-error mr-2.5 sm:mr-3 text-[20px] sm:text-[22px] shrink-0">emergency</span>
+          <div className="flex-1 pr-2 sm:pr-4">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-error">Alerta Roja Inmediata</span>
-              <span className="text-[11px] text-on-surface-variant font-mono">09:15:02</span>
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-error">Alerta Roja Inmediata</span>
+              <span className="text-[10px] sm:text-[11px] text-on-surface-variant font-mono">09:15:02</span>
             </div>
-            <p className="text-xs font-medium text-on-surface mt-1 leading-snug">
+            <p className="text-[11px] sm:text-xs font-medium text-on-surface mt-1 leading-snug">
               Paciente pediátrico derivado con T° 39.8°C (Ticket #T-102). Prioridad 1 Manchester asignada a Consultorio 2.
             </p>
           </div>
@@ -394,14 +394,14 @@ export default function QueuePage() {
       </div>
 
       {/* Active Filter Chips / Status bar */}
-      <div className="px-4 py-2 bg-surface-container flex items-center justify-between text-xs text-on-surface-variant border border-surface-container-high mb-4">
-        <div className="flex items-center gap-2">
+      <div className="px-3 sm:px-4 py-2 bg-surface-container flex flex-wrap items-center justify-between text-xs text-on-surface-variant border border-surface-container-high mb-4 gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <span className="font-medium text-on-surface">Mostrando:</span>
           <span className="font-mono text-primary font-bold">
             {patients.length} de {mockPatients.length} pacientes filtrados
           </span>
-          <span className="text-surface-container-highest">|</span>
-          <span className="text-[11px]">
+          <span className="text-surface-container-highest hidden sm:inline">|</span>
+          <span className="text-[11px] hidden sm:inline">
             Orden: <strong className="text-on-surface">Prioridad Manchester + Tiempo de Espera</strong>
           </span>
         </div>
@@ -418,9 +418,111 @@ export default function QueuePage() {
         </div>
       </div>
 
-      {/* IBM Carbon Data Table */}
-      <div className="bg-surface shadow-xs border border-surface-container-high overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
+      {/* Smartphone Tactile Patient Cards (< md) */}
+      <div className="md:hidden flex flex-col gap-2.5 mb-6">
+        {patients.map((p) => {
+          const isRojo = p.priority === 'rojo'
+          const isAmarillo = p.priority === 'amarillo'
+          return (
+            <article
+              key={p.id}
+              className={`p-3 flex flex-col gap-2 relative border border-surface-container-high shadow-xs ${
+                isRojo ? 'bg-error-container/15' : 'bg-surface'
+              }`}
+            >
+              <div
+                className={`absolute left-0 top-0 bottom-0 w-1.5 ${
+                  isRojo ? 'bg-error' : isAmarillo ? 'bg-[#f1c21b]' : 'bg-tertiary'
+                }`}
+              />
+
+              <div className="flex items-start justify-between gap-2 pl-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono text-xs font-bold px-1.5 py-0.5 bg-surface-container-high text-on-surface">
+                    {p.ticket}
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                      isRojo
+                        ? 'bg-error text-on-error'
+                        : isAmarillo
+                        ? 'bg-[#f1c21b] text-[#161616]'
+                        : 'bg-tertiary text-on-tertiary'
+                    }`}
+                  >
+                    {isRojo ? 'P1 • Emergencia' : isAmarillo ? 'P2 • Urgente' : 'P3 • Normal'}
+                  </span>
+                </div>
+                <div className="text-[11px] font-mono text-on-surface-variant flex items-center gap-1 shrink-0">
+                  <span className="material-symbols-outlined text-[13px]">timer</span> {p.espera}
+                </div>
+              </div>
+
+              <div className="pl-2">
+                <div
+                  onClick={() => setSelectedPatient(p)}
+                  className="text-sm font-bold text-on-surface hover:text-primary transition-colors cursor-pointer"
+                >
+                  {p.paciente}
+                </div>
+                <div className="text-xs text-on-surface-variant font-mono mt-0.5">
+                  {p.edad} • DNI: {p.dni} • {p.hora}
+                </div>
+              </div>
+
+              {p.vitals && p.vitals.length > 0 && (
+                <div className="pl-2 flex flex-wrap gap-1">
+                  {p.vitals.map((v, idx) => (
+                    <span
+                      key={idx}
+                      className="text-[10px] font-mono bg-surface-container px-1.5 py-0.5 border border-surface-container-high text-on-surface"
+                    >
+                      {v}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="pl-2 text-xs text-on-surface-variant">
+                <span className="font-semibold text-on-surface">Motivo:</span> {p.motivo}
+              </div>
+
+              <div className="pl-2 pt-2 border-t border-surface-container-high flex items-center justify-between gap-2">
+                <span className="text-xs font-medium text-primary flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">meeting_room</span> {p.destino}
+                </span>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => handleCall(p)}
+                    className="px-2.5 py-1 text-xs font-bold bg-primary text-on-primary hover:bg-on-primary-fixed-variant transition-colors cursor-pointer"
+                  >
+                    Llamar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handlePrintSlip(p)}
+                    className="px-2 py-1 text-xs font-medium bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-on-surface transition-colors cursor-pointer"
+                  >
+                    Ticket
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPatient(p)}
+                    className="px-2 py-1 text-xs font-medium bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-on-surface transition-colors cursor-pointer"
+                  >
+                    Ficha
+                  </button>
+                </div>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+
+      {/* IBM Carbon Data Table (Desktop & iPad) */}
+      <div className="hidden md:block bg-surface shadow-xs border border-surface-container-high overflow-x-auto">
+        <table className="w-full text-left text-xs border-collapse min-w-[700px]">
           <thead className="bg-surface-container text-on-surface-variant uppercase text-[11px] tracking-wider font-semibold border-b border-surface-container-high">
             <tr>
               <th className="p-3">Ticket #</th>

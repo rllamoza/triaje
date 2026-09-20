@@ -1,0 +1,63 @@
+/* ================================================================
+   TEMA 1: CLINIC (IBM Carbon Clinical Theme)
+   ================================================================ */
+
+:root,
+[data-theme="clinic"] {
+  --theme-id: "clinic";
+  --bg-canvas: #f4f4f4;
+  --bg-pattern: none;
+  --bg-pattern-size: auto;
+
+  /* IBM Carbon Surfaces */
+  --surface: #ffffff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #f4f4f4;
+  --surface-container: #f4f4f4;
+  --surface-container-high: #e0e0e0;
+  --surface-container-highest: #c6c6c6;
+
+  /* Typography & Contrast */
+  --on-surface: #161616;
+  --on-surface-variant: #525252;
+  --secondary: #6f6f6f;
+  --outline: #8d8d8d;
+  --outline-variant: #e0e0e0;
+
+  /* Primary IBM Blue */
+  --primary: #0f62fe;
+  --primary-hover: #0043ce;
+  --primary-container: #d0e2ff;
+  --on-primary: #ffffff;
+  --on-primary-container: #001d6c;
+  --primary-fixed-dim: #78a9ff;
+
+  /* Status */
+  --tertiary: #198038;
+  --tertiary-container: #a7f0ba;
+  --on-tertiary-container: #044317;
+
+  --warning: #f1c21b;
+  --warning-dark: #b28600;
+
+  --error: #da1e28;
+  --error-container: #fff1f1;
+  --on-error-container: #750e13;
+
+  --inverse-surface: #393939;
+  --inverse-on-surface: #f4f4f4;
+
+  /* Cards */
+  --card-bg: #ffffff;
+  --card-border: #e0e0e0;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  /* Micro-radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-card: 4px;
+  --radius-pill: 6px;
+
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}

@@ -5,10 +5,10 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Semilla Triaje de Salud — Asistencia Médica</title>
-    <!-- IBM Plex Sans & IBM Plex Mono -->
+    <!-- IBM Plex Sans & IBM Plex Mono + Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <!-- Google Material Symbols Outlined -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
@@ -21,64 +21,64 @@
             colors: {
               "secondary-fixed-dim": "#c6c6c6",
               "secondary-fixed": "#e0e0e0",
-              "surface-container-lowest": "#ffffff",
-              "primary-fixed": "#d0e2ff",
-              "outline": "#8d8d8d",
-              "background": "#ffffff",
-              "on-secondary-fixed": "#161616",
-              "surface-container-high": "#e0e0e0",
-              "surface-container-low": "#f4f4f4",
-              "surface": "#ffffff",
-              "on-surface-variant": "#525252",
-              "surface-bright": "#ffffff",
-              "on-tertiary-container": "#044317",
+              "surface-container-lowest": "var(--surface-container-lowest, #ffffff)",
+              "primary-fixed": "var(--primary-container, #d0e2ff)",
+              "outline": "var(--outline, #8d8d8d)",
+              "background": "var(--bg-canvas, #ffffff)",
+              "on-secondary-fixed": "var(--on-surface, #161616)",
+              "surface-container-high": "var(--surface-container-high, #e0e0e0)",
+              "surface-container-low": "var(--surface-container-low, #f4f4f4)",
+              "surface": "var(--surface, #ffffff)",
+              "on-surface-variant": "var(--on-surface-variant, #525252)",
+              "surface-bright": "var(--surface, #ffffff)",
+              "on-tertiary-container": "var(--on-tertiary-container, #044317)",
               "on-error": "#ffffff",
-              "primary-fixed-dim": "#78a9ff",
-              "surface-tint": "#0f62fe",
-              "tertiary-fixed": "#a7f0ba",
-              "error": "#da1e28",
-              "primary": "#0f62fe",
-              "tertiary-container": "#a7f0ba",
-              "on-primary": "#ffffff",
-              "on-primary-fixed": "#001d6c",
-              "on-background": "#161616",
-              "surface-container-highest": "#c6c6c6",
-              "on-surface": "#161616",
-              "secondary": "#6f6f6f",
-              "error-container": "#fff1f1",
+              "primary-fixed-dim": "var(--primary-fixed-dim, #78a9ff)",
+              "surface-tint": "var(--primary, #0f62fe)",
+              "tertiary-fixed": "var(--tertiary-container, #a7f0ba)",
+              "error": "var(--error, #da1e28)",
+              "primary": "var(--primary, #0f62fe)",
+              "tertiary-container": "var(--tertiary-container, #a7f0ba)",
+              "on-primary": "var(--on-primary, #ffffff)",
+              "on-primary-fixed": "var(--on-primary-container, #001d6c)",
+              "on-background": "var(--on-surface, #161616)",
+              "surface-container-highest": "var(--surface-container-highest, #c6c6c6)",
+              "on-surface": "var(--on-surface, #161616)",
+              "secondary": "var(--secondary, #6f6f6f)",
+              "error-container": "var(--error-container, #fff1f1)",
               "on-tertiary": "#ffffff",
-              "on-primary-fixed-variant": "#0043ce",
-              "on-primary-container": "#161616",
-              "on-error-container": "#750e13",
-              "inverse-surface": "#393939",
-              "primary-container": "#d0e2ff",
-              "secondary-container": "#e0e0e0",
-              "outline-variant": "#e0e0e0",
-              "surface-dim": "#e0e0e0",
-              "inverse-on-surface": "#f4f4f4",
-              "on-tertiary-fixed-variant": "#044317",
-              "surface-variant": "#f4f4f4",
-              "surface-container": "#f4f4f4",
-              "inverse-primary": "#78a9ff",
-              "on-secondary-fixed-variant": "#525252",
+              "on-primary-fixed-variant": "var(--primary-hover, #0043ce)",
+              "on-primary-container": "var(--on-primary-container, #161616)",
+              "on-error-container": "var(--on-error-container, #750e13)",
+              "inverse-surface": "var(--inverse-surface, #393939)",
+              "primary-container": "var(--primary-container, #d0e2ff)",
+              "secondary-container": "var(--surface-container-high, #e0e0e0)",
+              "outline-variant": "var(--outline-variant, #e0e0e0)",
+              "surface-dim": "var(--surface-container-high, #e0e0e0)",
+              "inverse-on-surface": "var(--inverse-on-surface, #f4f4f4)",
+              "on-tertiary-fixed-variant": "var(--on-tertiary-container, #044317)",
+              "surface-variant": "var(--surface-container, #f4f4f4)",
+              "surface-container": "var(--surface-container, #f4f4f4)",
+              "inverse-primary": "var(--inverse-primary, #78a9ff)",
+              "on-secondary-fixed-variant": "var(--on-surface-variant, #525252)",
               "on-secondary": "#ffffff",
-              "tertiary": "#198038",
-              "on-secondary-container": "#525252",
-              "on-tertiary-fixed": "#022d0d",
+              "tertiary": "var(--tertiary, #198038)",
+              "on-secondary-container": "var(--on-surface-variant, #525252)",
+              "on-tertiary-fixed": "var(--on-tertiary-container, #022d0d)",
               "tertiary-fixed-dim": "#42be65"
             },
             borderRadius: {
-              DEFAULT: "0.125rem",
-              lg: "0.25rem",
-              xl: "0.5rem",
-              full: "0.75rem"
+              DEFAULT: "var(--radius-xs, 0.125rem)",
+              lg: "var(--radius-sm, 0.25rem)",
+              xl: "var(--radius-card, 0.5rem)",
+              full: "var(--radius-pill, 0.75rem)"
             },
             fontFamily: {
-              headline: ["IBM Plex Sans", "sans-serif"],
-              display: ["IBM Plex Sans", "sans-serif"],
-              body: ["IBM Plex Sans", "sans-serif"],
-              label: ["IBM Plex Sans", "sans-serif"],
-              mono: ["IBM Plex Mono", "monospace"]
+              headline: ["var(--font-sans, 'IBM Plex Sans')", "sans-serif"],
+              display: ["var(--font-sans, 'IBM Plex Sans')", "sans-serif"],
+              body: ["var(--font-sans, 'IBM Plex Sans')", "sans-serif"],
+              label: ["var(--font-sans, 'IBM Plex Sans')", "sans-serif"],
+              mono: ["var(--font-mono, 'IBM Plex Mono')", "monospace"]
             }
           }
         }

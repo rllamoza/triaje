@@ -1,0 +1,182 @@
+/* ================================================================
+   TEMA 3: CYBERPUNK (Stitch #19 y #20 - Nexus Synth)
+   Dark Synth Canvas, Dark Glass, Píldora Neón & Glow HUD
+   ================================================================ */
+
+[data-theme="cyberpunk"] {
+  --theme-id: "cyberpunk";
+
+  /* Canvas Synthwave oscuro con retícula neón púrpura */
+  --bg-canvas: #05050d;
+  --bg-pattern: linear-gradient(to right, rgba(168, 85, 247, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
+  --bg-pattern-size: 24px 24px;
+
+  /* Superficies Dark Glass */
+  --surface: rgba(16, 14, 34, 0.88);
+  --surface-container-lowest: #05050d;
+  --surface-container-low: rgba(11, 10, 22, 0.8);
+  --surface-container: rgba(23, 20, 48, 0.85);
+  --surface-container-high: rgba(35, 30, 70, 0.9);
+  --surface-container-highest: rgba(168, 85, 247, 0.28);
+
+  /* Texto y Contrastes Brillantes */
+  --on-surface: #f1f5f9;
+  --on-surface-variant: #94a3b8;
+  --secondary: #06b6d4;
+  --outline: rgba(168, 85, 247, 0.45);
+  --outline-variant: rgba(168, 85, 247, 0.2);
+
+  /* Primarios Neón Magenta & Púrpura */
+  --primary: #d946ef;
+  --primary-hover: #c026d3;
+  --primary-container: rgba(217, 70, 239, 0.18);
+  --on-primary: #ffffff;
+  --on-primary-container: #f5d0fe;
+  --primary-fixed-dim: #a855f7;
+
+  /* Prioridades */
+  --tertiary: #10b981;
+  --tertiary-container: rgba(16, 185, 129, 0.2);
+  --on-tertiary-container: #6ee7b7;
+
+  --warning: #f59e0b;
+  --warning-dark: #fbbf24;
+
+  --error: #f43f5e;
+  --error-container: rgba(244, 63, 94, 0.2);
+  --on-error-container: #fda4af;
+
+  --inverse-surface: #f1f5f9;
+  --inverse-on-surface: #0b0a16;
+
+  /* Tarjetas Dark Glass con Resplandor Neón */
+  --card-bg: rgba(16, 14, 34, 0.88);
+  --card-border: rgba(168, 85, 247, 0.28);
+  --card-backdrop: blur(24px) saturate(190%);
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.7), 0 0 20px rgba(168, 85, 247, 0.15);
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+
+  --font-sans: 'Plus Jakarta Sans', 'IBM Plex Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+}
+
+/* ================================================================
+   REGLAS DE ESTILO COMPONENTES — CYBERPUNK
+   ================================================================ */
+
+/* 1. Tarjetas Dark Glass con Glow Neón */
+[data-theme="cyberpunk"] .bg-surface,
+[data-theme="cyberpunk"] .dark-glass {
+  background: rgba(16, 14, 34, 0.88) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 1px solid rgba(168, 85, 247, 0.28) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8), 0 0 20px rgba(168, 85, 247, 0.15) !important;
+  color: #f1f5f9 !important;
+}
+
+/* Contenedores secundarios Dark Synth */
+[data-theme="cyberpunk"] .bg-surface-container {
+  background: rgba(23, 20, 48, 0.85) !important;
+  border-radius: 12px !important;
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+[data-theme="cyberpunk"] .bg-surface-container-low {
+  background: rgba(11, 10, 22, 0.75) !important;
+}
+
+[data-theme="cyberpunk"] .border-surface-container-high {
+  border-color: rgba(168, 85, 247, 0.25) !important;
+}
+
+/* 2. Botones con Degradado Neón y Resplandor */
+[data-theme="cyberpunk"] button.bg-primary {
+  background: linear-gradient(135deg, #a855f7, #d946ef) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.45) !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3) !important;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+
+[data-theme="cyberpunk"] button.bg-primary:hover {
+  filter: brightness(1.15) !important;
+  box-shadow: 0 0 28px rgba(217, 70, 239, 0.7) !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme="cyberpunk"] button.bg-primary:active {
+  transform: scale(0.97) !important;
+}
+
+/* 3. Inputs y Formularios Dark Synth */
+[data-theme="cyberpunk"] input,
+[data-theme="cyberpunk"] select,
+[data-theme="cyberpunk"] textarea {
+  background-color: #0b0a16 !important;
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+  color: #f1f5f9 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+[data-theme="cyberpunk"] input:focus,
+[data-theme="cyberpunk"] select:focus,
+[data-theme="cyberpunk"] textarea:focus {
+  border-color: #d946ef !important;
+  outline: 2px solid rgba(217, 70, 239, 0.5) !important;
+  box-shadow: 0 0 18px rgba(217, 70, 239, 0.4) !important;
+}
+
+/* 4. Tablas Holográficas Dark Synth */
+[data-theme="cyberpunk"] table {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  background-color: rgba(16, 14, 34, 0.9) !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+[data-theme="cyberpunk"] th {
+  background-color: #13102c !important;
+  color: #f5d0fe !important;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.3) !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+[data-theme="cyberpunk"] td {
+  border-bottom: 1px solid rgba(168, 85, 247, 0.15) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="cyberpunk"] tr:hover td {
+  background-color: rgba(35, 25, 65, 0.8) !important;
+}
+
+/* 5. Títulos con Resplandor Neón */
+[data-theme="cyberpunk"] h1,
+[data-theme="cyberpunk"] h2,
+[data-theme="cyberpunk"] h3 {
+  color: #ffffff !important;
+  text-shadow: 0 0 12px rgba(217, 70, 239, 0.45);
+}
+
+/* 6. Utilidades Neón */
+[data-theme="cyberpunk"] .neon-border {
+  border: 1px solid rgba(168, 85, 247, 0.35) !important;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.2) !important;
+}
+
+[data-theme="cyberpunk"] .neon-pill-active {
+  background: linear-gradient(135deg, #a855f7, #d946ef) !important;
+  box-shadow: 0 0 25px rgba(217, 70, 239, 0.6), 0 0 10px rgba(168, 85, 247, 0.4) !important;
+}

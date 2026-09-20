@@ -43,16 +43,23 @@ Hacer doble clic en `iniciar_proyecto.bat` para iniciar automáticamente el back
    ```bash
    cd backend
    php artisan migrate --seed
-   php artisan serve --port=8000
+   php artisan serve --host=0.0.0.0 --port=8000
    ```
 2. **Frontend**:
    ```bash
    cd frontend
    npm install
-   npm run dev
+   npm run dev -- --host 0.0.0.0
    ```
 
-Acceder en el navegador: `http://localhost:5173`
+O ejecutar directamente:
+```bash
+iniciar_proyecto.bat
+```
+
+Acceder en el navegador:
+- Local: `http://localhost:5173`
+- Red Local (móviles, tablets, otras PCs): `http://<TU_IP_LOCAL>:5173` (ej. `http://192.168.0.251:5173`)
 
 ---
 

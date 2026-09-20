@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
+    host: '0.0.0.0',
     port: 5173,
     proxy: {
       '/api': {
@@ -13,6 +14,6 @@ export default defineConfig({
     },
   },
   define: {
-    'import.meta.env.VITE_API_URL': JSON.stringify('http://localhost:8000/api'),
+    'import.meta.env.VITE_API_URL': JSON.stringify('/api'),
   },
 })

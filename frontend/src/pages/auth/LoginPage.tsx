@@ -73,22 +73,65 @@ export default function LoginPage() {
         campaign_id: selectedCampaignId,
       })
       setAuth({ ...data, campaign_id: selectedCampaignId, station_id: selectedStation })
-      navigate('/admision')
-    } catch {
-      setPinError('PIN de guardia inválido')
+      navigate('/queue')
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setPinError(msg ?? 'PIN de guardia inválido. Intente con 1234, 8247 o 5519.')
     } finally {
       setLoading(false)
     }
   }
 
   const handlePinChange = (idx: number, val: string) => {
-    if (val.length > 1) val = val.slice(-1)
+    const clean = val.replace(/\D/g, '')
+    if (!clean) {
+      const next = [...pin]
+      next[idx] = ''
+      setPin(next)
+      return
+    }
+    if (clean.length > 1) {
+      const digits = clean.slice(0, 4).split('')
+      const next = [...pin]
+      digits.forEach((d, i) => {
+        if (idx + i < 4) next[idx + i] = d
+      })
+      setPin(next)
+      const nextFocus = Math.min(3, idx + digits.length)
+      document.getElementById(`pin-box-${nextFocus}`)?.focus()
+      return
+    }
     const next = [...pin]
-    next[idx] = val
+    next[idx] = clean
     setPin(next)
-    if (val && idx < 3) {
+    if (idx < 3) {
       document.getElementById(`pin-box-${idx + 1}`)?.focus()
     }
+  }
+
+  const handlePinKeyDown = (idx: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !pin[idx] && idx > 0) {
+      document.getElementById(`pin-box-${idx - 1}`)?.focus()
+    }
+  }
+
+  const handlePinPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4)
+    if (text) {
+      const next = ['', '', '', '']
+      text.split('').forEach((d, i) => {
+        next[i] = d
+      })
+      setPin(next)
+      document.getElementById(`pin-box-${Math.min(3, text.length)}`)?.focus()
+    }
+  }
+
+  const handleSelectPinPreset = (presetPin: string, presetResponsable: string) => {
+    setPin(presetPin.split(''))
+    setResponsable(presetResponsable)
+    setPinError('')
   }
 
   return (
@@ -323,21 +366,61 @@ export default function LoginPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider text-center">
-                    PIN de Contingencia de 4 Dígitos
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                      PIN de Contingencia (4 Dígitos)
+                    </label>
+                    <span className="text-[11px] text-secondary font-mono">
+                      Admin: 1234
+                    </span>
+                  </div>
                   <div className="flex justify-center gap-3">
                     {[0, 1, 2, 3].map((i) => (
                       <input
                         key={i}
                         id={`pin-box-${i}`}
                         type="password"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         maxLength={1}
                         value={pin[i]}
+                        onFocus={(e) => e.target.select()}
                         onChange={(e) => handlePinChange(i, e.target.value)}
-                        className="w-12 h-14 bg-surface-container border border-surface-container-high text-center text-2xl font-mono font-bold text-on-surface focus:bg-surface focus:border-primary focus:outline-none rounded-none"
+                        onKeyDown={(e) => handlePinKeyDown(i, e)}
+                        onPaste={handlePinPaste}
+                        className="w-12 h-14 bg-surface-container border border-surface-container-high text-center text-2xl font-mono font-bold text-on-surface focus:bg-surface focus:border-primary focus:outline-none rounded-none shadow-xs"
                       />
                     ))}
+                  </div>
+
+                  {/* Quick Preset PIN Chips */}
+                  <div className="pt-2">
+                    <div className="text-[11px] text-on-surface-variant mb-1.5 font-medium">
+                      PINs rápidos configurados:
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleSelectPinPreset('1234', 'Dr. Administrador de Guardia')}
+                        className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
+                      >
+                        ⚡ 1234 (Admin)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectPinPreset('8247', 'Dr. Marco Huamán Quispe')}
+                        className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
+                      >
+                        🩺 8247 (Médico)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSelectPinPreset('5519', 'Lic. Sofía Benavides Roca')}
+                        className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
+                      >
+                        📋 5519 (Triaje)
+                      </button>
+                    </div>
                   </div>
                 </div>
 

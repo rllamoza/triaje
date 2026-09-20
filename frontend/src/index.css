@@ -1,6 +1,8 @@
+@import './styles/themes.css';
+
 /* ================================================================
    SISTEMA DE TRIAJE MÉDICO - SEMILLA MÉDICA
-   Design System — IBM Carbon Clinical Theme
+   Design System — IBM Carbon Clinical Theme (Default Fallback)
    ================================================================ */
 
 :root {

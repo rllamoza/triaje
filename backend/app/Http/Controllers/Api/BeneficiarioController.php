@@ -13,19 +13,33 @@ class BeneficiarioController extends Controller
     public function reniecLookup(string $dni)
     {
         if (!preg_match('/^\d{8}$/', $dni)) {
-            return response()->json(['message' => 'DNI debe tener 8 dígitos'], 422);
+            return response()->json(['message' => 'DNI debe tener 8 dígitos numéricos'], 422);
         }
 
-        $data = $this->reniec->lookup($dni);
+        $raw = $this->reniec->lookup($dni);
 
-        if (!$data) {
-            return response()->json(['message' => 'DNI no encontrado en RENIEC', 'from_cache' => false], 404);
+        if (!$raw) {
+            return response()->json(['message' => 'DNI no encontrado en RENIEC ni en Padrón Local', 'from_cache' => false], 404);
         }
+
+        $mapped = $this->reniec->mapToForm($raw, $dni);
 
         return response()->json([
-            'found'      => true,
-            'from_cache' => true,
-            'data'       => $this->reniec->mapToForm($data),
+            'found'            => true,
+            'from_cache'       => ($mapped['source'] ?? '') !== 'RENIEC Cloud Oficial',
+            'source'           => $mapped['source'] ?? 'Padrón Comunitario',
+            'data'             => $mapped,
+            // Atributos directos en primer nivel para compatibilidad total con cualquier cliente:
+            'dni'              => $mapped['dni'],
+            'nombres'          => $mapped['nombres'],
+            'apellido_paterno' => $mapped['apellido_paterno'],
+            'apellido_materno' => $mapped['apellido_materno'],
+            'apellidos'        => $mapped['apellidos'],
+            'fecha_nacimiento' => $mapped['fecha_nacimiento'],
+            'sexo'             => $mapped['sexo'],
+            'comunidad'        => $mapped['comunidad'],
+            'telefono'         => $mapped['telefono'],
+            'direccion'        => $mapped['direccion'],
         ]);
     }
 

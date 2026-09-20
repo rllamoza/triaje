@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Semilla Salud: Interfaz Clínica con Píldora Fluida y Físicas Spring (Desktop)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            corporate: "#0a2540",
+            "corporate-dark": "#06182a",
+            "corporate-light": "#133b63",
+            clinical: "#0f62fe",
+            "clinical-soft": "#e8f1ff",
+            "clinical-border": "#cbdbf5",
+            surface: "#f8f9ff"
+          },
+          fontFamily: {
+            sans: ["'Plus Jakarta Sans'", "sans-serif"],
+            mono: ["'JetBrains Mono'", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent !important;
+      outline: none;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #f8f9ff;
+      background-image: 
+        linear-gradient(to right, rgba(10, 37, 64, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(10, 37, 64, 0.05) 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .spring-easing {
+      transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid rgba(203, 219, 245, 0.85);
+    }
+    .dock-pill {
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 4px 16px rgba(10, 37, 64, 0.35);
+    }
+    .fab-item {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased pb-28">
+
+  <!-- Desktop Main Container -->
+  <div class="max-w-[1280px] mx-auto px-6 pt-6 flex flex-col gap-6">
+
+    <!-- 1. TOP HEADER DESKTOP -->
+    <header class="glass-card rounded-2xl px-5 py-3.5 flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-4">
+        <!-- Hamburger Button with indicator -->
+        <button id="btn-drawer-open" aria-label="Abrir Menú Clínico" class="relative w-11 h-11 rounded-xl bg-white border border-clinical-border flex items-center justify-center text-corporate hover:bg-slate-50 active:scale-95 transition-transform spring-easing shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 absolute -top-0.5 -right-0.5 ring-2 ring-white"></span>
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
+
+        <!-- Brand identity -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-corporate text-emerald-400 flex items-center justify-center font-bold text-xl shadow-sm">
+            <span class="material-symbols-outlined text-[24px]">potted_plant</span>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-bold text-corporate tracking-wider uppercase font-sans">SEMILLA SALUD</span>
+              <span class="text-[11px] font-semibold text-clinical bg-clinical-soft px-2 py-0.5 rounded border border-clinical/20 uppercase font-sans">SISTEMA CLÍNICO</span>
+            </div>
+            <span class="text-xs font-medium text-slate-500 font-sans">Micro-Interactions &amp; Spring Dynamics</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-mono text-xs font-semibold text-emerald-800 tracking-wider">SPRING PHYS: 120 FPS</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-corporate text-white font-bold text-xs flex items-center justify-center shadow-sm tracking-wider">
+          SC
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. TRES TARJETAS DE ARQUITECTURA TÉCNICA (GRID 3 COLUMNAS) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Card 1 -->
+      <div class="glass-card rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:border-clinical/40 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-clinical">
+            <span class="material-symbols-outlined text-[22px]">web</span>
+          </div>
+          <span class="font-mono text-[11px] font-bold text-clinical bg-blue-50 px-2.5 py-1 rounded border border-blue-200 tracking-wider">GLASS BLUR NATIVO</span>
+        </div>
+        <h3 class="text-sm font-bold text-corporate flex items-center gap-1.5">
+          1. Vidrio Clínico Esmerilado <span class="w-2 h-2 rounded-full bg-clinical"></span>
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Efecto esmerilado real con <code class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-corporate font-semibold">backdrop-blur-md/lg</code>, <code class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-corporate font-semibold">-webkit-backdrop-filter</code>, contraste clínico y bordes en <code class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-corporate font-semibold">border-[#cbdbf5]</code>.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="glass-card rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:border-emerald-300 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+            <span class="material-symbols-outlined text-[22px]">all_inclusive</span>
+          </div>
+          <span class="font-mono text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 tracking-wider">FRAMER SPRINGS</span>
+        </div>
+        <h3 class="text-sm font-bold text-corporate flex items-center gap-1.5">
+          2. Resorte Físico Orgánico <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Cero movimiento lineal. Curva <code class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-corporate font-semibold">cubic-bezier(0.34, 1.56, 0.64, 1)</code> emulando rigidez (450) y amortiguación (28) con rebote inercial orgánico.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="glass-card rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:border-cyan-300 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="w-10 h-10 rounded-xl bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600">
+            <span class="material-symbols-outlined text-[22px]">phone_iphone</span>
+          </div>
+          <span class="font-mono text-[11px] font-bold text-cyan-700 bg-cyan-50 px-2.5 py-1 rounded border border-cyan-200 tracking-wider">ZERO FRICTION TAP</span>
+        </div>
+        <h3 class="text-sm font-bold text-corporate flex items-center gap-1.5">
+          3. Tap Highlight Bloqueado <span class="w-2 h-2 rounded-full bg-cyan-500"></span>
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          <code class="font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 text-corporate font-semibold">-webkit-tap-highlight-color: transparent</code> en cada botón móvil, erradicando cajas azules predeterminadas en Safari y Chrome.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. HERO DASHBOARD PRINCIPAL: PANEL DE CONTROL CLÍNICO -->
+    <section class="glass-card rounded-3xl p-7 shadow-sm flex flex-col gap-5">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="w-3 h-3 rounded-full bg-clinical"></span>
+          <h2 class="text-lg font-bold text-corporate">Panel de Control Clínico: Visión Holística</h2>
+        </div>
+        <span id="hero-module-badge" class="font-mono text-xs font-bold text-clinical bg-clinical-soft px-3 py-1 rounded-lg border border-clinical-border tracking-wider">TAB 01 / DASHBOARD</span>
+      </div>
+      <p class="text-xs font-mono text-slate-500">Telemetría de Red de Campo &amp; Monitoreo en Tiempo Real</p>
+
+      <!-- Inner Vision Holistica Container -->
+      <div class="bg-white/80 border border-clinical-border rounded-2xl p-10 flex flex-col items-center text-center shadow-inner gap-4">
+        <div class="w-18 h-18 p-3.5 rounded-2xl border-2 border-clinical/70 bg-clinical-soft/60 flex items-center justify-center text-clinical shadow-sm">
+          <span id="hero-icon" class="material-symbols-outlined text-[42px]">home</span>
+        </div>
+        <h3 id="hero-title" class="text-xl font-bold text-corporate">Panel de Control Clínico: Visión Holística</h3>
+        <p id="hero-desc" class="text-sm text-slate-600 max-w-xl leading-relaxed">
+          Interactuando con el módulo <span class="font-mono font-semibold text-corporate">[TAB 01 / DASHBOARD]</span>. Los datos viajan por el canal de eventos P2P del sistema Semilla.
+        </p>
+
+        <!-- Spring Spec Badges Row -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-3 font-mono text-xs">
+          <div class="bg-surface rounded-xl px-3.5 py-2 border border-clinical-border flex items-center gap-2 shadow-sm">
+            <span class="text-slate-500">Framer Spring:</span>
+            <span class="font-semibold text-clinical">stiffness 450, damping 28</span>
+          </div>
+          <div class="bg-surface rounded-xl px-3.5 py-2 border border-clinical-border flex items-center gap-2 shadow-sm">
+            <span class="text-slate-500">Backdrop-Filter:</span>
+            <span class="font-semibold text-emerald-700">blur(24px) saturate(180%)</span>
+          </div>
+          <div class="bg-surface rounded-xl px-3.5 py-2 border border-clinical-border flex items-center gap-2 shadow-sm">
+            <span class="text-slate-500">Tap Highlight:</span>
+            <span class="font-semibold text-purple-700">transparent (zero glare)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 4. FLOATING BOTTOM NAVIGATION DOCK -->
+  <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-auto" aria-label="Navegación Flotante">
+    <div id="dock-container" class="relative bg-white/90 backdrop-blur-2xl border border-clinical-border/90 rounded-full p-2 flex items-center gap-2 shadow-[0_16px_40px_rgba(10,37,64,0.16)]">
+      
+      <!-- The sliding fluid spring pill indicator -->
+      <div id="fluid-pill" class="dock-pill absolute top-2 h-[calc(100%-16px)] rounded-full bg-corporate z-0 pointer-events-none" style="width: 76px; transform: translate3d(8px, 0, 0);"></div>
+
+      <!-- 5 Interactive Navigation Tabs -->
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-white" data-index="0" data-id="inicio" data-title="Panel de Control Clínico: Visión Holística" data-desc="Interactuando con el módulo [TAB 01 / DASHBOARD]. Los datos viajan por el canal de eventos P2P del sistema Semilla." data-badge="TAB 01 / DASHBOARD" data-icon="home">
+        <span class="material-symbols-outlined text-[22px]">home</span>
+        <span class="text-[11px] font-semibold font-sans tracking-tight">Inicio</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-500 hover:text-corporate" data-index="1" data-id="red" data-title="Red Mesh Local &amp; Replicación P2P" data-desc="Monitoreo de nodos satelitales Starlink, base de datos SQLite distribuida y sincronización de campo resiliente." data-badge="TAB 02 / RED MESH" data-icon="wifi">
+        <span class="material-symbols-outlined text-[22px]">wifi</span>
+        <span class="text-[11px] font-semibold font-sans tracking-tight">Red</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-500 hover:text-corporate" data-index="2" data-id="triaje" data-title="Triaje Clínico &amp; Signos Vitales" data-desc="Protocolos de evaluación continua, Manchester / RAC y alertas tempranas automáticas de derivación." data-badge="TAB 03 / TRIAJE" data-icon="vital_signs">
+        <span class="material-symbols-outlined text-[22px]">vital_signs</span>
+        <span class="text-[11px] font-semibold font-sans tracking-tight">Triaje</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-500 hover:text-corporate" data-index="3" data-id="alertas" data-title="Monitor de Alertas y Telemetría" data-desc="Detección de hipoxemia, turnos en riesgo y telemetría de dispositivos médicos IoT conectados." data-badge="TAB 04 / ALERTAS" data-icon="notifications">
+        <span class="material-symbols-outlined text-[22px]">notifications</span>
+        <span class="text-[11px] font-semibold font-sans tracking-tight">Alertas</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-500 hover:text-corporate" data-index="4" data-id="ajustes" data-title="Configuración de Estación &amp; Periféricos" data-desc="Ajustes de la impresora térmica Bluetooth ESC/POS 80mm, perfiles clínicos de usuario y credenciales offline." data-badge="TAB 05 / AJUSTES" data-icon="settings">
+        <span class="material-symbols-outlined text-[22px]">settings</span>
+        <span class="text-[11px] font-semibold font-sans tracking-tight">Ajustes</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 5. RADIAL FLOATING ACTION BUTTON (FAB) -->
+  <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end pointer-events-none">
+    <!-- Radial Fan-Out Menu Items -->
+    <div id="fab-menu" class="flex flex-col gap-2.5 mb-3 items-end pointer-events-auto opacity-0 translate-y-4 scale-90 pointer-events-none transition-all duration-300 spring-easing">
+      <button class="fab-item flex items-center gap-2.5 bg-white text-corporate border border-clinical-border px-4 py-2 rounded-full shadow-lg text-xs font-semibold hover:bg-slate-50 active:scale-95">
+        <span>Triaje Vital</span>
+        <span class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">vital_signs</span>
+        </span>
+      </button>
+      <button class="fab-item flex items-center gap-2.5 bg-white text-corporate border border-clinical-border px-4 py-2 rounded-full shadow-lg text-xs font-semibold hover:bg-slate-50 active:scale-95">
+        <span>Consulta Médica</span>
+        <span class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">stethoscope</span>
+        </span>
+      </button>
+      <button class="fab-item flex items-center gap-2.5 bg-white text-corporate border border-clinical-border px-4 py-2 rounded-full shadow-lg text-xs font-semibold hover:bg-slate-50 active:scale-95">
+        <span>Ticket Térmico</span>
+        <span class="w-7 h-7 rounded-full bg-cyan-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+        </span>
+      </button>
+      <button class="fab-item flex items-center gap-2.5 bg-white text-corporate border border-clinical-border px-4 py-2 rounded-full shadow-lg text-xs font-semibold hover:bg-slate-50 active:scale-95">
+        <span>Alerta SOS</span>
+        <span class="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">emergency</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Main FAB Trigger -->
+    <button id="btn-fab-trigger" aria-label="Acciones Rápidas" class="pointer-events-auto w-14 h-14 rounded-full bg-corporate text-white flex items-center justify-center shadow-[0_10px_28px_rgba(10,37,64,0.35)] hover:bg-corporate-light active:scale-90 transition-all duration-300 spring-easing">
+      <span id="fab-icon" class="material-symbols-outlined text-[28px] transition-transform duration-300">add</span>
+    </button>
+  </div>
+
+  <!-- 6. CLINICAL DRAWER (SLIDE-OUT MENU) -->
+  <div id="drawer-backdrop" class="fixed inset-0 bg-corporate/40 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <aside id="clinical-drawer" class="fixed top-0 left-0 h-full w-[320px] bg-white/95 backdrop-blur-2xl border-r border-clinical-border z-50 transform -translate-x-full transition-transform duration-400 spring-easing flex flex-col p-6 shadow-2xl">
+    <div class="flex items-center justify-between pb-5 border-b border-clinical-border">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-corporate text-emerald-400 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[22px]">potted_plant</span>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-corporate">SEMILLA SALUD</h2>
+          <p class="text-[11px] text-clinical font-semibold tracking-wide">SUITE CLÍNICA CARBON</p>
+        </div>
+      </div>
+      <button id="btn-drawer-close" aria-label="Cerrar menú" class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 hover:text-corporate">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-1.5 py-5 flex-1 overflow-y-auto font-sans text-xs">
+      <span class="text-[11px] font-mono text-slate-400 uppercase tracking-wider px-3 py-1">Navegación Modular</span>
+      <a href="11_modulo1_login_campaña_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">login</span> M1 · Login &amp; Campaña
+      </a>
+      <a href="12_registro_beneficiario_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">how_to_reg</span> M2 · Admisión &amp; RENIEC
+      </a>
+      <a href="13_triage_signos_vitales_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">vital_signs</span> M3 · Triaje Clínico
+      </a>
+      <a href="04_cola_espera_triage_desktop.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">view_timeline</span> M4 · Cola
+      </a>
+      <a href="02_consulta_medica_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">stethoscope</span> M5 · Consulta Médica
+      </a>
+      <a href="07_modulo6_ticket_termico_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">receipt_long</span> M6 · Ticket Térmico
+      </a>
+      <a href="08_modulo7_gestion_usuarios_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">group</span> M7 · Roles &amp; Permisos
+      </a>
+      <a href="04_modulo8_integraciones_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-700 hover:bg-clinical-soft hover:text-clinical transition-colors">
+        <span class="material-symbols-outlined text-[20px]">hub</span> M8 · Red &amp; Sincronización
+      </a>
+    </div>
+
+    <div class="pt-4 border-t border-clinical-border flex items-center justify-between text-xs font-mono text-slate-500">
+      <span>Estación: Cusco-01</span>
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+    </div>
+  </aside>
+
+  <!-- JAVASCRIPT: EXACT FLUID SPRING PILL MATH & INTERACTIONS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const pill = document.getElementById('fluid-pill');
+      const dock = document.getElementById('dock-container');
+      const buttons = document.querySelectorAll('.dock-btn');
+
+      const heroIcon = document.getElementById('hero-icon');
+      const heroTitle = document.getElementById('hero-title');
+      const heroDesc = document.getElementById('hero-desc');
+      const heroBadge = document.getElementById('hero-module-badge');
+
+      // Mathematical centering of fluid spring pill
+      function updatePill(btn) {
+        if (!btn || !pill || !dock) return;
+        const btnRect = btn.getBoundingClientRect();
+        const dockRect = dock.getBoundingClientRect();
+
+        const targetX = btnRect.left - dockRect.left;
+        const targetW = btnRect.width;
+
+        pill.style.transform = `translate3d(${targetX}px, 0, 0)`;
+        pill.style.width = `${targetW}px`;
+
+        buttons.forEach(b => {
+          if (b === btn) {
+            b.classList.remove('text-slate-500', 'hover:text-corporate');
+            b.classList.add('text-white');
+          } else {
+            b.classList.remove('text-white');
+            b.classList.add('text-slate-500', 'hover:text-corporate');
+          }
+        });
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          updatePill(btn);
+
+          const title = btn.dataset.title;
+          const desc = btn.dataset.desc;
+          const badge = btn.dataset.badge;
+          const icon = btn.dataset.icon;
+
+          if (heroTitle) heroTitle.textContent = title;
+          if (heroDesc) heroDesc.innerHTML = desc;
+          if (heroBadge) heroBadge.textContent = badge;
+          if (heroIcon) heroIcon.textContent = icon;
+        });
+      });
+
+      setTimeout(() => {
+        const initialActive = buttons[0];
+        if (initialActive) updatePill(initialActive);
+      }, 50);
+
+      window.addEventListener('resize', () => {
+        const activeBtn = document.querySelector('.dock-btn.text-white') || buttons[0];
+        if (activeBtn) updatePill(activeBtn);
+      });
+
+      // FAB Toggle
+      const fabTrigger = document.getElementById('btn-fab-trigger');
+      const fabMenu = document.getElementById('fab-menu');
+      const fabIcon = document.getElementById('fab-icon');
+      let fabOpen = false;
+
+      fabTrigger.addEventListener('click', () => {
+        fabOpen = !fabOpen;
+        if (fabOpen) {
+          fabMenu.classList.remove('opacity-0', 'translate-y-4', 'scale-90', 'pointer-events-none');
+          fabMenu.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+          fabIcon.style.transform = 'rotate(45deg)';
+        } else {
+          fabMenu.classList.add('opacity-0', 'translate-y-4', 'scale-90', 'pointer-events-none');
+          fabMenu.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+          fabIcon.style.transform = 'rotate(0deg)';
+        }
+      });
+
+      // Clinical Drawer
+      const drawerOpen = document.getElementById('btn-drawer-open');
+      const drawerClose = document.getElementById('btn-drawer-close');
+      const drawer = document.getElementById('clinical-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+
+      function openDrawer() {
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100');
+      }
+
+      function closeDrawer() {
+        drawer.classList.add('-translate-x-full');
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        backdrop.classList.remove('opacity-100');
+      }
+
+      drawerOpen.addEventListener('click', openDrawer);
+      drawerClose.addEventListener('click', closeDrawer);
+      backdrop.addEventListener('click', closeDrawer);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Cyberpunk UI: Píldora Fluida Centrada y Físicas Spring (Desktop)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            synth: {
+              900: "#05050d",
+              800: "#0b0a16",
+              700: "#131126",
+              card: "rgba(16, 14, 34, 0.85)",
+              border: "rgba(168, 85, 247, 0.25)"
+            },
+            neon: {
+              pink: "#ec4899",
+              magenta: "#d946ef",
+              purple: "#a855f7",
+              cyan: "#06b6d4",
+              green: "#10b981"
+            }
+          },
+          fontFamily: {
+            sans: ["'Plus Jakarta Sans'", "sans-serif"],
+            mono: ["'JetBrains Mono'", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent !important;
+      outline: none;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #05050d;
+      background-image: 
+        linear-gradient(to right, rgba(168, 85, 247, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .spring-easing {
+      transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .dark-glass {
+      background: rgba(16, 14, 34, 0.85);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(168, 85, 247, 0.25);
+    }
+    .dock-pill {
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 24px rgba(217, 70, 239, 0.6), 0 0 12px rgba(168, 85, 247, 0.4);
+    }
+    .neon-text-glow {
+      text-shadow: 0 0 12px rgba(217, 70, 239, 0.5);
+    }
+    .fab-item {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+  </style>
+</head>
+<body class="antialiased pb-28">
+
+  <!-- Desktop Main Container -->
+  <div class="max-w-[1280px] mx-auto px-6 pt-6 flex flex-col gap-6">
+
+    <!-- 1. TOP HEADER DESKTOP DARK SYNTH -->
+    <header class="dark-glass rounded-2xl px-5 py-3.5 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.8)]">
+      <div class="flex items-center gap-4">
+        <!-- Hamburger Button with neon ring & indicator -->
+        <button id="btn-drawer-open" aria-label="Abrir Glow Drawer" class="relative w-11 h-11 rounded-xl bg-synth-700/80 border border-neon-purple/40 flex items-center justify-center text-neon-magenta hover:border-neon-magenta active:scale-95 transition-all spring-easing shadow-[0_0_12px_rgba(168,85,247,0.25)]">
+          <span class="w-2 h-2 rounded-full bg-neon-pink absolute -top-0.5 -right-0.5 ring-2 ring-black shadow-[0_0_8px_#ec4899]"></span>
+          <span class="material-symbols-outlined text-[24px]">menu</span>
+        </button>
+
+        <!-- Brand identity -->
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-900 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xl shadow-[0_0_18px_rgba(217,70,239,0.5)]">
+            <span class="material-symbols-outlined text-[24px]">bolt</span>
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-extrabold text-white tracking-wider uppercase font-sans">NEXUS • SYNTH</span>
+              <span class="text-[10px] font-mono font-bold text-neon-magenta bg-fuchsia-950/80 px-2 py-0.5 rounded border border-fuchsia-700/50 uppercase">V2.5 QUANTUM</span>
+            </div>
+            <span class="text-xs font-mono text-slate-400">Micro-Interactions &amp; Spring Dynamics</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-synth-700/80 border border-emerald-500/30 px-3.5 py-1.5 rounded-xl shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981] animate-pulse"></span>
+          <span class="font-mono text-xs font-semibold text-emerald-400 tracking-wider">SPRING PHYS: 120 FPS</span>
+        </div>
+        <div class="w-10 h-10 rounded-xl bg-synth-700 border border-neon-purple/40 text-neon-magenta font-mono font-bold text-xs flex items-center justify-center shadow-[0_0_15px_rgba(168,85,247,0.3)] tracking-wider">
+          NX
+        </div>
+      </div>
+    </header>
+
+    <!-- 2. TRES TARJETAS GLASSMORPHISM DARK (GRID 3 COLUMNAS) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- Card 1 -->
+      <div class="dark-glass rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:border-neon-purple/60 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="w-10 h-10 rounded-xl bg-purple-950/60 border border-purple-500/40 flex items-center justify-center text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.25)]">
+            <span class="material-symbols-outlined text-[22px]">web</span>
+          </div>
+          <span class="font-mono text-[11px] font-bold text-purple-300 bg-purple-950/80 px-2.5 py-1 rounded border border-purple-700/40 tracking-wider">GLASS BLUR NATIVO</span>
+        </div>
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+          1. Filtros de Vidrio iOS <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+        </h3>
+        <p class="text-xs text-slate-400 leading-relaxed font-mono">
+          Efecto esmerilado real con <code class="text-purple-300 font-semibold">backdrop-blur-md/lg</code>, <code class="text-purple-300 font-semibold">-webkit-backdrop-filter</code>, opacidad satinada y borde ultra-fino con <code class="text-purple-300 font-semibold">ring-white/5</code>.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="dark-glass rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:border-neon-magenta/60 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="w-10 h-10 rounded-xl bg-fuchsia-950/60 border border-fuchsia-500/40 flex items-center justify-center text-neon-magenta shadow-[0_0_12px_rgba(217,70,239,0.25)]">
+            <span class="material-symbols-outlined text-[22px]">auto_awesome</span>
+          </div>
+          <span class="font-mono text-[11px] font-bold text-neon-magenta bg-fuchsia-950/80 px-2.5 py-1 rounded border border-fuchsia-700/40 tracking-wider">FRAMER SPRINGS</span>
+        </div>
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+          2. Resorte Físico Orgánico <span class="w-2 h-2 rounded-full bg-neon-pink"></span>
+        </h3>
+        <p class="text-xs text-slate-400 leading-relaxed font-mono">
+          Cero movimiento lineal. <code class="text-neon-pink font-semibold">cubic-bezier(0.34, 1.56, 0.64, 1)</code> reproduciendo rigidez (450) y amortiguación (28) con rebote inercial orgánico.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="dark-glass rounded-2xl p-5 flex flex-col gap-3 shadow-sm hover:border-neon-cyan/60 transition-colors">
+        <div class="flex items-center justify-between">
+          <div class="w-10 h-10 rounded-xl bg-cyan-950/60 border border-cyan-500/40 flex items-center justify-center text-neon-cyan shadow-[0_0_12px_rgba(6,182,212,0.25)]">
+            <span class="material-symbols-outlined text-[22px]">smartphone</span>
+          </div>
+          <span class="font-mono text-[11px] font-bold text-neon-cyan bg-cyan-950/80 px-2.5 py-1 rounded border border-cyan-700/40 tracking-wider">ZERO FRICTION TAP</span>
+        </div>
+        <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+          3. Tap Highlight Bloqueado <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+        </h3>
+        <p class="text-xs text-slate-400 leading-relaxed font-mono">
+          <code class="text-neon-cyan font-semibold">-webkit-tap-highlight-color: transparent</code> en cada botón móvil, erradicando por completo cajas azules predeterminadas en Safari y Chrome.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. HERO DASHBOARD PRINCIPAL: PANEL DE CONTROL -->
+    <section class="dark-glass rounded-3xl p-7 shadow-[0_12px_40px_rgba(0,0,0,0.85)] flex flex-col gap-5">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="w-3 h-3 rounded-full bg-neon-pink shadow-[0_0_10px_#ec4899]"></span>
+          <h2 class="text-lg font-bold text-white neon-text-glow font-sans">Panel de Control: Visión Holística</h2>
+        </div>
+        <span id="hero-module-badge" class="font-mono text-xs font-bold text-neon-magenta bg-fuchsia-950/80 px-3 py-1 rounded-lg border border-neon-magenta/40 uppercase tracking-wider">TAB 01 / DASHBOARD</span>
+      </div>
+      <p class="text-xs font-mono text-slate-400">Telemetría de Red Neuronal &amp; Despliegue en Tiempo Real</p>
+
+      <!-- Inner Vision Holistica Container -->
+      <div class="bg-synth-800/80 border border-purple-500/20 rounded-2xl p-10 flex flex-col items-center text-center shadow-inner gap-4">
+        <div class="w-18 h-18 p-3.5 rounded-2xl border border-neon-magenta bg-fuchsia-950/50 flex items-center justify-center text-neon-magenta shadow-[0_0_24px_rgba(217,70,239,0.45)]">
+          <span id="hero-icon" class="material-symbols-outlined text-[42px]">home</span>
+        </div>
+        <h3 id="hero-title" class="text-xl font-bold text-white neon-text-glow font-sans">Panel de Control: Visión Holística</h3>
+        <p id="hero-desc" class="text-sm text-slate-400 max-w-xl leading-relaxed font-sans">
+          Interactuando con el módulo <span class="font-mono font-semibold text-neon-pink">[TAB 01 / DASHBOARD]</span>. Los cambios de estado viajan por el canal de eventos P2P.
+        </p>
+
+        <!-- Spring Spec Badges Row -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mt-3 font-mono text-xs">
+          <div class="bg-synth-900/90 rounded-xl px-3.5 py-2 border border-purple-500/20 flex items-center gap-2 shadow-sm">
+            <span class="text-slate-400">Framer Spring:</span>
+            <span class="font-semibold text-neon-pink">stiffness 450, damping 28</span>
+          </div>
+          <div class="bg-synth-900/90 rounded-xl px-3.5 py-2 border border-purple-500/20 flex items-center gap-2 shadow-sm">
+            <span class="text-slate-400">Backdrop-Filter:</span>
+            <span class="font-semibold text-neon-magenta">blur(24px) saturate(190%)</span>
+          </div>
+          <div class="bg-synth-900/90 rounded-xl px-3.5 py-2 border border-purple-500/20 flex items-center gap-2 shadow-sm">
+            <span class="text-slate-400">Tap Highlight:</span>
+            <span class="font-semibold text-neon-cyan">transparent (zero glare)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 4. FLOATING BOTTOM NAVIGATION DOCK DARK CYBERPUNK -->
+  <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-auto" aria-label="Navegación Flotante">
+    <div id="dock-container" class="relative bg-synth-800/90 backdrop-blur-2xl border border-white/15 rounded-full p-2 flex items-center gap-2 shadow-[0_16px_48px_rgba(0,0,0,0.95)]">
+      
+      <!-- The sliding fluid spring pill indicator with purple-magenta gradient -->
+      <div id="fluid-pill" class="dock-pill absolute top-2 h-[calc(100%-16px)] rounded-full bg-gradient-to-r from-purple-600 to-fuchsia-600 z-0 pointer-events-none" style="width: 76px; transform: translate3d(8px, 0, 0);"></div>
+
+      <!-- 5 Interactive Navigation Tabs -->
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-white font-semibold" data-index="0" data-id="inicio" data-title="Panel de Control: Visión Holística" data-desc="Interactuando con el módulo [TAB 01 / DASHBOARD]. Los cambios de estado viajan por el canal de eventos P2P." data-badge="TAB 01 / DASHBOARD" data-icon="home">
+        <span class="material-symbols-outlined text-[22px]">home</span>
+        <span class="text-[11px] font-mono tracking-tight">Inicio</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-400 hover:text-white" data-index="1" data-id="red" data-title="Red Neuronal &amp; Mesh Distribuido" data-desc="Enlace redundante de baja latencia con verificación cuántica de paquetes y nodo Starlink de campo." data-badge="TAB 02 / MESH" data-icon="wifi">
+        <span class="material-symbols-outlined text-[22px]">wifi</span>
+        <span class="text-[11px] font-mono tracking-tight">Red</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-400 hover:text-white" data-index="2" data-id="triaje" data-title="Matriz de Triaje &amp; Signos Vitales" data-desc="Algoritmo de clasificación predictiva con evaluación continua y priorización de urgencias." data-badge="TAB 03 / TRIAJE" data-icon="insights">
+        <span class="material-symbols-outlined text-[22px]">insights</span>
+        <span class="text-[11px] font-mono tracking-tight">Triaje</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-400 hover:text-white" data-index="3" data-id="alertas" data-title="Monitor de Sobrecarga &amp; Alertas" data-desc="Disparadores automáticos ante caídas de enlace, desbordamiento de cola y alertas de paciente crítico." data-badge="TAB 04 / ALERTS" data-icon="notifications">
+        <span class="material-symbols-outlined text-[22px]">notifications</span>
+        <span class="text-[11px] font-mono tracking-tight">Alertas</span>
+      </button>
+
+      <button class="dock-btn relative z-10 px-5 py-2.5 flex flex-col items-center justify-center gap-1 transition-colors duration-200 active:scale-95 text-slate-400 hover:text-white" data-index="4" data-id="ajustes" data-title="Configuración de Sistema Synth" data-desc="Parámetros de rigidez de resorte, calibración de buffers de vidrio y sincronización periférica." data-badge="TAB 05 / SETTINGS" data-icon="settings">
+        <span class="material-symbols-outlined text-[22px]">settings</span>
+        <span class="text-[11px] font-mono tracking-tight">Ajustes</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- 5. RADIAL FLOATING ACTION BUTTON (FAB) -->
+  <div class="fixed bottom-6 right-6 z-40 flex flex-col items-end pointer-events-none">
+    <!-- Radial Fan-Out Menu Items -->
+    <div id="fab-menu" class="flex flex-col gap-2.5 mb-3 items-end pointer-events-auto opacity-0 translate-y-4 scale-90 pointer-events-none transition-all duration-300 spring-easing">
+      <button class="fab-item flex items-center gap-2.5 bg-synth-800 text-white border border-neon-purple/40 px-4 py-2 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.3)] text-xs font-mono hover:border-neon-magenta active:scale-95">
+        <span>Triaje Cuántico</span>
+        <span class="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">insights</span>
+        </span>
+      </button>
+      <button class="fab-item flex items-center gap-2.5 bg-synth-800 text-white border border-neon-purple/40 px-4 py-2 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.3)] text-xs font-mono hover:border-neon-magenta active:scale-95">
+        <span>Diagnóstico Bio</span>
+        <span class="w-7 h-7 rounded-full bg-fuchsia-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">stethoscope</span>
+        </span>
+      </button>
+      <button class="fab-item flex items-center gap-2.5 bg-synth-800 text-white border border-neon-purple/40 px-4 py-2 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.3)] text-xs font-mono hover:border-neon-magenta active:scale-95">
+        <span>Ticket ESC/POS</span>
+        <span class="w-7 h-7 rounded-full bg-cyan-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+        </span>
+      </button>
+      <button class="fab-item flex items-center gap-2.5 bg-synth-800 text-white border border-neon-purple/40 px-4 py-2 rounded-full shadow-[0_0_15px_rgba(168,85,247,0.3)] text-xs font-mono hover:border-neon-magenta active:scale-95">
+        <span>Trigger SOS</span>
+        <span class="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[16px]">emergency</span>
+        </span>
+      </button>
+    </div>
+
+    <!-- Main FAB Trigger -->
+    <button id="btn-fab-trigger" aria-label="Acciones Rápidas" class="pointer-events-auto w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-fuchsia-500 text-white flex items-center justify-center shadow-[0_0_28px_rgba(217,70,239,0.7)] hover:brightness-110 active:scale-90 transition-all duration-300 spring-easing">
+      <span id="fab-icon" class="material-symbols-outlined text-[28px] transition-transform duration-300">add</span>
+    </button>
+  </div>
+
+  <!-- 6. GLOW DRAWER (SLIDE-OUT MENU DARK) -->
+  <div id="drawer-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-md z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <aside id="clinical-drawer" class="fixed top-0 left-0 h-full w-[320px] bg-synth-900/95 backdrop-blur-2xl border-r border-neon-purple/30 z-50 transform -translate-x-full transition-transform duration-400 spring-easing flex flex-col p-6 shadow-[0_0_40px_rgba(168,85,247,0.25)]">
+    <div class="flex items-center justify-between pb-5 border-b border-purple-900/50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-700 to-fuchsia-600 text-white flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-[22px]">bolt</span>
+        </div>
+        <div>
+          <h2 class="text-sm font-bold text-white font-mono">NEXUS • SYNTH</h2>
+          <p class="text-[11px] text-neon-magenta font-mono tracking-wide">GLOW DRAWER V2.5</p>
+        </div>
+      </div>
+      <button id="btn-drawer-close" aria-label="Cerrar menú" class="w-9 h-9 rounded-lg bg-synth-800 text-slate-400 hover:text-white flex items-center justify-center border border-white/5">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-1.5 py-5 flex-1 overflow-y-auto font-mono text-xs">
+      <span class="text-[11px] text-slate-500 uppercase tracking-wider px-3 py-1">Navegación Cuántica</span>
+      <a href="18_pildora_fluida_clinica_desktop.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-fuchsia-950/50 hover:text-neon-magenta transition-colors border border-transparent hover:border-purple-800/40">
+        <span class="material-symbols-outlined text-[20px]">medical_services</span> Versión Semilla Clínica
+      </a>
+      <a href="11_modulo1_login_campaña_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-fuchsia-950/50 hover:text-neon-magenta transition-colors border border-transparent hover:border-purple-800/40">
+        <span class="material-symbols-outlined text-[20px]">login</span> M1 · Login &amp; Campaña
+      </a>
+      <a href="12_registro_beneficiario_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-fuchsia-950/50 hover:text-neon-magenta transition-colors border border-transparent hover:border-purple-800/40">
+        <span class="material-symbols-outlined text-[20px]">how_to_reg</span> M2 · Admisión &amp; RENIEC
+      </a>
+      <a href="13_triage_signos_vitales_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-fuchsia-950/50 hover:text-neon-magenta transition-colors border border-transparent hover:border-purple-800/40">
+        <span class="material-symbols-outlined text-[20px]">vital_signs</span> M3 · Triaje Clínico
+      </a>
+      <a href="05_cola_espera_triage_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-fuchsia-950/50 hover:text-neon-magenta transition-colors border border-transparent hover:border-purple-800/40">
+        <span class="material-symbols-outlined text-[20px]">view_timeline</span> M4 · Cola
+      </a>
+      <a href="07_modulo6_ticket_termico_carbon.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-slate-300 hover:bg-fuchsia-950/50 hover:text-neon-magenta transition-colors border border-transparent hover:border-purple-800/40">
+        <span class="material-symbols-outlined text-[20px]">receipt_long</span> M6 · Ticket Térmico
+      </a>
+    </div>
+
+    <div class="pt-4 border-t border-purple-900/50 flex items-center justify-between text-xs font-mono text-slate-400">
+      <span>Core: Nexus-99</span>
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#10b981]"></span>
+    </div>
+  </aside>
+
+  <!-- JAVASCRIPT: EXACT FLUID SPRING PILL MATH & INTERACTIONS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const pill = document.getElementById('fluid-pill');
+      const dock = document.getElementById('dock-container');
+      const buttons = document.querySelectorAll('.dock-btn');
+
+      const heroIcon = document.getElementById('hero-icon');
+      const heroTitle = document.getElementById('hero-title');
+      const heroDesc = document.getElementById('hero-desc');
+      const heroBadge = document.getElementById('hero-module-badge');
+
+      function updatePill(btn) {
+        if (!btn || !pill || !dock) return;
+        const btnRect = btn.getBoundingClientRect();
+        const dockRect = dock.getBoundingClientRect();
+
+        const targetX = btnRect.left - dockRect.left;
+        const targetW = btnRect.width;
+
+        pill.style.transform = `translate3d(${targetX}px, 0, 0)`;
+        pill.style.width = `${targetW}px`;
+
+        buttons.forEach(b => {
+          if (b === btn) {
+            b.classList.remove('text-slate-400', 'hover:text-white');
+            b.classList.add('text-white');
+          } else {
+            b.classList.remove('text-white');
+            b.classList.add('text-slate-400', 'hover:text-white');
+          }
+        });
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          updatePill(btn);
+
+          const title = btn.dataset.title;
+          const desc = btn.dataset.desc;
+          const badge = btn.dataset.badge;
+          const icon = btn.dataset.icon;
+
+          if (heroTitle) heroTitle.textContent = title;
+          if (heroDesc) heroDesc.innerHTML = desc;
+          if (heroBadge) heroBadge.textContent = badge;
+          if (heroIcon) heroIcon.textContent = icon;
+        });
+      });
+
+      setTimeout(() => {
+        const initialActive = buttons[0];
+        if (initialActive) updatePill(initialActive);
+      }, 50);
+
+      window.addEventListener('resize', () => {
+        const activeBtn = document.querySelector('.dock-btn.text-white') || buttons[0];
+        if (activeBtn) updatePill(activeBtn);
+      });
+
+      // FAB Toggle
+      const fabTrigger = document.getElementById('btn-fab-trigger');
+      const fabMenu = document.getElementById('fab-menu');
+      const fabIcon = document.getElementById('fab-icon');
+      let fabOpen = false;
+
+      fabTrigger.addEventListener('click', () => {
+        fabOpen = !fabOpen;
+        if (fabOpen) {
+          fabMenu.classList.remove('opacity-0', 'translate-y-4', 'scale-90', 'pointer-events-none');
+          fabMenu.classList.add('opacity-100', 'translate-y-0', 'scale-100');
+          fabIcon.style.transform = 'rotate(45deg)';
+        } else {
+          fabMenu.classList.add('opacity-0', 'translate-y-4', 'scale-90', 'pointer-events-none');
+          fabMenu.classList.remove('opacity-100', 'translate-y-0', 'scale-100');
+          fabIcon.style.transform = 'rotate(0deg)';
+        }
+      });
+
+      // Glow Drawer
+      const drawerOpen = document.getElementById('btn-drawer-open');
+      const drawerClose = document.getElementById('btn-drawer-close');
+      const drawer = document.getElementById('clinical-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+
+      function openDrawer() {
+        drawer.classList.remove('-translate-x-full');
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100');
+      }
+
+      function closeDrawer() {
+        drawer.classList.add('-translate-x-full');
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        backdrop.classList.remove('opacity-100');
+      }
+
+      drawerOpen.addEventListener('click', openDrawer);
+      drawerClose.addEventListener('click', closeDrawer);
+      backdrop.addEventListener('click', closeDrawer);
+    });
+  </script>
+</body>
+</html>

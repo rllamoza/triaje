@@ -1,0 +1,177 @@
+/* ================================================================
+   TEMA 2: CLINICA GLASS (Stitch #17 y #18 - Semilla Salud)
+   Glassmorphism, Blueprint Grid, Píldora Fluida & Físicas Spring
+   ================================================================ */
+
+[data-theme="clinica-glass"],
+[data-theme="glass"] {
+  --theme-id: "glass";
+
+  /* Canvas con retícula técnica blueprint azulada 24x24px */
+  --bg-canvas: #f8f9ff;
+  --bg-pattern: linear-gradient(to right, rgba(10, 37, 64, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(10, 37, 64, 0.05) 1px, transparent 1px);
+  --bg-pattern-size: 24px 24px;
+
+  /* Superficies Glassmorphism Esmerilado */
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: rgba(240, 244, 255, 0.6);
+  --surface-container: rgba(240, 244, 255, 0.85);
+  --surface-container-high: #dbe7fb;
+  --surface-container-highest: #cbdbf5;
+
+  /* Colores Corporativo Salud */
+  --on-surface: #0a2540;
+  --on-surface-variant: #3c5678;
+  --secondary: #4a6585;
+  --outline: #9ebde8;
+  --outline-variant: #cbdbf5;
+
+  /* Primarios Azul Corporativo */
+  --primary: #0a2540;
+  --primary-hover: #133b63;
+  --primary-container: #e8f1ff;
+  --on-primary: #ffffff;
+  --on-primary-container: #0a2540;
+  --primary-fixed-dim: #0f62fe;
+
+  /* Prioridades */
+  --tertiary: #10b981;
+  --tertiary-container: #d1fae5;
+  --on-tertiary-container: #065f46;
+
+  --warning: #f59e0b;
+  --warning-dark: #b45309;
+
+  --error: #ef4444;
+  --error-container: #fee2e2;
+  --on-error-container: #991b1b;
+
+  --inverse-surface: #0a2540;
+  --inverse-on-surface: #f8f9ff;
+
+  /* Tarjetas Glassmorphism Real */
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --card-border: rgba(203, 219, 245, 0.85);
+  --card-backdrop: blur(24px) saturate(180%);
+  --card-shadow: 0 10px 30px -5px rgba(10, 37, 64, 0.08), 0 4px 10px -2px rgba(10, 37, 64, 0.04);
+
+  /* Radios suaves estilo píldora */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+
+  --font-sans: 'Plus Jakarta Sans', 'IBM Plex Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+}
+
+/* ================================================================
+   REGLAS DE ESTILO COMPONENTES — CLINICA GLASS
+   ================================================================ */
+
+/* 1. Superficies Glassmorphism Esmerilado */
+[data-theme="clinica-glass"] .glass-panel,
+[data-theme="glass"] .glass-panel,
+[data-theme="clinica-glass"] .bg-surface,
+[data-theme="glass"] .bg-surface {
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(203, 219, 245, 0.85) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px -5px rgba(10, 37, 64, 0.08), 0 4px 10px -2px rgba(10, 37, 64, 0.04) !important;
+}
+
+/* Contenedores secundarios */
+[data-theme="clinica-glass"] .bg-surface-container,
+[data-theme="glass"] .bg-surface-container {
+  background: rgba(240, 244, 255, 0.75) !important;
+  border-radius: 12px !important;
+}
+
+[data-theme="clinica-glass"] .bg-surface-container-low,
+[data-theme="glass"] .bg-surface-container-low {
+  background: rgba(248, 249, 255, 0.6) !important;
+}
+
+[data-theme="clinica-glass"] .border-surface-container-high,
+[data-theme="glass"] .border-surface-container-high {
+  border-color: rgba(203, 219, 245, 0.75) !important;
+}
+
+/* 2. Botones con Físicas Spring */
+[data-theme="clinica-glass"] button.bg-primary,
+[data-theme="glass"] button.bg-primary {
+  background-color: #0a2540 !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 14px rgba(10, 37, 64, 0.18) !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease !important;
+}
+
+[data-theme="clinica-glass"] button.bg-primary:hover,
+[data-theme="glass"] button.bg-primary:hover {
+  background-color: #133b63 !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-theme="clinica-glass"] button.bg-primary:active,
+[data-theme="glass"] button.bg-primary:active {
+  transform: scale(0.97) !important;
+}
+
+/* 3. Inputs y Selects */
+[data-theme="clinica-glass"] input,
+[data-theme="clinica-glass"] select,
+[data-theme="clinica-glass"] textarea,
+[data-theme="glass"] input,
+[data-theme="glass"] select,
+[data-theme="glass"] textarea {
+  border-radius: 12px !important;
+  border: 1px solid #cbdbf5 !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0a2540 !important;
+  box-shadow: 0 1px 3px rgba(10, 37, 64, 0.04) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+[data-theme="clinica-glass"] input:focus,
+[data-theme="clinica-glass"] select:focus,
+[data-theme="clinica-glass"] textarea:focus,
+[data-theme="glass"] input:focus,
+[data-theme="glass"] select:focus,
+[data-theme="glass"] textarea:focus {
+  border-color: #0f62fe !important;
+  outline: 2px solid rgba(15, 98, 254, 0.2) !important;
+  box-shadow: 0 0 12px rgba(15, 98, 254, 0.15) !important;
+}
+
+/* 4. Tablas Clínicas */
+[data-theme="clinica-glass"] table,
+[data-theme="glass"] table {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+[data-theme="clinica-glass"] th,
+[data-theme="glass"] th {
+  background: #f0f4fc !important;
+  color: #0a2540 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="clinica-glass"] tr:hover td,
+[data-theme="glass"] tr:hover td {
+  background-color: rgba(232, 241, 255, 0.6) !important;
+}
+
+/* 5. Píldora Spring Dock */
+[data-theme="clinica-glass"] .spring-dock-pill,
+[data-theme="glass"] .spring-dock-pill {
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 16px rgba(10, 37, 64, 0.35);
+}

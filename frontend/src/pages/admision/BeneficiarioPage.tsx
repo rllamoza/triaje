@@ -4,6 +4,7 @@ import {
   useReniecLookup,
   useStoreAtencion,
 } from '../../api/hooks'
+import { PATIENT_DATABASE } from '../../services/patientRegistry'
 
 export default function BeneficiarioPage() {
   const [dni, setDni] = useState('45892104')
@@ -35,19 +36,56 @@ export default function BeneficiarioPage() {
   const createBeneficiario = useStoreBeneficiario()
   const createAtencion = useStoreAtencion()
 
-  const handleReniec = async () => {
-    if (dni.length !== 8) return
+  const handleReniec = async (customDni?: string) => {
+    const targetDni = (customDni || dni).trim()
+    if (targetDni.length !== 8 || !/^\d{8}$/.test(targetDni)) {
+      setMessage({ text: 'Por favor ingrese un número de DNI válido de 8 dígitos.', type: 'error' })
+      return
+    }
     setIsSearchingReniec(true)
     setMessage(null)
     try {
-      const data = await reniecLookup.mutateAsync(dni)
-      setNombres(data.nombres)
-      setApellidos(`${data.apellido_paterno} ${data.apellido_materno}`)
-      if (data.fecha_nacimiento) setFechaNac(data.fecha_nacimiento)
-      if (data.sexo) setSexo(data.sexo as 'M' | 'F')
-      setMessage({ text: 'Datos cargados desde RENIEC / Padrón Local con éxito', type: 'success' })
+      const res = await reniecLookup.mutateAsync(targetDni)
+      const p = res.data || res
+
+      const nom = p.nombres || ''
+      const ape = p.apellidos || `${p.apellido_paterno || ''} ${p.apellido_materno || ''}`.trim()
+      const dob = p.fecha_nacimiento || ''
+      const sex = (p.sexo === 'F' ? 'F' : 'M') as 'M' | 'F'
+
+      setNombres(nom)
+      setApellidos(ape)
+      if (dob) setFechaNac(dob)
+      setSexo(sex)
+      if (p.comunidad) setComunidad(p.comunidad)
+      if (p.telefono) setTelefono(p.telefono)
+
+      const src = res.source || (res.from_cache ? 'Padrón Local Campaña' : 'RENIEC Oficial')
+      setMessage({
+        text: `✓ Identidad verificada para DNI ${targetDni}: ${nom} ${ape} (${src})`,
+        type: 'success',
+      })
     } catch {
-      setMessage({ text: 'RENIEC no disponible en este momento. Ingrese datos manualmente.', type: 'error' })
+      // Local fallback si el backend no responde o no tiene conexión
+      const localMatch = PATIENT_DATABASE.find((pt) => pt.dni === targetDni)
+      if (localMatch) {
+        const parts = localMatch.paciente.split(',')
+        const ape = parts[0]?.trim() || localMatch.paciente
+        const nom = parts[1]?.trim() || ''
+        setNombres(nom)
+        setApellidos(ape)
+        setSexo(localMatch.sexo)
+        if (localMatch.telefono) setTelefono(localMatch.telefono)
+        setMessage({
+          text: `✓ Datos cargados desde Padrón Comunitario Local (${localMatch.paciente})`,
+          type: 'success',
+        })
+      } else {
+        setMessage({
+          text: 'RENIEC no disponible en este momento. Puede ingresar los datos del paciente manualmente.',
+          type: 'error',
+        })
+      }
     } finally {
       setIsSearchingReniec(false)
     }
@@ -229,26 +267,59 @@ export default function BeneficiarioPage() {
                     <input
                       className="w-full h-10 px-3 bg-transparent text-on-surface text-sm font-mono focus:outline-none"
                       maxLength={8}
-                      placeholder="Ingrese 8 dígitos de DNI"
+                      placeholder="Ingrese 8 dígitos de DNI..."
                       type="text"
                       value={dni}
-                      onChange={(e) => setDni(e.target.value)}
+                      onChange={(e) => setDni(e.target.value.replace(/\D/g, ''))}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleReniec()
+                        }
+                      }}
                     />
                     <button
                       type="button"
                       disabled={isSearchingReniec}
-                      onClick={handleReniec}
-                      className="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors whitespace-nowrap cursor-pointer rounded-none"
+                      onClick={() => handleReniec()}
+                      className="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors whitespace-nowrap cursor-pointer rounded-none disabled:opacity-50"
+                      title="Buscar datos del paciente por DNI (Enter o clic)"
                     >
-                      <span className="material-symbols-outlined text-[16px]">fingerprint</span>
+                      <span className={`material-symbols-outlined text-[16px] ${isSearchingReniec ? 'animate-spin' : ''}`}>
+                        {isSearchingReniec ? 'sync' : 'fingerprint'}
+                      </span>
                       <span>{isSearchingReniec ? 'Buscando...' : 'Buscar RENIEC'}</span>
                     </button>
+                  </div>
+                  {/* Píldoras de DNI para prueba rápida */}
+                  <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                    <span className="text-[10px] font-mono text-on-surface-variant">Rápidos:</span>
+                    {[
+                      { num: '45892104', label: 'Santos Q.' },
+                      { num: '02817462', label: 'Rosa M.' },
+                      { num: '42918274', label: 'Juan Q.' },
+                      { num: '78291043', label: 'Dylan H.' },
+                      { num: '48920194', label: 'Hilda R.' },
+                    ].map((item) => (
+                      <button
+                        key={item.num}
+                        type="button"
+                        onClick={() => {
+                          setDni(item.num)
+                          handleReniec(item.num)
+                        }}
+                        className="text-[10px] font-mono px-2 py-0.5 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-on-surface transition-colors cursor-pointer"
+                        title={`Cargar datos para DNI ${item.num}`}
+                      >
+                        {item.num} ({item.label})
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 <div className="md:col-span-5 flex items-center gap-2 pb-2 text-xs text-tertiary font-medium">
                   <span className="material-symbols-outlined text-[18px]">verified</span>
-                  <span>Validación conectada a RENIEC v2.1</span>
+                  <span>Conectado a RENIEC &amp; Padrón Local Activo</span>
                 </div>
               </div>
 

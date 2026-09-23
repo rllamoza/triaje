@@ -24,6 +24,7 @@ export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
     { path: '/tickets', label: 'Protocolo ESC/POS', icon: 'receipt_long' },
     { path: '/admin/personalizacion', label: 'Calibración Synth & HUD', icon: 'palette' },
     { path: '/admin/telemetria', label: 'Red Mesh & Webhooks', icon: 'hub' },
+    { path: '/admin/auditoria', label: 'Caja Negra Forense & audi_triaje', icon: 'policy', badge: 'FORENSIC' },
   ]
 
   return (

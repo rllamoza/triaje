@@ -116,12 +116,15 @@ export interface Medicamento {
 
 export interface NodeStatus {
   node_id: string
+  hardware?: string
   starlink: boolean
   latency_ms: number
   battery_pct: number
   printer: string
   printer_ok: boolean
   db_synced: boolean
+  pending_sync_count?: number
+  timezone?: string
   timestamp: string
 }
 

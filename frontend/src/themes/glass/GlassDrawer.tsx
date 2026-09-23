@@ -28,6 +28,7 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
     { path: '/tickets', label: 'Ticket Térmico ESC/POS', icon: 'receipt_long' },
     { path: '/admin/personalizacion', label: 'Personalización & Branding', icon: 'palette' },
     { path: '/admin/telemetria', label: 'Telemetría & Red Mesh', icon: 'hub' },
+    { path: '/admin/auditoria', label: 'Auditoría Forense & audi_triaje', icon: 'policy' },
   ]
 
   return (

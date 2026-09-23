@@ -63,6 +63,7 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
     { path: '/admin/personalizacion', label: 'Personalización & Logos', icon: 'palette' },
     { path: '/admin/usuarios', label: 'Gestión de Usuarios', icon: 'manage_accounts' },
     { path: '/admin/telemetria', label: 'Integraciones (API & Webhooks)', icon: 'hub' },
+    { path: '/admin/auditoria', label: 'Auditoría Forense & Dispositivos', icon: 'policy' },
   ]
 
   const handleMobileLogout = async () => {

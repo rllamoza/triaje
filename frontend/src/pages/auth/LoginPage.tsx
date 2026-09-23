@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { useLogin, useLoginPin, useNodeStatus } from '../../api/hooks'
+import { useLogin, useLoginPin } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
+import { HardwareStatusBar } from '../../components/common/HardwareStatusBar'
 
 type LoginMode = 'credential' | 'pin'
 
@@ -29,7 +30,6 @@ export default function LoginPage() {
   const [pinError, setPinError] = useState('')
 
   // Campaigns & Stations
-  const { data: nodeStatus } = useNodeStatus()
   const [selectedCampaignId, setSelectedCampaignId] = useState<number>(1)
   const [selectedStation, setSelectedStation] = useState('ADM-01')
 
@@ -137,38 +137,7 @@ export default function LoginPage() {
   return (
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col">
       {/* Top Hardware Telemetry Bar */}
-      <div className="w-full bg-surface-container-high py-2.5 px-6 flex items-center justify-between text-xs font-mono text-on-surface-variant select-none border-b border-surface-container-highest">
-        <div className="flex items-center gap-6 overflow-x-auto">
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-            <span className="font-semibold text-on-surface uppercase tracking-wider">
-              NODO LOCAL: {nodeStatus?.node_id ?? 'CUS-VALLE-04'}
-            </span>
-            <span className="text-secondary">(Minisforum Edge Core v4.2)</span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="material-symbols-outlined text-sm text-tertiary">battery_charging_90</span>
-            <span>BATERÍA: {nodeStatus?.battery_pct ?? 94}% [Respaldado UPS]</span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="material-symbols-outlined text-sm text-primary">satellite_alt</span>
-            <span>ENLACE: Starlink Mini Activo (Latencia {nodeStatus?.latency_ms ?? 38}ms)</span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="material-symbols-outlined text-sm text-on-surface">print</span>
-            <span>IMPRESORA TÉRMICA: {nodeStatus?.printer ?? 'BT-POS-01'} Conectada</span>
-          </div>
-        </div>
-        <div className="hidden lg:flex items-center gap-4 shrink-0">
-          <div className="flex items-center gap-1 text-tertiary bg-tertiary-container px-2 py-0.5">
-            <span className="material-symbols-outlined text-xs">sync_saved_locally</span>
-            <span className="font-sans font-medium text-xs text-on-tertiary-container">
-              DB Local 100% Sincronizada
-            </span>
-          </div>
-          <span className="text-secondary">UTC-5 • Rumichaca, Cusco</span>
-        </div>
-      </div>
+      <HardwareStatusBar variant="full" />
 
       {/* Main Split Grid */}
       <div className="w-full grid grid-cols-12 min-h-[calc(100vh-42px)] flex-1">

@@ -79,4 +79,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('users/{user}',                      [UserController::class, 'update']);
     Route::delete('users/{user}',                   [UserController::class, 'destroy']);
     Route::post('users/{user}/reset-pin',           [UserController::class, 'resetPin']);
+
+    // Auditoría Forense y Telemetría
+    Route::prefix('admin/audit')->group(function () {
+        Route::get('status',    [\App\Http\Controllers\Api\AuditAdminController::class, 'status']);
+        Route::post('toggle',   [\App\Http\Controllers\Api\AuditAdminController::class, 'toggle']);
+        Route::get('logs',      [\App\Http\Controllers\Api\AuditAdminController::class, 'index']);
+        Route::get('logs/{id}', [\App\Http\Controllers\Api\AuditAdminController::class, 'show']);
+        Route::get('stats',     [\App\Http\Controllers\Api\AuditAdminController::class, 'stats']);
+        Route::get('export',    [\App\Http\Controllers\Api\AuditAdminController::class, 'export']);
+    });
 });

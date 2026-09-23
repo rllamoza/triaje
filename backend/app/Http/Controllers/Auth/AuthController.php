@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Services\RENIECService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class AuthController extends Controller
 {
@@ -108,15 +110,27 @@ class AuthController extends Controller
 
     public function nodeStatus()
     {
+        $pendingSyncCount = 0;
+        try {
+            if (Schema::hasTable('sync_logs')) {
+                $pendingSyncCount = DB::table('sync_logs')->where('synced', false)->count();
+            }
+        } catch (\Throwable $e) {
+            $pendingSyncCount = 0;
+        }
+
         return response()->json([
-            'node_id'      => config('app.node_id', 'NODO-LOCAL'),
-            'starlink'     => true,
-            'latency_ms'   => rand(30, 80),
-            'battery_pct'  => 94,
-            'printer'      => 'BT-POS-01',
-            'printer_ok'   => true,
-            'db_synced'    => true,
-            'timestamp'    => now()->toISOString(),
+            'node_id'            => env('NODE_ID', config('app.node_id', 'CUS-VALLE-04')),
+            'hardware'           => env('NODE_HARDWARE', 'Minisforum Edge Core v4.2'),
+            'starlink'           => true,
+            'latency_ms'         => rand(32, 45),
+            'battery_pct'        => 94,
+            'printer'            => 'BT-POS-01',
+            'printer_ok'         => true,
+            'db_synced'          => $pendingSyncCount === 0,
+            'pending_sync_count' => $pendingSyncCount,
+            'timezone'           => config('app.timezone', 'UTC-5'),
+            'timestamp'          => now()->toISOString(),
         ]);
     }
 }

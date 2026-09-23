@@ -10,6 +10,7 @@ import ConsultaPage from './pages/consulta/ConsultaPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
 import TelemetriaPage from './pages/admin/TelemetriaPage'
 import PersonalizacionPage from './pages/admin/PersonalizacionPage'
+import AuditoriaPage from './pages/admin/AuditoriaPage'
 import TicketPage from './pages/tickets/TicketPage'
 import { useAuthStore } from './store/authStore'
 
@@ -68,6 +69,7 @@ export default function App() {
               <Route path="/admin/personalizacion" element={<PersonalizacionPage />} />
               <Route path="/admin/usuarios"    element={<UsuariosPage />} />
               <Route path="/admin/telemetria"  element={<TelemetriaPage />} />
+              <Route path="/admin/auditoria"   element={<AuditoriaPage />} />
             </Route>
           </Route>
 

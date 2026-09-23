@@ -12,12 +12,37 @@ export const api = axios.create({
   timeout: 15000,
 })
 
-// ── Request interceptor: attach Bearer token ─────────────────
+function getClientAuditTelemetry(): string | null {
+  try {
+    const nav = typeof navigator !== 'undefined' ? (navigator as any) : null
+    const conn = nav?.connection || nav?.mozConnection || nav?.webkitConnection
+    return JSON.stringify({
+      screen: typeof window !== 'undefined' ? `${window.screen?.width || 0}x${window.screen?.height || 0}` : null,
+      timezone: typeof Intl !== 'undefined' ? Intl.DateTimeFormat().resolvedOptions().timeZone : null,
+      language: nav?.language ?? null,
+      effectiveType: conn?.effectiveType ?? null,
+      rtt: conn?.rtt ?? null,
+      downlink: conn?.downlink ?? null,
+      saveData: conn?.saveData ?? false,
+      hardwareConcurrency: nav?.hardwareConcurrency ?? null,
+    })
+  } catch {
+    return null
+  }
+}
+
+// ── Request interceptor: attach Bearer token & client telemetry ──
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+
+  const telemetry = getClientAuditTelemetry()
+  if (telemetry) {
+    config.headers['X-Client-Audit-Telemetry'] = telemetry
+  }
+
   return config
 })
 

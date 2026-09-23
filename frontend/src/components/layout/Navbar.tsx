@@ -5,6 +5,7 @@ import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS } from '../../store/themeStore'
 import { useScannerStore } from '../../store/scannerStore'
 import { useLogout, useNodeStatus, useCampaigns } from '../../api/hooks'
+import { HardwareStatusBar } from '../common/HardwareStatusBar'
 
 interface NavbarProps {
   onOpenMobileMenu?: () => void
@@ -100,17 +101,19 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
             title="Cambiar campaña activa"
           >
             <span className="material-symbols-outlined text-[17px] text-primary shrink-0">local_hospital</span>
-            <span className="text-[12px] lg:text-[13px] font-medium text-on-surface truncate max-w-[120px] lg:max-w-[200px] xl:max-w-[280px]">
+            <span className="text-[12px] lg:text-[13px] font-medium text-on-surface truncate max-w-[120px] lg:max-w-[180px] xl:max-w-[240px]">
               Campaña: {activeCampaign.name}
             </span>
             <span className="material-symbols-outlined text-[17px] text-primary shrink-0">expand_more</span>
           </Link>
 
-          <div className="hidden sm:flex items-center bg-tertiary-container text-on-tertiary-container px-2 lg:px-2.5 py-1 gap-1 lg:gap-1.5 border border-tertiary/20 shrink-0">
+          {/* Telemetría Compacta de Hardware y Nodo */}
+          <HardwareStatusBar variant="compact" className="hidden sm:inline-flex" />
+
+          <div className="hidden xl:flex items-center bg-tertiary-container text-on-tertiary-container px-2 lg:px-2.5 py-1 gap-1 lg:gap-1.5 border border-tertiary/20 shrink-0">
             <span className="material-symbols-outlined text-[15px] lg:text-[16px] text-tertiary shrink-0">cloud_done</span>
             <span className="text-[11.5px] lg:text-[12.5px] font-medium tracking-tight whitespace-nowrap">
-              <span className="hidden lg:inline">{nodeStatus?.db_synced ? 'Sincronizado / Offline-ready' : 'Modo Terreno Offline'}</span>
-              <span className="lg:hidden">{nodeStatus?.db_synced ? 'Online' : 'Offline'}</span>
+              <span>{nodeStatus?.db_synced ? 'Sincronizado' : 'Modo Offline'}</span>
             </span>
           </div>
         </div>
@@ -236,6 +239,18 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
                   <div>
                     <div className="text-[14px] font-semibold leading-none">Integraciones &amp; Telemetría</div>
                     <div className="text-[12px] text-on-surface-variant mt-1">Webhooks, Starlink y sincronización P2P</div>
+                  </div>
+                </Link>
+
+                <Link
+                  to="/admin/auditoria"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                >
+                  <span className="material-symbols-outlined text-[20px] text-primary">policy</span>
+                  <div>
+                    <div className="text-[14px] font-semibold leading-none">Auditoría Forense &amp; Red</div>
+                    <div className="text-[12px] text-on-surface-variant mt-1">Logs inmutables, IP, dispositivos y audi_triaje</div>
                   </div>
                 </Link>
               </div>

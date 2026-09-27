@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'brevo' => [
+        'api_key'              => env('BREVO_API_KEY'),
+        'sender_email'        => env('BREVO_SENDER_EMAIL', 'notificaciones@semilla.pe'),
+        'sender_name'         => env('BREVO_SENDER_NAME', 'Campaña Médica Semilla'),
+        'daily_limit'         => env('BREVO_DAILY_LIMIT', 300),
+        'template_verify_code'=> env('BREVO_TEMPLATE_VERIFY_CODE'),
+    ],
+
 ];

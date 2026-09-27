@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppLayout } from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
+import RegisterVolunteerPage from './pages/auth/RegisterVolunteerPage'
 import CampaignSelectPage from './pages/campaigns/CampaignSelectPage'
 import BeneficiarioPage from './pages/admision/BeneficiarioPage'
 import QueuePage from './pages/queue/QueuePage'
@@ -51,8 +52,10 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Public */}
-          <Route path="/login"     element={<LoginPage />} />
-          <Route path="/campaigns" element={<CampaignSelectPage />} />
+          <Route path="/login"               element={<LoginPage />} />
+          <Route path="/registro-voluntario" element={<RegisterVolunteerPage />} />
+          <Route path="/registro"            element={<RegisterVolunteerPage />} />
+          <Route path="/campaigns"           element={<CampaignSelectPage />} />
 
           {/* Protected */}
           <Route element={<AppLayout />}>

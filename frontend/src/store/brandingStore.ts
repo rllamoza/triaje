@@ -32,25 +32,25 @@ export interface BrandingState {
 }
 
 export const DEFAULT_BRANDING = {
-  appName: 'Semilla',
-  appTagline: 'Triaje Clínico & Campañas',
-  loginTitle: 'PLATAFORMA CLÍNICA DE TERRENO',
-  loginSubtitle: 'Control y triaje offline-first para brigadas rurales',
+  appName: 'ElRond',
+  appTagline: 'Sistema de Gestión Médica - Módulo de Triaje',
+  loginTitle: 'ELROND SISTEMA DE GESTIÓN MÉDICA',
+  loginSubtitle: 'Módulo de Triaje & Atención Médica',
 
   logoUrl:
     'https://lh3.googleusercontent.com/aida/AEtjO1WHui6EMlZ8nLYWhqM7Pt8xyBgk9V73SUi-O3GdU4QWAqyQOCDKLbzOxctZ7wZ3QiylxrmLuvQW71vVeBAssOJflzXXy76a1cXn6KwfL0JJAaxblaCy7MdqZr0BlEsQ4wKHJbGszn7p9AWkNF0LUcgBdjCcr0hKtytcRr-r3cFvcYm7_2Y7GIXLfg8IT-5Ta8t6TCqSLvT87qdOBISwCYI__NdVWoRNkfVnnJ30-vqAo6u2jU06N36Q89g_',
   isotipoUrl:
     'https://lh3.googleusercontent.com/aida/AEtjO1WZ0tE2OVs5Sheyc4hORQ0oGj271jvC10KhuNWKN1dg5zIqDxV7G-A7uAlo05HPtzIkVbqgyemo4dRRGPbfdkGxo6aQrrKFjPQ7xIccQx8klvnBNRNPpsibPhkHx5XYAJ2HK5ZrAmfuqejPoxEsriVD84qCOv1n4wuo4x9p_qVw4BA17-e0mGJupmkTuWM5DDoVqIrv2hP_BAqGfrBHTMMhrO_vKhumJiQEyQ-oiRRi1lEDdTH5vXQOKGkS',
 
-  footerLeftText: 'Soporte Técnico Satelital: +51 84 290112',
+  footerLeftText: 'Soporte Técnico ElRond: +51 84 290112',
   footerCenterText: 'Sincronización P2P: 6 dispositivos en red local',
-  footerRightText: 'Build v2.4.9-field',
+  footerRightText: 'ElRond v2.5.0-field',
   footerLogoUrl: '',
 
-  exportHeader: 'ONG SEMILLA • ASISTENCIA MÉDICA RURAL',
-  exportSubheader: 'SISTEMA NACIONAL DE TRIAJE Y EVALUACIÓN CLÍNICA AMBULATORIA',
+  exportHeader: 'ELROND • SISTEMA DE GESTIÓN MÉDICA',
+  exportSubheader: 'MÓDULO DE TRIAJE CLÍNICO Y EVALUACIÓN AMBULATORIA',
   exportFooterLegal:
-    'Documento clínico emitido en campaña de campo. Válido para referencia hospitalaria y atención inmediata.',
+    'Documento clínico emitido por ElRond Sistema de Gestión Médica. Válido para referencia hospitalaria y atención inmediata.',
   ticketLogoUrl: '',
   pdfLogoUrl: '',
   selectedExportLogo: 'principal' as const,

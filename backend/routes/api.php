@@ -11,9 +11,13 @@ use App\Http\Controllers\Api\UserController;
 
 // ── Públicos ────────────────────────────────────────────────────────────────
 Route::prefix('auth')->group(function () {
-    Route::post('login',        [AuthController::class, 'login']);
-    Route::post('login-pin',    [AuthController::class, 'loginPin']);
-    Route::get('node-status',   [AuthController::class, 'nodeStatus']);
+    Route::post('login',              [AuthController::class, 'login']);
+    Route::post('login-pin',          [AuthController::class, 'loginPin']);
+    Route::post('register-volunteer', [AuthController::class, 'registerVolunteer']);
+    Route::post('verify-code',        [AuthController::class, 'verifyEmailCode']);
+    Route::post('resend-code',        [AuthController::class, 'resendVerificationCode']);
+    Route::post('test-brevo',         [AuthController::class, 'testBrevo']);
+    Route::get('node-status',         [AuthController::class, 'nodeStatus']);
 });
 
 // ── Autenticados ────────────────────────────────────────────────────────────

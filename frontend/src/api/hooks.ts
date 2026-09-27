@@ -10,10 +10,12 @@ export interface User {
   full_name: string
   cmp_code: string | null
   dni: string | null
-  role: 'admin' | 'medico' | 'triaje' | 'admision' | 'guardia'
+  role: 'admin' | 'medico' | 'triaje' | 'admision' | 'guardia' | 'farmacia' | 'coordinador' | 'voluntario' | string
   station_default: string | null
   active: boolean
   last_login_at: string | null
+  telefono?: string | null
+  especialidad?: string | null
 }
 
 export interface Campaign {
@@ -151,6 +153,40 @@ export const useLoginPin = () =>
 export const useLogout = () =>
   useMutation({
     mutationFn: () => api.post('/auth/logout').then((r) => r.data),
+  })
+
+export const useRegisterVolunteer = () =>
+  useMutation({
+    mutationFn: (data: {
+      name: string
+      apellidos: string
+      email: string
+      password: string
+      role: string
+      dni?: string
+      telefono?: string
+      cmp_code?: string
+      especialidad?: string
+      station_default?: string
+    }) => api.post('/auth/register-volunteer', data).then((r) => r.data),
+  })
+
+export const useVerifyEmailCode = () =>
+  useMutation({
+    mutationFn: (data: { email: string; code: string }) =>
+      api.post('/auth/verify-code', data).then((r) => r.data),
+  })
+
+export const useResendEmailCode = () =>
+  useMutation({
+    mutationFn: (data: { email: string }) =>
+      api.post('/auth/resend-code', data).then((r) => r.data),
+  })
+
+export const useTestBrevo = () =>
+  useMutation({
+    mutationFn: (data: { email: string }) =>
+      api.post('/auth/test-brevo', data).then((r) => r.data),
   })
 
 export const useNodeStatus = () =>

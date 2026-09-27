@@ -12,18 +12,25 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     protected $fillable = [
-        'name','apellidos','email','password','cmp_code','dni',
+        'name','apellidos','email','password','cmp_code','dni','telefono','especialidad',
         'role','pin_hash','biometric_hash','token_fisico',
-        'station_default','active','last_login_at'
+        'station_default','active','last_login_at',
+        'email_verification_code','email_verification_expires_at','email_verification_attempts',
+        'email_verified_at'
     ];
 
-    protected $hidden = ['password','pin_hash','biometric_hash','remember_token'];
+    protected $hidden = [
+        'password','pin_hash','biometric_hash','remember_token',
+        'email_verification_code'
+    ];
 
     protected $casts = [
-        'email_verified_at' => 'datetime',
-        'last_login_at'     => 'datetime',
-        'active'            => 'boolean',
-        'password'          => 'hashed',
+        'email_verified_at'             => 'datetime',
+        'email_verification_expires_at' => 'datetime',
+        'email_verification_attempts'   => 'integer',
+        'last_login_at'                 => 'datetime',
+        'active'                        => 'boolean',
+        'password'                      => 'hashed',
     ];
 
     public function campaigns() { return $this->belongsToMany(Campaign::class, 'campaign_users'); }

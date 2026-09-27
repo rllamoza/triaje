@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useLogin, useLoginPin } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
@@ -314,6 +314,19 @@ export default function LoginPage() {
                   <span>{loading ? 'Validando credenciales...' : 'Iniciar Sesión e Ingresar al Puesto'}</span>
                   <span className="material-symbols-outlined text-base">arrow_forward</span>
                 </button>
+
+                <div className="pt-3 border-t border-surface-container-high text-center">
+                  <p className="text-[11px] text-secondary mb-2">
+                    ¿Te integras como voluntario o profesional a la campaña?
+                  </p>
+                  <Link
+                    to="/registro-voluntario"
+                    className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-3 bg-surface hover:bg-surface-container border border-primary/40 text-primary text-xs font-semibold uppercase tracking-wider transition-colors shadow-xs"
+                  >
+                    <span className="material-symbols-outlined text-sm">volunteer_activism</span>
+                    <span>Registrarse como Voluntario (6 Roles)</span>
+                  </Link>
+                </div>
               </form>
             ) : (
               <form className="space-y-5" onSubmit={handlePinLogin}>

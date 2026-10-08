@@ -4,6 +4,8 @@ import { useLogin, useLoginPin } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
 import { HardwareStatusBar } from '../../components/common/HardwareStatusBar'
+import { AppFooter } from '../../components/layout/AppFooter'
+import { useCampaignGeolocation } from '../../hooks/useCampaignGeolocation'
 
 type LoginMode = 'credential' | 'pin'
 
@@ -12,6 +14,22 @@ export default function LoginPage() {
   const setAuth = useAuthStore((s) => s.setAuth)
   const isAuth = useAuthStore((s) => s.isAuthenticated())
   const branding = useBrandingStore()
+
+  // Dynamic Geolocation & Nearest Campaign calculation
+  const {
+    campaigns,
+    nearestCampaign,
+    selectedCampaign,
+    selectedCampaignId,
+    selectCampaign,
+    resetToNearest,
+    coords,
+    geoStatus,
+    geoMessage,
+    requestSmartphoneLocation,
+    setSimulatedLocation,
+    presetLocations,
+  } = useCampaignGeolocation(1)
 
   if (isAuth) {
     return <Navigate to="/" replace />
@@ -29,8 +47,7 @@ export default function LoginPage() {
   const [responsable, setResponsable] = useState('Dr. M. Benavides (Med. General)')
   const [pinError, setPinError] = useState('')
 
-  // Campaigns & Stations
-  const [selectedCampaignId, setSelectedCampaignId] = useState<number>(1)
+  // Stations
   const [selectedStation, setSelectedStation] = useState('ADM-01')
 
   const loginMutation = useLogin()
@@ -137,7 +154,10 @@ export default function LoginPage() {
   return (
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen flex flex-col">
       {/* Top Hardware Telemetry Bar */}
-      <HardwareStatusBar variant="full" />
+      <HardwareStatusBar
+        variant="full"
+        locationOverride={selectedCampaign?.location_name}
+      />
 
       {/* Main Split Grid */}
       <div className="w-full grid grid-cols-12 min-h-[calc(100vh-42px)] flex-1">
@@ -147,11 +167,11 @@ export default function LoginPage() {
             {/* Brand Header */}
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 flex-shrink-0 bg-inverse-surface flex items-center justify-center p-1.5 shadow-sm">
-                {branding.isotipoUrl ? (
+                {branding.isotipoUrl || branding.logoUrl ? (
                   <img
                     alt={branding.appName}
                     className="w-full h-full object-contain"
-                    src={branding.isotipoUrl}
+                    src={branding.isotipoUrl || branding.logoUrl}
                   />
                 ) : (
                   <span className="material-symbols-outlined text-white text-2xl">local_hospital</span>
@@ -444,7 +464,7 @@ export default function LoginPage() {
         {/* Right Column: Paso 02 // Entorno Operativo */}
         <div className="col-span-12 lg:col-span-7 bg-surface-container-low p-8 lg:p-12 flex flex-col justify-between space-y-8">
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="text-xs uppercase tracking-widest text-secondary font-semibold font-mono">
                   Paso 02 // Entorno Operativo
@@ -453,103 +473,236 @@ export default function LoginPage() {
               </div>
               <div className="flex items-center gap-2 bg-surface px-3 py-1.5 text-xs font-mono text-on-surface border border-surface-container-high shadow-xs">
                 <span className="material-symbols-outlined text-sm text-primary">pin_drop</span>
-                <span>Nodo: Valle Sagrado Sector 04</span>
+                <span>Nodo: {selectedCampaign?.node_id || 'Valle Sagrado Sector 04'}</span>
+                {selectedCampaign?.distanceFormatted && (
+                  <span className="text-[11px] font-semibold text-primary ml-1 bg-primary/10 px-1.5 py-0.5 rounded-xs">
+                    ~{selectedCampaign.distanceFormatted}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Panel de Telemetría GPS del Smartphone */}
+            <div className="bg-surface p-3.5 border border-surface-container-high shadow-xs space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-3 w-3">
+                    {geoStatus === 'locating' ? (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                    ) : geoStatus === 'ready' ? (
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    ) : null}
+                    <span
+                      className={`relative inline-flex rounded-full h-3 w-3 ${
+                        geoStatus === 'ready'
+                          ? 'bg-emerald-500'
+                          : geoStatus === 'locating'
+                          ? 'bg-primary'
+                          : geoStatus === 'simulated'
+                          ? 'bg-amber-500'
+                          : 'bg-zinc-400'
+                      }`}
+                    />
+                  </span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-on-surface">
+                    Geolocalización del Smartphone
+                  </span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 font-mono uppercase font-semibold rounded-xs border ${
+                      geoStatus === 'ready'
+                        ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                        : geoStatus === 'locating'
+                        ? 'bg-blue-50 text-blue-800 border-blue-300'
+                        : geoStatus === 'simulated'
+                        ? 'bg-amber-50 text-amber-800 border-amber-300'
+                        : 'bg-surface-container text-secondary border-surface-container-high'
+                    }`}
+                  >
+                    {geoStatus === 'ready'
+                      ? 'GPS Activo'
+                      : geoStatus === 'locating'
+                      ? 'Calculando...'
+                      : geoStatus === 'simulated'
+                      ? 'Simulado'
+                      : 'Sin Señal GPS'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={requestSmartphoneLocation}
+                    title="Actualizar posición satelital del smartphone"
+                    className="px-2.5 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11px] font-mono text-on-surface flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                  >
+                    <span className={`material-symbols-outlined text-[14px] ${geoStatus === 'locating' ? 'animate-spin' : ''}`}>
+                      my_location
+                    </span>
+                    <span>Actualizar GPS</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Detalle de posición y cercanía calculada */}
+              <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-[11.5px] text-secondary font-mono bg-surface-container-low px-2.5 py-1.5 border border-surface-container-high">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="material-symbols-outlined text-[15px] text-primary">satellite_alt</span>
+                  <span className="truncate">{geoMessage || 'Sintonizando posición satelital del smartphone...'}</span>
+                </div>
+                {nearestCampaign && (
+                  <div className="text-primary font-semibold flex items-center gap-1 shrink-0">
+                    <span className="text-secondary font-normal">Más cercana:</span>
+                    <span className="underline decoration-dotted">{nearestCampaign.name}</span>
+                    {nearestCampaign.distanceFormatted && (
+                      <span className="bg-primary/10 text-primary px-1 py-0.2 rounded-2xs">
+                        ({nearestCampaign.distanceFormatted})
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Botones de simulación para pruebas de campo / brigada */}
+              <div className="pt-0.5 flex flex-wrap items-center gap-1.5 text-[11px]">
+                <span className="text-on-surface-variant font-medium">Probar cercanía:</span>
+                {presetLocations.map((p) => {
+                  const isAct = coords?.source === 'simulated' && coords.label === p.name
+                  return (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => setSimulatedLocation(p)}
+                      title={p.desc}
+                      className={`px-2 py-0.5 border text-[11px] font-mono cursor-pointer transition-all ${
+                        isAct
+                          ? 'bg-primary text-white border-primary shadow-xs font-semibold'
+                          : 'bg-surface hover:bg-surface-container border-surface-container-high text-on-surface'
+                      }`}
+                    >
+                      📍 {p.name.split(',')[0]}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Campaign Selection Cards */}
             <div className="space-y-3">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                Seleccionar Brigada / Campaña
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  Seleccionar Brigada / Campaña
+                </label>
+                {nearestCampaign && selectedCampaignId !== nearestCampaign.id && (
+                  <button
+                    type="button"
+                    onClick={resetToNearest}
+                    className="text-[11px] text-primary hover:underline font-mono font-semibold flex items-center gap-1 cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-[13px]">near_me</span>
+                    Auto-asignar más cercana ({nearestCampaign.name})
+                  </button>
+                )}
+              </div>
 
               <div className="grid grid-cols-1 gap-3">
-                {/* Active Campaign 1 */}
-                <div
-                  onClick={() => setSelectedCampaignId(1)}
-                  className={`cursor-pointer p-4 transition-all relative border ${
-                    selectedCampaignId === 1
-                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
-                      : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-tertiary text-on-tertiary uppercase tracking-wider">
-                          En Curso
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-CUS-02</span>
-                      </div>
-                      <h3 className="text-base font-semibold text-on-surface">Cusco - Valle Sagrado 2025</h3>
-                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Salón Comunal Rumichaca • Urubamba, Cusco (2,870 msnm)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-light font-mono text-primary">142</span>
-                      <div className="text-[11px] text-secondary">Pacientes hoy</div>
-                    </div>
-                  </div>
-                  <div className="mt-3 pt-3 flex items-center justify-between text-xs bg-surface-container px-3 py-2 border-t border-surface-container-high">
-                    <span className="text-secondary font-mono">Triajes activos: 3 | Farmacia: Abierta</span>
-                    {selectedCampaignId === 1 && (
-                      <span className="text-primary font-semibold flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm">check_circle</span> Seleccionada
-                      </span>
-                    )}
-                  </div>
-                </div>
+                {campaigns.map((camp) => {
+                  const isSelected = selectedCampaignId === camp.id
+                  const isClosest = camp.isNearest && camp.distanceKm !== undefined
+                  const isClosed = camp.status === 'closed'
 
-                {/* Scheduled Campaign 2 */}
-                <div
-                  onClick={() => setSelectedCampaignId(2)}
-                  className={`cursor-pointer p-4 transition-all border ${
-                    selectedCampaignId === 2
-                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
-                      : 'bg-surface border-surface-container-high opacity-75 hover:opacity-100'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-on-surface uppercase tracking-wider">
-                          Programada
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-PUN-01</span>
-                      </div>
-                      <h3 className="text-base font-medium text-on-surface">Puno - Altiplano 2025</h3>
-                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Centro Cívico Ilave • El Collao, Puno (3,850 msnm)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xs font-mono text-secondary">Inicio: 12 Mayo</span>
-                    </div>
-                  </div>
-                </div>
+                  return (
+                    <div
+                      key={camp.id}
+                      onClick={() => !isClosed && selectCampaign(camp.id)}
+                      className={`p-4 transition-all relative border ${
+                        isClosed
+                          ? 'bg-surface border-surface-container-high opacity-40 cursor-not-allowed select-none'
+                          : isSelected
+                          ? 'bg-surface border-primary shadow-sm ring-1 ring-primary cursor-pointer'
+                          : isClosest
+                          ? 'bg-surface border-emerald-500/70 hover:border-emerald-600 shadow-2xs cursor-pointer'
+                          : 'bg-surface border-surface-container-high hover:border-surface-container-highest cursor-pointer'
+                      }`}
+                    >
+                      {/* Distintivo de campaña más cercana por geolocalización */}
+                      {isClosest && (
+                        <div className="mb-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 text-[10.5px] font-bold bg-emerald-600 text-white uppercase tracking-wider shadow-2xs">
+                          <span className="material-symbols-outlined text-[14px] animate-pulse">radar</span>
+                          <span>Campaña más cercana calculada por GPS</span>
+                          {camp.distanceFormatted && (
+                            <span className="font-mono bg-emerald-700 px-1.5 py-0.2 rounded-2xs">
+                              a {camp.distanceFormatted}
+                            </span>
+                          )}
+                        </div>
+                      )}
 
-                {/* Closed Campaign 3 */}
-                <div className="bg-surface p-4 border border-surface-container-high opacity-40 select-none">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-secondary uppercase tracking-wider">
-                          Cerrada
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2024-HVC-09</span>
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span
+                              className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                                camp.status === 'active'
+                                  ? 'bg-tertiary text-on-tertiary'
+                                  : camp.status === 'planned'
+                                  ? 'bg-surface-container-highest text-on-surface'
+                                  : 'bg-surface-container-highest text-secondary'
+                              }`}
+                            >
+                              {camp.status === 'active'
+                                ? 'En Curso'
+                                : camp.status === 'planned'
+                                ? 'Programada'
+                                : 'Cerrada'}
+                            </span>
+                            <span className="text-xs font-mono text-secondary">ID: {camp.code}</span>
+                            {camp.distanceFormatted && !isClosest && (
+                              <span className="text-[11px] font-mono text-secondary bg-surface-container px-2 py-0.5 border border-surface-container-high flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[13px] text-primary">directions_car</span>
+                                <span>a {camp.distanceFormatted}</span>
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-base font-semibold text-on-surface">{camp.name}</h3>
+                          <p className="text-xs text-on-surface-variant flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
+                            {camp.location_name}
+                          </p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          {camp.status === 'active' ? (
+                            <>
+                              <span className="text-2xl font-light font-mono text-primary">{camp.today_count}</span>
+                              <div className="text-[11px] text-secondary">Pacientes hoy</div>
+                            </>
+                          ) : camp.status === 'planned' ? (
+                            <span className="text-xs font-mono text-secondary">
+                              Inicio: {camp.start_date || '12 Mayo'}
+                            </span>
+                          ) : (
+                            <span className="text-xs font-mono text-secondary">Archivado</span>
+                          )}
+                        </div>
                       </div>
-                      <h3 className="text-base font-medium text-on-surface">Huancavelica - Pampas</h3>
-                      <p className="text-xs text-secondary flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Hospital de Apoyo Tayacaja • Campaña Finalizada
-                      </p>
+
+                      {/* Pie de tarjeta con estado de triajes y selección */}
+                      <div className="mt-3 pt-3 flex items-center justify-between text-xs bg-surface-container px-3 py-2 border-t border-surface-container-high">
+                        <span className="text-secondary font-mono">
+                          {camp.status === 'active'
+                            ? 'Triajes activos: 3 | Farmacia: Abierta'
+                            : camp.status === 'planned'
+                            ? 'En preparación logística de carpa'
+                            : 'Hospital de Apoyo • Campaña Finalizada'}
+                        </span>
+                        {isSelected && !isClosed && (
+                          <span className="text-primary font-semibold flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm">check_circle</span> Seleccionada
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <span className="text-xs font-mono text-secondary">Archivado</span>
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -591,6 +744,9 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Pie de página institucional y créditos del desarrollador */}
+      <AppFooter className="mt-auto" />
     </div>
   )
 }

@@ -7,6 +7,7 @@ import {
 } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
+import { AppFooter } from '../../components/layout/AppFooter'
 
 type VolunteerRole =
   | 'medico'
@@ -274,8 +275,16 @@ export default function RegisterVolunteerPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white flex flex-col justify-center items-center p-4">
       {/* Encabezado */}
       <div className="w-full max-w-2xl text-center mb-6">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-teal-500/20 border border-teal-400/30 text-3xl mb-3 shadow-lg shadow-teal-900/50">
-          🩺
+        <div className="inline-flex items-center justify-center p-2 rounded-2xl bg-teal-500/20 border border-teal-400/30 mb-3 shadow-lg shadow-teal-900/50 min-w-16 min-h-16">
+          {branding.logoUrl || branding.isotipoUrl ? (
+            <img
+              src={branding.logoUrl || branding.isotipoUrl}
+              alt={branding.appName || 'Logo Institucional'}
+              className="h-12 w-auto max-w-[160px] object-contain"
+            />
+          ) : (
+            <span className="text-3xl">🩺</span>
+          )}
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           {branding.appName || 'ElRond'}
@@ -596,6 +605,8 @@ export default function RegisterVolunteerPage() {
           </form>
         )}
       </div>
+
+      <AppFooter className="mt-8 bg-transparent border-teal-500/20 text-teal-300/80 max-w-2xl" />
     </div>
   )
 }

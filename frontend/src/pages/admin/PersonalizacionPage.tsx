@@ -23,6 +23,9 @@ export default function PersonalizacionPage() {
     ticketLogoUrl: branding.ticketLogoUrl,
     pdfLogoUrl: branding.pdfLogoUrl,
     selectedExportLogo: branding.selectedExportLogo,
+    developerName: branding.developerName,
+    developerUrl: branding.developerUrl,
+    crossLogoUrl: branding.crossLogoUrl,
   })
 
   const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion'>('cabecera')
@@ -31,6 +34,7 @@ export default function PersonalizacionPage() {
   // File input refs
   const logoFileRef = useRef<HTMLInputElement>(null)
   const isotipoFileRef = useRef<HTMLInputElement>(null)
+  const crossLogoFileRef = useRef<HTMLInputElement>(null)
   const footerLogoFileRef = useRef<HTMLInputElement>(null)
   const ticketLogoFileRef = useRef<HTMLInputElement>(null)
   const pdfLogoFileRef = useRef<HTMLInputElement>(null)
@@ -410,17 +414,83 @@ export default function PersonalizacionPage() {
                   />
                 </div>
 
-                {/* Sello o Logo inferior */}
+                {/* Logo de la Cruz Médica de ElRond */}
                 <div className="pt-3 border-t border-surface-container-high space-y-2">
                   <label className="block font-semibold text-on-surface">
-                    Logo o Sello Institucional Inferior (Opcional)
+                    Logo de la Cruz Médica (Pie de Página Global)
+                  </label>
+                  <p className="text-[11.5px] text-on-surface-variant">
+                    Isotipo con la cruz médica estilizada que se estampa en la barra inferior más pequeña de todas las pantallas.
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formData.crossLogoUrl}
+                      onChange={(e) => setFormData({ ...formData, crossLogoUrl: e.target.value })}
+                      placeholder="URL del isotipo de la cruz"
+                      className="flex-1 px-3 py-1.5 text-xs border border-surface-container-highest bg-surface-container-low text-on-surface focus:outline-none focus:border-primary"
+                    />
+                    <input
+                      type="file"
+                      ref={crossLogoFileRef}
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload('crossLogoUrl', e.target.files?.[0] ?? null)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => crossLogoFileRef.current?.click()}
+                      className="px-3 py-1.5 bg-surface-container text-xs font-medium border border-surface-container-highest hover:bg-surface-container-high flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">upload</span>
+                      <span>Subir Cruz</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Créditos del Desarrollador */}
+                <div className="pt-3 border-t border-surface-container-high space-y-3">
+                  <label className="block font-semibold text-on-surface">
+                    Créditos y Página Web del Desarrollador
+                  </label>
+                  <div>
+                    <label className="block text-[12px] font-medium text-on-surface-variant mb-1">
+                      Nombre o Etiqueta Visible
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.developerName}
+                      onChange={(e) => setFormData({ ...formData, developerName: e.target.value })}
+                      placeholder="Ej. Página del Desarrollador"
+                      className="w-full px-3 py-1.5 text-xs border border-surface-container-highest bg-surface-container-low text-on-surface focus:outline-none focus:border-primary"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[12px] font-medium text-on-surface-variant mb-1">
+                      Enlace / URL de la Web del Desarrollador
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.developerUrl}
+                      onChange={(e) => setFormData({ ...formData, developerUrl: e.target.value })}
+                      placeholder="https://elrond.salud"
+                      className="w-full px-3 py-1.5 text-xs border border-surface-container-highest bg-surface-container-low text-on-surface focus:outline-none focus:border-primary font-mono"
+                    />
+                  </div>
+                </div>
+
+                {/* Sello o Logo inferior adicional */}
+                <div className="pt-3 border-t border-surface-container-high space-y-2">
+                  <label className="block font-semibold text-on-surface">
+                    Logo o Sello Institucional Secundario (Opcional)
                   </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={formData.footerLogoUrl}
                       onChange={(e) => setFormData({ ...formData, footerLogoUrl: e.target.value })}
-                      placeholder="URL del sello o archivo"
+                      placeholder="URL del sello o archivo secundario"
                       className="flex-1 px-3 py-1.5 text-xs border border-surface-container-highest bg-surface-container-low text-on-surface focus:outline-none focus:border-primary"
                     />
                     <input
@@ -448,9 +518,35 @@ export default function PersonalizacionPage() {
               <div>
                 <h2 className="text-sm font-bold text-on-surface uppercase tracking-wider flex items-center gap-2 border-b border-surface-container-high pb-2 mb-4">
                   <span className="material-symbols-outlined text-base text-primary">visibility</span>
-                  <span>Previsualización del Pie de Página</span>
+                  <span>Previsualización de la Barra Inferior (Global en Todo el Sistema)</span>
                 </h2>
 
+                {/* Global Compact Footer Preview */}
+                <div className="border border-surface-container-high bg-surface p-3 text-[11px] font-sans flex flex-col sm:flex-row items-center justify-between gap-2 shadow-xs mb-4">
+                  <div className="flex items-center gap-1.5">
+                    {formData.crossLogoUrl ? (
+                      <img src={formData.crossLogoUrl} alt="Cruz" className="h-4.5 w-auto object-contain" />
+                    ) : (
+                      <span className="material-symbols-outlined text-primary text-[16px]">local_hospital</span>
+                    )}
+                    <span className="font-bold text-on-surface">
+                      ElRond - Sistema de Gestión Médica - Módulo Triaje
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-on-surface-variant">Desarrollo:</span>
+                    <a
+                      href={formData.developerUrl || '#'}
+                      onClick={(e) => e.preventDefault()}
+                      className="text-primary font-semibold underline flex items-center gap-0.5"
+                    >
+                      <span>{formData.developerName || 'Página del Desarrollador'}</span>
+                      <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Legacy Node Status Box */}
                 <div className="border border-surface-container-high bg-[#161616] text-[#c6c6c6] p-4 text-xs font-mono">
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-[#393939] pb-3 mb-3">
                     <div className="flex items-center gap-2 text-xs">
@@ -471,13 +567,13 @@ export default function PersonalizacionPage() {
                   </div>
 
                   <div className="text-[11px] text-[#8d8d8d] text-center">
-                    Área reservada para firmas digitales y telemetría de dispositivos en campaña
+                    Barra de telemetría P2P para contingencias y nodos de campo
                   </div>
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-surface-container-high text-xs text-on-surface-variant">
-                El pie de página se replica automáticamente en la pantalla de inicio de sesión y en los paneles de telemetría de campo.
+                La barra inferior con el logo de la cruz y el enlace al desarrollador se visualiza en todas las páginas de la aplicación independientemente del tema visual activo.
               </div>
             </div>
           </div>

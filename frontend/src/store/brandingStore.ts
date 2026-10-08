@@ -12,11 +12,14 @@ export interface BrandingState {
   logoUrl: string
   isotipoUrl: string
 
-  // Pie de Página
+  // Pie de Página & Créditos de Desarrollador
   footerLeftText: string
   footerCenterText: string
   footerRightText: string
   footerLogoUrl: string
+  developerName: string
+  developerUrl: string
+  crossLogoUrl: string
 
   // Documentos a Exportar (Tickets, Fichas, Reportes)
   exportHeader: string
@@ -46,6 +49,9 @@ export const DEFAULT_BRANDING = {
   footerCenterText: 'Sincronización P2P: 6 dispositivos en red local',
   footerRightText: 'ElRond v2.5.0-field',
   footerLogoUrl: '',
+  developerName: 'Página del Desarrollador',
+  developerUrl: 'https://elrond.salud',
+  crossLogoUrl: '/elrond-cross-logo.png',
 
   exportHeader: 'ELROND • SISTEMA DE GESTIÓN MÉDICA',
   exportSubheader: 'MÓDULO DE TRIAJE CLÍNICO Y EVALUACIÓN AMBULATORIA',

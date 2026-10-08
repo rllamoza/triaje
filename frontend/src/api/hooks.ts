@@ -435,3 +435,264 @@ export const useResetPin = () =>
     mutationFn: ({ id, pin }: { id: number; pin: string }) =>
       api.post(`/users/${id}/reset-pin`, { pin }).then((r) => r.data),
   })
+
+/* ── Webhooks & Integrations ──────────────────────────────────── */
+export interface WebhookItem {
+  id: number
+  name: string
+  description: string | null
+  type: 'REST_WEBHOOK' | 'REST_API' | 'HL7_FHIR' | 'MQTT_IOT' | 'S3_BUCKET'
+  protocol: string
+  url: string
+  event: string
+  auth_type: 'NONE' | 'BEARER' | 'BASIC' | 'API_KEY' | 'HMAC'
+  auth_token?: string | null
+  secret?: string | null
+  headers?: Record<string, string> | null
+  status: 'ACTIVE' | 'INACTIVE' | 'ERROR'
+  last_status_code: number | null
+  last_latency_ms: number | null
+  last_triggered_at: string | null
+  last_error: string | null
+  payload_sample?: Record<string, unknown> | null
+  is_enabled: boolean
+  deliveries_count?: number
+  created_at?: string
+  updated_at?: string
+}
+
+export interface WebhookDeliveryItem {
+  id: number
+  webhook_id: number
+  event: string
+  url: string
+  request_headers: Record<string, string> | null
+  request_payload: Record<string, unknown> | null
+  response_status: number | null
+  response_headers: Record<string, string> | null
+  response_body: string | null
+  duration_ms: number
+  status: 'SUCCESS' | 'FAILED'
+  error_message: string | null
+  created_at: string
+}
+
+export interface TelemetryStats {
+  starlink: {
+    model: string
+    azimuth: string
+    latency_ms: number
+    packet_loss: number
+    wan_status: string
+    ups_battery: number
+    wan_ip: string
+    gateway: string
+    throughput_mbps: { down: number; up: number }
+  }
+  mesh: {
+    synchronized_records: number
+    total_records: number
+    sync_percentage: number
+    active_peers: number
+    total_peers: number
+    thermal_tickets: number
+    p2p_protocol: string
+  }
+  reniec: {
+    queries_count: number
+    success_rate: number
+    sqlite_hits: number
+    hits_count: number
+    wan_saved_mb: number
+  }
+  printer: {
+    device_name: string
+    protocol: string
+    baudrate: string
+    status: string
+    paper_sensor: string
+  }
+  webhooks_summary: {
+    total: number
+    active: number
+    deliveries: number
+    success_rate: number
+    last_sync_log: any
+  }
+  edge_node: {
+    name: string
+    ip: string
+    firmware: string
+    uptime: string
+    load_average: string
+  }
+}
+
+export interface TelemetryEvent {
+  id: string
+  time: string
+  datetime: string
+  event: string
+  source_node: string
+  target: string
+  status: string
+  type: string
+  duration_ms?: number
+}
+
+export interface MeshNode {
+  code: string
+  name: string
+  hardware: string
+  ip: string
+  role: string
+  status: string
+  is_master: boolean
+  latency: string
+}
+
+export const useWebhooks = (filters?: { type?: string; status?: string; search?: string }) => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{ success: boolean; data: WebhookItem[]; total: number }>({
+    queryKey: ['webhooks', filters],
+    queryFn: () => api.get('/admin/integrations/webhooks', { params: filters }).then((r) => r.data),
+    enabled: !!token,
+  })
+}
+
+export const useCreateWebhook = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Partial<WebhookItem>) =>
+      api.post('/admin/integrations/webhooks', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+    },
+  })
+}
+
+export const useUpdateWebhook = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: number; [k: string]: unknown }) =>
+      api.put(`/admin/integrations/webhooks/${id}`, data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+    },
+  })
+}
+
+export const useDeleteWebhook = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) =>
+      api.delete(`/admin/integrations/webhooks/${id}`).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+    },
+  })
+}
+
+export const useToggleWebhook = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) =>
+      api.post(`/admin/integrations/webhooks/${id}/toggle`).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+    },
+  })
+}
+
+export const useTestWebhookPing = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) =>
+      api.post(`/admin/integrations/webhooks/${id}/test`).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-events'] })
+    },
+  })
+}
+
+export const useTriggerWebhook = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) =>
+      api.post(`/admin/integrations/webhooks/${id}/trigger`).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['webhooks'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-events'] })
+    },
+  })
+}
+
+export const useWebhookLogs = (id: number | null) => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{
+    success: boolean
+    webhook: { id: number; name: string; url: string }
+    data: WebhookDeliveryItem[]
+  }>({
+    queryKey: ['webhook-logs', id],
+    queryFn: () => api.get(`/admin/integrations/webhooks/${id}/logs`).then((r) => r.data),
+    enabled: !!token && id !== null,
+  })
+}
+
+export const useTelemetryStats = () => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{ success: boolean; data: TelemetryStats }>({
+    queryKey: ['telemetry-stats'],
+    queryFn: () => api.get('/admin/telemetria/stats').then((r) => r.data),
+    enabled: !!token,
+    refetchInterval: 10000,
+  })
+}
+
+export const useTelemetryEvents = () => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{ success: boolean; events: TelemetryEvent[] }>({
+    queryKey: ['telemetry-events'],
+    queryFn: () => api.get('/admin/telemetria/events').then((r) => r.data),
+    enabled: !!token,
+    refetchInterval: 5000,
+  })
+}
+
+export const usePingStarlink = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.post('/admin/telemetria/ping-starlink').then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-events'] })
+    },
+  })
+}
+
+export const useSyncDelta = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.post('/admin/telemetria/sync-delta').then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['telemetry-stats'] })
+      qc.invalidateQueries({ queryKey: ['telemetry-events'] })
+    },
+  })
+}
+
+export const useMeshTopology = () => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{ success: boolean; nodes: MeshNode[]; total: number }>({
+    queryKey: ['mesh-topology'],
+    queryFn: () => api.get('/admin/telemetria/mesh-topology').then((r) => r.data),
+    enabled: !!token,
+  })
+}

@@ -5,6 +5,7 @@ import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS, applyThemeToDom } from '../../store/themeStore'
 import { useScannerStore } from '../../store/scannerStore'
 import { Navbar } from './Navbar'
+import { AppFooter } from './AppFooter'
 import { GlassHeader, GlassFluidDock, GlassDrawer, GlassFab } from '../../themes/glass'
 import { CyberHeader, NeonFluidDock, CyberDrawer, CyberFab } from '../../themes/cyberpunk'
 import { QrScannerModal } from '../common/QrScannerModal'
@@ -79,33 +80,35 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
     <div className="min-h-screen bg-surface-container-low font-body text-on-surface antialiased">
       {/* ── 1. HEADER & CONTENEDOR SEGÚN TEMA ACTIVO ───────────── */}
       {currentTheme === 'glass' ? (
-        <>
+        <div className="flex flex-col min-h-screen">
           <GlassHeader onOpenDrawer={() => setMobileMenuOpen(true)} />
           <GlassDrawer
             isOpen={mobileMenuOpen}
             onClose={() => setMobileMenuOpen(false)}
             onLogout={handleMobileLogout}
           />
-          <main className="max-w-[1280px] mx-auto pt-6 pb-28 px-3 sm:px-6 min-h-screen text-on-surface">
+          <main className="max-w-[1280px] w-full mx-auto pt-6 pb-24 px-3 sm:px-6 flex-1 text-on-surface">
             <Outlet />
           </main>
+          <AppFooter className="mb-20 md:mb-0 relative z-30" />
           <GlassFab />
           <GlassFluidDock />
-        </>
+        </div>
       ) : currentTheme === 'cyberpunk' ? (
-        <>
+        <div className="flex flex-col min-h-screen">
           <CyberHeader onOpenDrawer={() => setMobileMenuOpen(true)} />
           <CyberDrawer
             isOpen={mobileMenuOpen}
             onClose={() => setMobileMenuOpen(false)}
             onLogout={handleMobileLogout}
           />
-          <main className="max-w-[1280px] mx-auto pt-6 pb-28 px-3 sm:px-6 min-h-screen font-sans text-slate-100">
+          <main className="max-w-[1280px] w-full mx-auto pt-6 pb-24 px-3 sm:px-6 flex-1 font-sans text-slate-100">
             <Outlet />
           </main>
+          <AppFooter className="mb-20 md:mb-0 relative z-30" />
           <CyberFab />
           <NeonFluidDock />
-        </>
+        </div>
       ) : (
         /* ── TEMA: CLINIC (IBM CARBON ORIGINAL) ─────────────────── */
         <>
@@ -168,7 +171,7 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
             </div>
 
             {/* Terminal Local Status Box */}
-            <div className="p-3 bg-surface-container-low m-2.5 border border-surface-container-high">
+            <div className="p-3 bg-surface-container-low m-2.5 border border-surface-container-high space-y-2">
               <div className="flex items-center justify-between text-xs text-on-surface-variant mb-1">
                 <span className="font-bold uppercase tracking-wider text-[11px]">Terminal Local</span>
                 <span className="text-tertiary font-bold flex items-center gap-1.5 text-xs">
@@ -178,14 +181,23 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
               <div className="text-[12px] lg:text-[13px] font-mono text-on-surface-variant truncate">
                 Nodo: {nodeStatus?.node_id ?? 'CUS-VALLE-04'}
               </div>
+              <div className="pt-2 border-t border-surface-container-high/80 flex items-center gap-2 text-[11px] text-on-surface-variant">
+                <img
+                  src="/elrond-cross-logo.png"
+                  alt="ElRond"
+                  className="h-4 w-auto object-contain rounded-xs shrink-0"
+                />
+                <span className="font-semibold truncate">ElRond - Triaje OS v2.5</span>
+              </div>
             </div>
           </aside>
 
           {/* Main Workspace for Clinic */}
-          <div className="md:pl-60 lg:pl-64 xl:pl-72">
-            <main className="w-full pt-16 pb-24 md:pb-16 px-3 sm:px-6 lg:px-8 min-h-screen bg-surface-container-low text-on-surface">
+          <div className="md:pl-60 lg:pl-64 xl:pl-72 flex flex-col min-h-screen">
+            <main className="w-full pt-16 pb-12 px-3 sm:px-6 lg:px-8 flex-1 bg-surface-container-low text-on-surface">
               <Outlet />
             </main>
+            <AppFooter />
           </div>
         </>
       )}

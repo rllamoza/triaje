@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '../../store/authStore'
+import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS } from '../../store/themeStore'
 import { useScannerStore } from '../../store/scannerStore'
 
@@ -12,6 +13,7 @@ interface CyberDrawerProps {
 
 export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
   const { user } = useAuthStore()
+  const branding = useBrandingStore()
   const { theme: currentTheme, setTheme } = useThemeStore()
   const { openScanner } = useScannerStore()
   const location = useLocation()
@@ -51,20 +53,28 @@ export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
           >
             <div>
               {/* Drawer Top Branding */}
-              <div className="p-5 border-b border-purple-900/40 flex items-center justify-between bg-gradient-to-b from-purple-950/40 to-transparent">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-800 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xl shadow-[0_0_18px_rgba(217,70,239,0.6)]">
-                    <span className="material-symbols-outlined text-[24px]">bolt</span>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-extrabold text-white tracking-wider uppercase font-sans">
-                        NEXUS • SYNTH
-                      </span>
+              <div className="p-4 sm:p-5 border-b border-purple-900/40 flex items-center justify-between bg-gradient-to-b from-purple-950/40 to-transparent">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {branding.logoUrl ? (
+                    <div className="p-1 rounded-xl bg-[#131126]/90 border border-purple-500/40 shadow-[0_0_12px_rgba(168,85,247,0.3)] flex items-center justify-center">
+                      <img
+                        alt={branding.appName}
+                        className="h-8 w-auto max-w-[120px] object-contain"
+                        src={branding.logoUrl}
+                      />
                     </div>
-                    <span className="text-[10px] font-mono font-bold text-neon-magenta bg-fuchsia-950/80 px-2 py-0.5 rounded border border-fuchsia-700/50 uppercase">
-                      GLOW DRAWER V2.5
-                    </span>
+                  ) : (
+                    <div className="h-8 px-2 rounded-lg bg-gradient-to-tr from-purple-800 to-fuchsia-600 text-white text-xs font-bold font-mono flex items-center justify-center uppercase">
+                      {branding.appName}
+                    </div>
+                  )}
+                  <div className="overflow-hidden">
+                    <div className="text-[13px] font-bold text-white tracking-wider uppercase font-mono truncate">
+                      {branding.appName}
+                    </div>
+                    <div className="text-[10px] font-mono text-fuchsia-300/80 truncate uppercase">
+                      {branding.appTagline || 'CYBER HUD'}
+                    </div>
                   </div>
                 </div>
 

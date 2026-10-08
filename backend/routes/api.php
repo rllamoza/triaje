@@ -18,6 +18,7 @@ Route::prefix('auth')->group(function () {
     Route::post('resend-code',        [AuthController::class, 'resendVerificationCode']);
     Route::post('test-brevo',         [AuthController::class, 'testBrevo']);
     Route::get('node-status',         [AuthController::class, 'nodeStatus']);
+    Route::get('campaigns-public',    [CampaignController::class, 'publicList']);
 });
 
 // ── Autenticados ────────────────────────────────────────────────────────────
@@ -93,4 +94,30 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('stats',     [\App\Http\Controllers\Api\AuditAdminController::class, 'stats']);
         Route::get('export',    [\App\Http\Controllers\Api\AuditAdminController::class, 'export']);
     });
+
+    // API Integraciones y Webhooks
+    Route::prefix('admin/integrations')->group(function () {
+        Route::get('webhooks',              [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'index']);
+        Route::post('webhooks',             [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'store']);
+        Route::get('webhooks/{id}',         [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'show']);
+        Route::put('webhooks/{id}',         [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'update']);
+        Route::delete('webhooks/{id}',      [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'destroy']);
+        Route::post('webhooks/{id}/toggle', [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'toggle']);
+        Route::post('webhooks/{id}/test',   [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'test']);
+        Route::post('webhooks/{id}/trigger',[\App\Http\Controllers\Api\IntegrationWebhookController::class, 'trigger']);
+        Route::get('webhooks/{id}/logs',    [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'logs']);
+        Route::get('deliveries',            [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'deliveries']);
+    });
+
+    // Telemetría Satelital, P2P Mesh y Conectividad NOC
+    Route::prefix('admin/telemetria')->group(function () {
+        Route::get('stats',          [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'stats']);
+        Route::post('ping-starlink', [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'pingStarlink']);
+        Route::post('sync-delta',    [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'syncDelta']);
+        Route::get('mesh-topology',  [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'meshTopology']);
+        Route::get('events',         [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'events']);
+        Route::get('export-dump',    [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'exportDump']);
+        Route::get('openapi',        [\App\Http\Controllers\Api\IntegrationWebhookController::class, 'openApiSpec']);
+    });
 });
+

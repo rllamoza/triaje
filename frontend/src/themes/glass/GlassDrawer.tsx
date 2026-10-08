@@ -56,19 +56,25 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
             <div>
               {/* Drawer Top Branding */}
               <div className="p-5 border-b border-[#cbdbf5] flex items-center justify-between bg-gradient-to-b from-blue-50/50 to-transparent">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#0a2540] text-emerald-400 flex items-center justify-center font-bold text-xl shadow-xs">
-                    <span className="material-symbols-outlined text-[24px]">potted_plant</span>
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-sm font-bold text-[#0a2540] tracking-wider uppercase font-sans">
-                        {branding.appName}
-                      </span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {branding.logoUrl ? (
+                    <img
+                      alt={branding.appName}
+                      className="h-8 w-auto max-w-[120px] object-contain"
+                      src={branding.logoUrl}
+                    />
+                  ) : (
+                    <div className="h-8 px-2 rounded-lg bg-[#0a2540] text-white text-xs font-bold flex items-center justify-center uppercase font-sans">
+                      {branding.appName}
                     </div>
-                    <span className="text-[11px] font-semibold text-[#0f62fe] bg-[#e8f1ff] px-1.5 py-0.2 rounded border border-[#0f62fe]/20 uppercase">
-                      Clinica Glass
-                    </span>
+                  )}
+                  <div className="overflow-hidden">
+                    <div className="text-[13px] font-bold text-[#0a2540] truncate font-sans">
+                      {branding.appName}
+                    </div>
+                    <div className="text-[10px] text-slate-500 truncate uppercase font-sans">
+                      {branding.appTagline || 'Clinica Glass'}
+                    </div>
                   </div>
                 </div>
 

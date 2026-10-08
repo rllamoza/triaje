@@ -8,6 +8,8 @@ class Atencion extends Model
 {
     use HasFactory;
 
+    protected $table = 'atenciones';
+
     protected $fillable = [
         'ticket_number','beneficiario_id','campaign_id','station_id',
         'arrival_time','status','seguro_usado',

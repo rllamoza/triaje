@@ -345,13 +345,21 @@ export default function TicketPage() {
           <div className="w-[320px] bg-[#fafafa] text-[#111111] p-5 shadow-2xl border border-[#d0d0d0] font-mono text-xs select-none">
             {/* Thermal Header */}
             <div className="text-center flex flex-col items-center gap-1 border-b border-dashed border-[#111111] pb-3">
-              {branding.ticketLogoUrl && (
-                <img
-                  src={branding.ticketLogoUrl}
-                  alt="Logo Ticket"
-                  className="h-10 w-auto max-w-[140px] object-contain mb-1 filter grayscale contrast-200"
-                />
-              )}
+              {branding.selectedExportLogo !== 'ninguno' && (() => {
+                const resolvedLogo =
+                  branding.selectedExportLogo === 'ticket_personalizado' && branding.ticketLogoUrl
+                    ? branding.ticketLogoUrl
+                    : branding.selectedExportLogo === 'isotipo' && branding.isotipoUrl
+                    ? branding.isotipoUrl
+                    : branding.logoUrl || branding.ticketLogoUrl
+                return resolvedLogo ? (
+                  <img
+                    src={resolvedLogo}
+                    alt="Logo Ticket"
+                    className="h-10 w-auto max-w-[140px] object-contain mb-1 filter grayscale contrast-200"
+                  />
+                ) : null
+              })()}
               <div className="font-bold text-sm tracking-tight">{branding.exportHeader}</div>
               <div className="text-[10px] leading-tight">{branding.exportSubheader}</div>
               <div className="text-[8px] tracking-widest mt-1 opacity-80">

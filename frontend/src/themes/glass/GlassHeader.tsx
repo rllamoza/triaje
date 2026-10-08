@@ -54,24 +54,32 @@ export function GlassHeader({ onOpenDrawer }: GlassHeaderProps) {
           </button>
 
           {/* Brand Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#0a2540] text-emerald-400 flex items-center justify-center font-bold text-lg shadow-xs">
-              <span className="material-symbols-outlined text-[22px]">potted_plant</span>
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            {branding.logoUrl ? (
+              <img
+                alt={branding.appName}
+                className="h-8 sm:h-9 w-auto max-w-[140px] sm:max-w-[160px] object-contain transition-transform group-hover:scale-102"
+                src={branding.logoUrl}
+              />
+            ) : (
+              <div className="h-8 sm:h-9 px-2.5 rounded-xl bg-[#0a2540] text-white flex items-center justify-center font-bold text-xs shadow-xs tracking-wider uppercase font-sans">
+                {branding.appName}
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[#0a2540] tracking-wider uppercase font-sans">
+                <span className="text-xs sm:text-sm font-bold text-[#0a2540] tracking-tight font-sans">
                   {branding.appName}
                 </span>
-                <span className="text-[10px] font-semibold text-[#0f62fe] bg-[#e8f1ff] px-2 py-0.5 rounded border border-[#0f62fe]/20 uppercase font-sans">
-                  Clinica Glass
+                <span className="text-[9.5px] font-semibold text-[#0f62fe] bg-[#e8f1ff] px-1.5 py-0.5 rounded-md border border-[#0f62fe]/20 uppercase font-sans">
+                  Glass
                 </span>
               </div>
-              <span className="text-[11px] font-medium text-slate-500 hidden sm:inline-block">
-                Micro-Interactions &amp; Spring Dynamics
+              <span className="text-[11px] font-medium text-slate-500 hidden sm:inline-block truncate max-w-[200px] xl:max-w-[300px]">
+                {branding.appTagline || 'Micro-Interactions & Spring Dynamics'}
               </span>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Right Header Actions */}
@@ -193,16 +201,32 @@ export function GlassHeader({ onOpenDrawer }: GlassHeaderProps) {
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:bg-[#e8f1ff] hover:text-[#0a2540] rounded-xl transition-colors font-medium"
                 >
-                  <span className="material-symbols-outlined text-[18px]">brush</span>
+                  <span className="material-symbols-outlined text-[18px] text-primary">palette</span>
                   Personalización &amp; Logos
+                </Link>
+                <Link
+                  to="/admin/usuarios"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:bg-[#e8f1ff] hover:text-[#0a2540] rounded-xl transition-colors font-medium"
+                >
+                  <span className="material-symbols-outlined text-[18px] text-secondary">manage_accounts</span>
+                  Gestión de Usuarios
                 </Link>
                 <Link
                   to="/admin/telemetria"
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:bg-[#e8f1ff] hover:text-[#0a2540] rounded-xl transition-colors font-medium"
                 >
-                  <span className="material-symbols-outlined text-[18px]">hub</span>
-                  Integraciones Satelitales
+                  <span className="material-symbols-outlined text-[18px] text-tertiary">hub</span>
+                  Integraciones &amp; Telemetría
+                </Link>
+                <Link
+                  to="/admin/auditoria"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-700 hover:bg-[#e8f1ff] hover:text-[#0a2540] rounded-xl transition-colors font-medium"
+                >
+                  <span className="material-symbols-outlined text-[18px] text-primary">policy</span>
+                  Auditoría Forense &amp; Red
                 </Link>
               </div>
 

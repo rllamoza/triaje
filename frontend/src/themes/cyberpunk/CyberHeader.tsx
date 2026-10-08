@@ -54,24 +54,34 @@ export function CyberHeader({ onOpenDrawer }: CyberHeaderProps) {
           </button>
 
           {/* Brand Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fuchsia-600 text-white flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(217,70,239,0.5)]">
-              <span className="material-symbols-outlined text-[22px]">smart_toy</span>
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            {branding.logoUrl ? (
+              <div className="p-1 rounded-xl bg-[#131126]/90 border border-purple-500/35 shadow-[0_0_15px_rgba(168,85,247,0.25)] flex items-center justify-center">
+                <img
+                  alt={branding.appName}
+                  className="h-8 sm:h-9 w-auto max-w-[140px] sm:max-w-[160px] object-contain transition-transform group-hover:scale-102"
+                  src={branding.logoUrl}
+                />
+              </div>
+            ) : (
+              <div className="h-8 sm:h-9 px-2.5 rounded-xl bg-gradient-to-tr from-purple-700 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xs shadow-[0_0_15px_rgba(217,70,239,0.5)] tracking-wider uppercase font-mono">
+                {branding.appName}
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-white tracking-widest uppercase font-mono">
+                <span className="text-xs sm:text-sm font-bold text-white tracking-widest uppercase font-mono">
                   {branding.appName}
                 </span>
-                <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/70 px-2 py-0.5 rounded border border-cyan-500/30 uppercase font-mono tracking-wider">
-                  Cyberpunk HUD
+                <span className="text-[9.5px] font-bold text-cyan-400 bg-cyan-950/70 px-1.5 py-0.5 rounded border border-cyan-500/30 uppercase font-mono tracking-wider">
+                  HUD
                 </span>
               </div>
-              <span className="text-[11px] font-mono text-fuchsia-300/80 hidden sm:inline-block">
-                Quantum Synth Dynamics • v2.5
+              <span className="text-[11px] font-mono text-fuchsia-300/80 hidden sm:inline-block truncate max-w-[200px] xl:max-w-[300px]">
+                {branding.appTagline || 'Quantum Synth Dynamics • v2.5'}
               </span>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Right Header Actions */}
@@ -193,16 +203,32 @@ export function CyberHeader({ onOpenDrawer }: CyberHeaderProps) {
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-purple-950/50 hover:text-fuchsia-300 rounded-xl transition-colors font-medium"
                 >
-                  <span className="material-symbols-outlined text-[18px]">brush</span>
+                  <span className="material-symbols-outlined text-[18px] text-fuchsia-400">palette</span>
                   Personalización &amp; Logos
+                </Link>
+                <Link
+                  to="/admin/usuarios"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-purple-950/50 hover:text-fuchsia-300 rounded-xl transition-colors font-medium"
+                >
+                  <span className="material-symbols-outlined text-[18px] text-cyan-400">manage_accounts</span>
+                  Gestión de Usuarios
                 </Link>
                 <Link
                   to="/admin/telemetria"
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-purple-950/50 hover:text-fuchsia-300 rounded-xl transition-colors font-medium"
                 >
-                  <span className="material-symbols-outlined text-[18px]">hub</span>
-                  Telemetría Starlink
+                  <span className="material-symbols-outlined text-[18px] text-emerald-400">hub</span>
+                  Telemetría &amp; Webhooks
+                </Link>
+                <Link
+                  to="/admin/auditoria"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-2.5 px-3 py-2 text-xs text-slate-300 hover:bg-purple-950/50 hover:text-fuchsia-300 rounded-xl transition-colors font-medium"
+                >
+                  <span className="material-symbols-outlined text-[18px] text-purple-400">policy</span>
+                  Auditoría Forense &amp; Red
                 </Link>
               </div>
 

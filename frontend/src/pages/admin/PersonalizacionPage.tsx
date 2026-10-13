@@ -628,46 +628,46 @@ export default function PersonalizacionPage() {
                 </h2>
 
                 {/* Thermal Ticket Preview */}
-                <div className="max-w-[280px] mx-auto bg-white text-black p-4 font-mono text-[11px] leading-tight border-2 border-dashed border-gray-400 shadow-md">
+                <div className="max-w-[290px] mx-auto bg-white text-black p-4 font-mono text-xs leading-snug border-2 border-dashed border-black shadow-lg antialiased">
                   {/* Logo chosen */}
                   <div className="text-center mb-2">
                     {formData.selectedExportLogo !== 'ninguno' && (
                       <div className="flex justify-center mb-1">
                         {formData.selectedExportLogo === 'ticket_personalizado' && formData.ticketLogoUrl ? (
-                          <img src={formData.ticketLogoUrl} alt="Logo Ticket" className="h-10 w-auto object-contain filter grayscale" />
+                          <img src={formData.ticketLogoUrl} alt="Logo Ticket" className="h-11 w-auto object-contain filter grayscale contrast-200" />
                         ) : formData.selectedExportLogo === 'isotipo' && formData.isotipoUrl ? (
-                          <img src={formData.isotipoUrl} alt="Isotipo Ticket" className="h-10 w-auto object-contain filter grayscale" />
+                          <img src={formData.isotipoUrl} alt="Isotipo Ticket" className="h-11 w-auto object-contain filter grayscale contrast-200" />
                         ) : formData.logoUrl ? (
-                          <img src={formData.logoUrl} alt="Logo Principal Ticket" className="h-9 w-auto object-contain filter grayscale" />
+                          <img src={formData.logoUrl} alt="Logo Principal Ticket" className="h-10 w-auto object-contain filter grayscale contrast-200" />
                         ) : (
-                          <div className="text-[10px] uppercase font-bold">[ LOGO ]</div>
+                          <div className="text-xs uppercase font-black text-black">[ LOGO ]</div>
                         )}
                       </div>
                     )}
-                    <div className="font-bold text-xs uppercase">{formData.exportHeader || 'ONG SEMILLA'}</div>
-                    <div className="text-[9px] text-gray-700">{formData.exportSubheader || 'TRIAJE CLÍNICO'}</div>
-                    <div className="border-b border-dashed border-black my-2" />
+                    <div className="font-black text-sm uppercase text-black">{formData.exportHeader || 'ONG SEMILLA'}</div>
+                    <div className="text-[11px] font-bold text-black uppercase mt-0.5">{formData.exportSubheader || 'TRIAJE CLÍNICO'}</div>
+                    <div className="border-b-2 border-dashed border-black my-2" />
                   </div>
 
                   <div className="text-center my-3">
-                    <div className="text-[10px] uppercase text-gray-600">TURNO ASIGNADO</div>
-                    <div className="text-3xl font-bold tracking-wider my-1">T-101</div>
-                    <div className="text-[10px] font-bold bg-black text-white px-2 py-0.5 inline-block">
+                    <div className="text-xs font-black uppercase text-black">TURNO ASIGNADO</div>
+                    <div className="text-4xl font-black tracking-wider my-1 text-black">T-101</div>
+                    <div className="text-[11px] font-black bg-black text-white px-2 py-0.5 inline-block">
                       PRIORIDAD I — ROJO (EMERGENCIA)
                     </div>
                   </div>
 
-                  <div className="border-b border-dashed border-black my-2" />
+                  <div className="border-b-2 border-dashed border-black my-2" />
 
-                  <div className="space-y-0.5 text-[10px]">
-                    <div><strong>PACIENTE:</strong> MAMANI QUISPE, ROSA</div>
-                    <div><strong>DNI:</strong> 02817462 • EDAD: 67 AÑOS</div>
-                    <div><strong>HORA:</strong> 09:12 • DESTINO: BOX 01</div>
+                  <div className="space-y-1 text-xs text-black font-semibold">
+                    <div><strong className="font-black">PACIENTE:</strong> MAMANI QUISPE, ROSA</div>
+                    <div><strong className="font-black">DNI:</strong> 02817462 • <strong className="font-black">EDAD:</strong> 67 AÑOS</div>
+                    <div><strong className="font-black">HORA:</strong> 09:12 • <strong className="font-black">DESTINO:</strong> BOX 01</div>
                   </div>
 
-                  <div className="border-b border-dashed border-black my-2" />
+                  <div className="border-b-2 border-dashed border-black my-2" />
 
-                  <div className="text-[8px] text-center text-gray-700 uppercase leading-snug">
+                  <div className="text-[10px] text-center text-black font-bold uppercase leading-snug">
                     {formData.exportFooterLegal || 'Documento clínico de campo válido para transferencia'}
                   </div>
                 </div>

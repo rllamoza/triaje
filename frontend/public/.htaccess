@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Permitir que las peticiones a la API pasen directamente al backend
+    RewriteRule ^api/ - [L]
+
+    # Servir archivos y carpetas existentes directamente
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Enrutar todas las demás rutas de la SPA a index.html
+    RewriteRule ^ index.html [L]
+</IfModule>

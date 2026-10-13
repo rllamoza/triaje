@@ -271,34 +271,22 @@ export const PATIENT_DATABASE: DetailedPatient[] = [
 ]
 
 /**
- * Genera el payload JSON oficial y legible que se codifica en el código QR del ticket
+ * Genera el payload JSON oficial, interoperable y optimizado para escaneo óptico e impresión térmica ESC/POS
  */
 export function generatePatientQrPayload(patient: DetailedPatient): string {
-  const qrObject = {
-    sistema: 'SEMILLA_TRIAJE_MEDICO',
-    tipo: 'FICHA_CLINICA_CAMPAÑA',
-    version: '1.0',
+  const qrObject: Record<string, unknown> = {
+    sistema: 'SEMILLA',
     ticket: patient.ticket,
     dni: patient.dni,
     paciente: patient.paciente,
-    edad: patient.edad,
-    sexo: patient.sexo,
-    comunidad: patient.comunidad,
     prioridad: patient.prioridad,
-    prioridadLabel: patient.prioridadLabel,
     hora: patient.hora,
-    seguro: patient.seguro,
-    alergias: patient.alergias ?? 'Ninguna conocida',
-    antecedentes: patient.antecedentes ?? 'Sin antecedentes registrados',
-    motivo: patient.motivo,
     destino: patient.destino,
-    medico: patient.medico,
-    vitals: patient.vitals,
-    receta: patient.receta ?? [],
-    hash: patient.hash ?? '8f92-a1b4-7c3e-90df',
-    fecha: patient.fecha ?? '19/09/2026',
   }
-  return JSON.stringify(qrObject, null, 2)
+  if (patient.alergias && patient.alergias.toLowerCase() !== 'ninguna') {
+    qrObject.alergias = patient.alergias
+  }
+  return JSON.stringify(qrObject)
 }
 
 /**

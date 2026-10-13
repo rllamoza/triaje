@@ -54,24 +54,40 @@ export function CyberHeader({ onOpenDrawer }: CyberHeaderProps) {
           </button>
 
           {/* Brand Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fuchsia-600 text-white flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(217,70,239,0.5)]">
-              <span className="material-symbols-outlined text-[22px]">smart_toy</span>
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.appName}
+                className="h-8 sm:h-9 w-auto max-w-[130px] sm:max-w-[160px] object-contain filter drop-shadow-[0_0_10px_rgba(217,70,239,0.5)]"
+              />
+            ) : branding.isotipoUrl ? (
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fuchsia-600 flex items-center justify-center overflow-hidden shadow-[0_0_15px_rgba(217,70,239,0.5)] border border-fuchsia-400/40">
+                <img
+                  src={branding.isotipoUrl}
+                  alt={branding.appName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-700 to-fuchsia-600 text-white flex items-center justify-center font-bold text-lg shadow-[0_0_15px_rgba(217,70,239,0.5)]">
+                <span className="material-symbols-outlined text-[22px]">health_and_safety</span>
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-white tracking-widest uppercase font-mono">
+                <span className="text-xs sm:text-sm font-bold text-white tracking-widest uppercase font-mono">
                   {branding.appName}
                 </span>
-                <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/70 px-2 py-0.5 rounded border border-cyan-500/30 uppercase font-mono tracking-wider">
+                <span className="text-[10px] font-bold text-cyan-400 bg-cyan-950/70 px-2 py-0.5 rounded border border-cyan-500/30 uppercase font-mono tracking-wider shadow-[0_0_8px_rgba(6,182,212,0.3)]">
                   Cyberpunk HUD
                 </span>
               </div>
               <span className="text-[11px] font-mono text-fuchsia-300/80 hidden sm:inline-block">
-                Quantum Synth Dynamics • v2.5
+                {branding.appTagline || 'Quantum Synth Dynamics • v2.5'}
               </span>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Right Header Actions */}

@@ -351,11 +351,30 @@ export const useFirmarConsulta = () => {
   })
 }
 
-/* ── Tickets ──────────────────────────────────────────────────── */
+/* ── Tickets & Impresoras Térmicas ────────────────────────────── */
 export const useGenerateTicket = () =>
   useMutation({
-    mutationFn: (data: { atencion_id: number; tipo: string; printer_id?: string }) =>
+    mutationFn: (data: { atencion_id: number; tipo: string; printer_id?: string; print_now?: boolean; printer_ip?: string }) =>
       api.post('/tickets/generate', data).then((r) => r.data),
+  })
+
+export const usePrinterStatus = () =>
+  useQuery({
+    queryKey: ['printers', 'status'],
+    queryFn: () => api.get('/printers/status').then((r) => r.data),
+    staleTime: 15000,
+  })
+
+export const usePrintDirectTicket = () =>
+  useMutation({
+    mutationFn: (data: {
+      payload?: Record<string, unknown>
+      atencion_id?: number
+      escpos_base64?: string
+      printer_name?: string
+      printer_ip?: string
+      printer_port?: number
+    }) => api.post('/tickets/print-direct', data).then((r) => r.data),
   })
 
 /* ── Users ────────────────────────────────────────────────────── */

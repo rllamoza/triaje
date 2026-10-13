@@ -10,8 +10,8 @@ for /f "tokens=*" %%a in ('powershell -NoProfile -Command "(Get-NetIPAddress -Ad
 
 if "%LAN_IP%"=="" set LAN_IP=127.0.0.1
 
-echo 1. Iniciando Backend Laravel en 0.0.0.0:8000...
-start "Backend Laravel" cmd /k "cd /d %~dp0backend && php artisan serve --host=0.0.0.0 --port=8000"
+echo 1. Iniciando Backend API Nativa en 0.0.0.0:8000...
+start "Backend API PHP" cmd /k "cd /d %~dp0backend && php -S 0.0.0.0:8000 index.php"
 
 echo 2. Iniciando Frontend Vite en 0.0.0.0:5173...
 start "Frontend Vite" cmd /k "cd /d %~dp0frontend && npm run dev -- --host 0.0.0.0"

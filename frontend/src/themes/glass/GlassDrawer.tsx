@@ -56,10 +56,26 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
             <div>
               {/* Drawer Top Branding */}
               <div className="p-5 border-b border-[#cbdbf5] flex items-center justify-between bg-gradient-to-b from-blue-50/50 to-transparent">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#0a2540] text-emerald-400 flex items-center justify-center font-bold text-xl shadow-xs">
-                    <span className="material-symbols-outlined text-[24px]">potted_plant</span>
-                  </div>
+                <Link to="/" onClick={onClose} className="flex items-center gap-3">
+                  {branding.logoUrl ? (
+                    <img
+                      src={branding.logoUrl}
+                      alt={branding.appName}
+                      className="h-9 w-auto max-w-[130px] object-contain"
+                    />
+                  ) : branding.isotipoUrl ? (
+                    <div className="w-10 h-10 rounded-xl bg-[#0a2540] flex items-center justify-center overflow-hidden shadow-xs border border-[#cbdbf5]">
+                      <img
+                        src={branding.isotipoUrl}
+                        alt={branding.appName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-[#0a2540] text-emerald-400 flex items-center justify-center font-bold text-xl shadow-xs">
+                      <span className="material-symbols-outlined text-[24px]">health_and_safety</span>
+                    </div>
+                  )}
                   <div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-bold text-[#0a2540] tracking-wider uppercase font-sans">
@@ -67,10 +83,10 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
                       </span>
                     </div>
                     <span className="text-[11px] font-semibold text-[#0f62fe] bg-[#e8f1ff] px-1.5 py-0.2 rounded border border-[#0f62fe]/20 uppercase">
-                      Clinica Glass
+                      {branding.appTagline || 'Clinica Glass'}
                     </span>
                   </div>
-                </div>
+                </Link>
 
                 <button
                   type="button"

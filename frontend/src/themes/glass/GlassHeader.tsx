@@ -54,13 +54,29 @@ export function GlassHeader({ onOpenDrawer }: GlassHeaderProps) {
           </button>
 
           {/* Brand Identity */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[#0a2540] text-emerald-400 flex items-center justify-center font-bold text-lg shadow-xs">
-              <span className="material-symbols-outlined text-[22px]">potted_plant</span>
-            </div>
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt={branding.appName}
+                className="h-8 sm:h-9 w-auto max-w-[130px] sm:max-w-[160px] object-contain"
+              />
+            ) : branding.isotipoUrl ? (
+              <div className="w-9 h-9 rounded-xl bg-[#0a2540] flex items-center justify-center overflow-hidden shadow-xs border border-[#cbdbf5]">
+                <img
+                  src={branding.isotipoUrl}
+                  alt={branding.appName}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <div className="w-9 h-9 rounded-xl bg-[#0a2540] text-emerald-400 flex items-center justify-center font-bold text-lg shadow-xs">
+                <span className="material-symbols-outlined text-[22px]">health_and_safety</span>
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[#0a2540] tracking-wider uppercase font-sans">
+                <span className="text-xs sm:text-sm font-bold text-[#0a2540] tracking-wider uppercase font-sans">
                   {branding.appName}
                 </span>
                 <span className="text-[10px] font-semibold text-[#0f62fe] bg-[#e8f1ff] px-2 py-0.5 rounded border border-[#0f62fe]/20 uppercase font-sans">
@@ -68,10 +84,10 @@ export function GlassHeader({ onOpenDrawer }: GlassHeaderProps) {
                 </span>
               </div>
               <span className="text-[11px] font-medium text-slate-500 hidden sm:inline-block">
-                Micro-Interactions &amp; Spring Dynamics
+                {branding.appTagline || 'Micro-Interactions & Spring Dynamics'}
               </span>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Right Header Actions */}

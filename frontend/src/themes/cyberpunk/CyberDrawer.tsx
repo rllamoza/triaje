@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuthStore } from '../../store/authStore'
+import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS } from '../../store/themeStore'
 import { useScannerStore } from '../../store/scannerStore'
 
@@ -12,6 +13,7 @@ interface CyberDrawerProps {
 
 export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
   const { user } = useAuthStore()
+  const branding = useBrandingStore()
   const { theme: currentTheme, setTheme } = useThemeStore()
   const { openScanner } = useScannerStore()
   const location = useLocation()
@@ -52,21 +54,37 @@ export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
             <div>
               {/* Drawer Top Branding */}
               <div className="p-5 border-b border-purple-900/40 flex items-center justify-between bg-gradient-to-b from-purple-950/40 to-transparent">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-800 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xl shadow-[0_0_18px_rgba(217,70,239,0.6)]">
-                    <span className="material-symbols-outlined text-[24px]">bolt</span>
-                  </div>
+                <Link to="/" onClick={onClose} className="flex items-center gap-3">
+                  {branding.logoUrl ? (
+                    <img
+                      src={branding.logoUrl}
+                      alt={branding.appName}
+                      className="h-9 w-auto max-w-[130px] object-contain filter drop-shadow-[0_0_12px_rgba(217,70,239,0.6)]"
+                    />
+                  ) : branding.isotipoUrl ? (
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-800 to-fuchsia-600 flex items-center justify-center overflow-hidden shadow-[0_0_18px_rgba(217,70,239,0.6)] border border-fuchsia-400/40">
+                      <img
+                        src={branding.isotipoUrl}
+                        alt={branding.appName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-800 to-fuchsia-600 text-white flex items-center justify-center font-bold text-xl shadow-[0_0_18px_rgba(217,70,239,0.6)]">
+                      <span className="material-symbols-outlined text-[24px]">health_and_safety</span>
+                    </div>
+                  )}
                   <div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-extrabold text-white tracking-wider uppercase font-sans">
-                        NEXUS • SYNTH
+                        {branding.appName}
                       </span>
                     </div>
                     <span className="text-[10px] font-mono font-bold text-neon-magenta bg-fuchsia-950/80 px-2 py-0.5 rounded border border-fuchsia-700/50 uppercase">
-                      GLOW DRAWER V2.5
+                      {branding.appTagline || 'GLOW DRAWER V2.5'}
                     </span>
                   </div>
-                </div>
+                </Link>
 
                 <button
                   type="button"

@@ -47,8 +47,8 @@ export const DEFAULT_BRANDING = {
   footerRightText: 'Build v2.4.9-field',
   footerLogoUrl: '',
 
-  exportHeader: 'ONG SEMILLA • ASISTENCIA MÉDICA RURAL',
-  exportSubheader: 'SISTEMA NACIONAL DE TRIAJE Y EVALUACIÓN CLÍNICA AMBULATORIA',
+  exportHeader: 'ONG SEMILLA - ASISTENCIA MEDICA RURAL',
+  exportSubheader: 'SISTEMA DE TRIAJE Y EVALUACION CLINICA AMBULATORIA',
   exportFooterLegal:
     'Documento clínico emitido en campaña de campo. Válido para referencia hospitalaria y atención inmediata.',
   ticketLogoUrl: '',

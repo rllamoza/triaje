@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useScannerStore } from '../../store/scannerStore'
 import { PATIENT_DATABASE } from '../../services/patientRegistry'
+import { printThermalElement } from '../../utils/printEngine'
 
 interface QueuePatient {
   id: number
@@ -903,27 +904,30 @@ export default function QueuePage() {
             </div>
 
             {/* Thermal Paper Emulation */}
-            <div className="bg-[#fafafa] text-[#111111] p-4 text-center border border-[#d0d0d0] space-y-2 text-xs select-none">
-              <div className="font-bold text-sm tracking-tight text-black">ONG SEMILLA SALUD</div>
-              <div className="text-[10px] text-secondary">CAMPAÑA VALLE SAGRADO 2025</div>
-              <div className="text-[10px] text-secondary">********************************</div>
+            <div
+              id="queue-thermal-modal-receipt"
+              className="bg-[#ffffff] text-[#000000] p-4 text-center border-2 border-black space-y-2 text-xs font-mono font-bold select-none antialiased"
+            >
+              <div className="font-black text-sm tracking-tight text-black uppercase">ONG SEMILLA SALUD</div>
+              <div className="text-[11px] font-bold text-black uppercase">CAMPAÑA VALLE SAGRADO 2025</div>
+              <div className="text-[10px] font-black text-black">********************************</div>
               <div className="py-1">
-                <div className="text-3xl font-extrabold text-black">#{thermalPatient.ticket}</div>
-                <div className={`text-[11px] font-bold mt-1 uppercase ${
+                <div className="text-4xl font-black text-black">#{thermalPatient.ticket}</div>
+                <div className={`text-xs font-black mt-1 uppercase ${
                   thermalPatient.priority === 'rojo' ? 'text-error' : thermalPatient.priority === 'amarillo' ? 'text-[#b28600]' : 'text-tertiary'
                 }`}>
                   {thermalPatient.priority === 'rojo' ? 'ROJO - EMERGENCIA' : thermalPatient.priority === 'amarillo' ? 'AMARILLO - URGENTE' : 'VERDE - NORMAL'}
                 </div>
               </div>
-              <div className="text-[10px] text-secondary">--------------------------------</div>
-              <div className="text-left text-[11px] space-y-1">
-                <div><strong className="text-black">PACIENTE:</strong> <span className="text-black">{thermalPatient.paciente}</span></div>
-                <div><strong className="text-black">DNI:</strong> <span className="text-black">{thermalPatient.dni}</span></div>
-                <div><strong className="text-black">HORA:</strong> <span className="text-black">{thermalPatient.hora}</span></div>
-                <div><strong className="text-black">DESTINO:</strong> <span className="text-black">{thermalPatient.destino}</span></div>
+              <div className="text-[10px] font-black text-black">--------------------------------</div>
+              <div className="text-left text-xs space-y-1 text-black font-semibold">
+                <div><strong className="font-black text-black">PACIENTE:</strong> <span className="text-black">{thermalPatient.paciente}</span></div>
+                <div><strong className="font-black text-black">DNI:</strong> <span className="text-black">{thermalPatient.dni}</span></div>
+                <div><strong className="font-black text-black">HORA:</strong> <span className="text-black">{thermalPatient.hora}</span></div>
+                <div><strong className="font-black text-black">DESTINO:</strong> <span className="text-black">{thermalPatient.destino}</span></div>
               </div>
-              <div className="text-[10px] text-secondary">--------------------------------</div>
-              <div className="text-[9px] leading-tight text-secondary">
+              <div className="text-[10px] font-black text-black">--------------------------------</div>
+              <div className="text-[10px] leading-tight font-bold text-black">
                 Conserve este ticket. Esté atento a los altavoces y pantallas de llamado.
               </div>
             </div>
@@ -938,8 +942,9 @@ export default function QueuePage() {
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setCalledMessage(`Comando ESC/POS enviado a impresora para #${thermalPatient.ticket}`)
+                onClick={async () => {
+                  await printThermalElement('queue-thermal-modal-receipt', '58mm')
+                  setCalledMessage(`Ticket #${thermalPatient.ticket} enviado al driver de impresión`)
                   setThermalPatient(null)
                   setTimeout(() => setCalledMessage(null), 3000)
                 }}

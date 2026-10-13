@@ -2,14 +2,16 @@
 
 Plataforma integral de triaje clínico, filiación médica, colas de atención, impresión de tickets térmicos ESC/POS y telemetría de campo diseñada bajo la estética **IBM Carbon Clinical** para brigadas médicas rurales en entornos de conectividad limitada o nula.
 
+**Versión Actual:** `v0.3.0`
+
 ---
 
-## 🚀 Arquitectura Tecnológica
+## 🚀 Arquitectura Tecnológica (v0.3.0)
 
 - **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, TanStack React Query, Zustand (persistencia local), Dexie.js (IndexedDB).
-- **Backend**: Laravel 11, PHP 8.4, MySQL / SQLite local contingente, Laravel Sanctum (autenticación API y tokens de guardia).
-- **Impresión & Hardware**: Soporte nativo para impresión de tickets térmicos ESC/POS de 58mm y 80mm vía Bluetooth y USB.
-- **Sincronización P2P & Mesh**: Preparado para trabajo desconectado y sincronización con gateways Starlink o nodos locales.
+- **Backend API**: PHP 8 Nativo y Ligero (**Zero-Laravel, Zero-Composer**), Arquitectura Front-Controller, PDO MySQL/SQLite, autenticación por tokens y PIN de guardia.
+- **Motor de Impresión**: Motor universal multi-dispositivo con detección automática de Windows Desktop vs Smartphones (Android/iOS), iframe térmico aislado y renderizado ESC/POS de alta nitidez.
+- **Despliegue Plug-and-Play**: Listo para cPanel / BanaHosting y servidores Apache compartidos mediante archivos ZIP preempaquetados.
 
 ---
 
@@ -17,33 +19,37 @@ Plataforma integral de triaje clínico, filiación médica, colas de atención, 
 
 ```
 triaje/
-├── backend/                  # API REST Laravel 11
-│   ├── app/Http/Controllers/ # Controladores (Auth, Beneficiarios, Triaje, Cola, Tickets)
-│   ├── database/migrations/  # 18 migraciones clínicas y de campaña
-│   └── routes/api.php        # Endpoints protegidos y de contingencia
-├── frontend/                 # Aplicación SPA React 19 + Vite
-│   ├── src/pages/            # Admisión, Cola, Triaje, Consulta, Tickets, Administración
-│   ├── src/components/       # Layouts, Navbar interactivo, modales Carbon
-│   └── src/store/            # Stores Zustand (Auth, Branding, Cola)
-├── disenos/                  # Maquetas HTML de referencia clínica Carbon
-├── .agents/                  # Skills y configuraciones del agente
-├── iniciar_proyecto.bat      # Script lanzador automático de ambos servidores
+├── backend/                       # API REST Nativa PHP 8
+│   ├── config/                    # Configuración de BD y entorno
+│   ├── controllers/               # Controladores clínicos y administrativos
+│   ├── core/                      # Conexión PDO, Auth y Helpers
+│   ├── database/                  # Dump SQL de producción (triaje_produccion.sql)
+│   ├── .htaccess                  # Reescritura Apache y headers CORS
+│   └── index.php                  # Router principal y Front-Controller
+├── frontend/                      # Aplicación SPA React 19 + TypeScript + Vite
+│   ├── dist/                      # Compilado de producción listo para cPanel
+│   ├── src/                       # Código fuente de componentes y vistas
+│   └── package.json               # Dependencias de frontend
+├── lib/                           # Recursos auxiliares, maquetas y documentación
+├── backend_produccion_cpanel.zip  # Archivo zip listo para cPanel (~43 KB)
+├── frontend_dist_cpanel.zip       # Archivo zip listo para cPanel (~347 KB)
+├── iniciar_proyecto.bat           # Lanzador en un clic para desarrollo local
+├── RELEASE_NOTES_v0.3.md          # Notas oficiales de la versión 0.3
 └── README.md
 ```
 
 ---
 
-## ⚡ Inicio Rápido
+## ⚡ Inicio Rápido en Desarrollo Local
 
-### Opción 1: Lanzador de un clic
+### Opción 1: Lanzador de un clic (Recomendado en Windows)
 Hacer doble clic en `iniciar_proyecto.bat` para iniciar automáticamente el backend y el frontend.
 
-### Opción 2: Manual
+### Opción 2: Línea de comandos
 1. **Backend**:
    ```bash
    cd backend
-   php artisan migrate --seed
-   php artisan serve --host=0.0.0.0 --port=8000
+   php -S 0.0.0.0:8000 index.php
    ```
 2. **Frontend**:
    ```bash
@@ -52,18 +58,36 @@ Hacer doble clic en `iniciar_proyecto.bat` para iniciar automáticamente el back
    npm run dev -- --host 0.0.0.0
    ```
 
-O ejecutar directamente:
-```bash
-iniciar_proyecto.bat
-```
-
 Acceder en el navegador:
-- Local: `http://localhost:5173`
-- Red Local (móviles, tablets, otras PCs): `http://<TU_IP_LOCAL>:5173` (ej. `http://192.168.0.251:5173`)
+- **Local:** `http://localhost:5173`
+- **Red Local (Smartphones, tablets, laptops):** `http://<TU_IP_LOCAL>:5173` (ej. `http://192.168.0.251:5173`)
+
+---
+
+## 🌐 Despliegue en Producción (cPanel / BanaHosting)
+
+1. **Crear Base de Datos en cPanel:**
+   - Crear una base de datos MySQL y un usuario con todos los privilegios.
+   - En phpMyAdmin, importar el archivo `backend/database/triaje_produccion.sql`.
+2. **Subir Backend:**
+   - Subir el archivo `backend_produccion_cpanel.zip` a su carpeta destino (ej. `public_html/api` o un subdominio como `api.tudominio.com`).
+   - Extraer el ZIP y configurar las credenciales en `backend/config/db.php`.
+3. **Subir Frontend:**
+   - Subir el archivo `frontend_dist_cpanel.zip` a `public_html` (o la carpeta raíz de su dominio).
+   - Extraer el contenido (incluye el archivo `.htaccess` para enrutamiento SPA).
 
 ---
 
 ## 🔑 Credenciales de Acceso por Defecto
-- **Usuario**: `admin@semilla.pe`
-- **Contraseña**: `Admin2025!`
-- **PIN de Guardia**: `1234`
+
+| Rol | Correo / Usuario | Contraseña | PIN de Guardia |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | `admin@semilla.pe` | `Admin2025!` | `1234` |
+| **Médico General** | `medico@semilla.pe` | `Medico2025!` | `1234` |
+| **Enfermera Triaje**| `enfermera@semilla.pe` | `Enfermera2025!` | `1234` |
+| **Admisión** | `admision@semilla.pe` | `Admision2025!` | `1234` |
+
+---
+
+## 📄 Notas de la Versión
+Consulte el archivo [RELEASE_NOTES_v0.3.md](file:///c:/Users/sistemas3/Documents/APPS/triaje/RELEASE_NOTES_v0.3.md) para ver la lista completa de cambios y mejoras introducidas en esta versión.

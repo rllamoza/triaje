@@ -1,4 +1,5 @@
 import api from './client'
+import { getApiUrl } from '../config'
 
 export interface AuditStatus {
   enabled: boolean
@@ -98,7 +99,7 @@ export const auditApi = {
 
   exportCsvUrl: (params?: Record<string, any>): string => {
     const searchParams = new URLSearchParams(params as any).toString()
-    const base = import.meta.env.VITE_API_URL || '/api'
+    const base = getApiUrl()
     return `${base}/admin/audit/export?${searchParams}`
   }
 }

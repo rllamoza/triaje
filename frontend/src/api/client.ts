@@ -1,10 +1,9 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
-
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+import { getApiUrl } from '../config'
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: getApiUrl(),
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -31,8 +30,10 @@ function getClientAuditTelemetry(): string | null {
   }
 }
 
-// ── Request interceptor: attach Bearer token & client telemetry ──
+// ── Request interceptor: attach dynamic baseURL, Bearer token & client telemetry ──
 api.interceptors.request.use((config) => {
+  config.baseURL = getApiUrl()
+
   const token = useAuthStore.getState().token
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

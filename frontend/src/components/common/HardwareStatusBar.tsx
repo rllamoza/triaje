@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNodeStatus, useCampaigns } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
+import { ApiConnectionModal } from './ApiConnectionModal'
 
 interface BatteryStatus {
   level: number
@@ -18,6 +19,7 @@ export function HardwareStatusBar({
   locationOverride,
   className = '',
 }: HardwareStatusBarProps) {
+  const [isApiModalOpen, setIsApiModalOpen] = useState(false)
   const { data: nodeStatus } = useNodeStatus()
   const { campaignId } = useAuthStore()
   const { data: campaigns } = useCampaigns()
@@ -167,8 +169,18 @@ export function HardwareStatusBar({
           </div>
         </div>
 
-        {/* Lado Derecho: DB Sync & Ubicación */}
-        <div className="hidden lg:flex items-center gap-4 shrink-0">
+        {/* Lado Derecho: DB Sync, Validar API & Ubicación */}
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsApiModalOpen(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-surface hover:bg-surface-container-highest border border-surface-container-highest text-on-surface text-[11px] font-mono cursor-pointer transition-colors shadow-2xs rounded-xs"
+            title="Probar y diagnosticar conexión con la API"
+          >
+            <span className="material-symbols-outlined text-xs text-primary">network_check</span>
+            <span className="font-semibold">Validar API</span>
+          </button>
+
           <div
             className={`flex items-center gap-1 px-2 py-0.5 ${
               isSynced
@@ -185,54 +197,81 @@ export function HardwareStatusBar({
                 : `Cola Offline: ${pendingSync} pend.`}
             </span>
           </div>
-          <span className="text-secondary truncate max-w-[240px]">
+          <span className="text-secondary truncate max-w-[200px]">
             UTC-5 • {locationText}
           </span>
         </div>
+
+        <ApiConnectionModal
+          isOpen={isApiModalOpen}
+          onClose={() => setIsApiModalOpen(false)}
+        />
       </div>
     )
   }
 
   // ── VARIANT: COMPACT (Para cabecera Navbar / Header) ──
   return (
-    <div
-      className={`inline-flex items-center gap-2 px-2.5 py-1 bg-surface-container text-xs font-mono text-on-surface-variant border border-surface-container-high shrink-0 ${className}`}
-      title={`Nodo: ${nodeId} (${hardwareModel}) | Batería: ${batteryPct}% ${batteryLabel} | Latencia: ${nodeStatus?.latency_ms ?? 38}ms | Ubicación: ${locationText}`}
-    >
-      <div className="flex items-center gap-1.5 shrink-0">
-        <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-        <span className="font-semibold text-on-surface text-[11px]">
-          {nodeId}
-        </span>
-      </div>
+    <>
+      <div
+        className={`inline-flex items-center gap-2 px-2.5 py-1 bg-surface-container text-xs font-mono text-on-surface-variant border border-surface-container-high shrink-0 ${className}`}
+        title={`Nodo: ${nodeId} (${hardwareModel}) | Batería: ${batteryPct}% ${batteryLabel} | Latencia: ${nodeStatus?.latency_ms ?? 38}ms | Ubicación: ${locationText}`}
+      >
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
+          <span className="font-semibold text-on-surface text-[11px]">
+            {nodeId}
+          </span>
+        </div>
 
-      <span className="text-outline-variant">•</span>
+        <span className="text-outline-variant">•</span>
 
-      {/* Batería */}
-      <div className="flex items-center gap-1 shrink-0 text-[11px]">
-        <span
-          className={`material-symbols-outlined text-[15px] ${
-            batteryPct <= 20 ? 'text-error' : 'text-tertiary'
-          }`}
+        {/* Batería */}
+        <div className="flex items-center gap-1 shrink-0 text-[11px]">
+          <span
+            className={`material-symbols-outlined text-[15px] ${
+              batteryPct <= 20 ? 'text-error' : 'text-tertiary'
+            }`}
+          >
+            {getBatteryIcon(batteryPct, isCharging)}
+          </span>
+          <span>{batteryPct}%</span>
+        </div>
+
+        <span className="text-outline-variant hidden sm:inline">•</span>
+
+        {/* Enlace */}
+        <div className="hidden sm:flex items-center gap-1 shrink-0 text-[11px]">
+          <span
+            className={`material-symbols-outlined text-[15px] ${
+              isOnline ? 'text-primary' : 'text-error'
+            }`}
+          >
+            {isOnline ? 'satellite_alt' : 'signal_disconnected'}
+          </span>
+          <span>{isOnline ? `${nodeStatus?.latency_ms ?? 38}ms` : 'Offline'}</span>
+        </div>
+
+        <span className="text-outline-variant">•</span>
+
+        {/* Botón Validar API */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setIsApiModalOpen(true)
+          }}
+          className="flex items-center text-primary hover:text-on-surface p-0.5 hover:bg-surface-container-high rounded-xs transition-colors cursor-pointer"
+          title="Validar conexión con la API"
         >
-          {getBatteryIcon(batteryPct, isCharging)}
-        </span>
-        <span>{batteryPct}%</span>
+          <span className="material-symbols-outlined text-sm">network_check</span>
+        </button>
       </div>
 
-      <span className="text-outline-variant hidden sm:inline">•</span>
-
-      {/* Enlace */}
-      <div className="hidden sm:flex items-center gap-1 shrink-0 text-[11px]">
-        <span
-          className={`material-symbols-outlined text-[15px] ${
-            isOnline ? 'text-primary' : 'text-error'
-          }`}
-        >
-          {isOnline ? 'satellite_alt' : 'signal_disconnected'}
-        </span>
-        <span>{isOnline ? `${nodeStatus?.latency_ms ?? 38}ms` : 'Offline'}</span>
-      </div>
-    </div>
+      <ApiConnectionModal
+        isOpen={isApiModalOpen}
+        onClose={() => setIsApiModalOpen(false)}
+      />
+    </>
   )
 }

@@ -7,6 +7,13 @@ declare global {
   }
 }
 
+export interface ApiConfigInfo {
+  url: string
+  source: 'window.__APP_CONFIG__.API_URL (dist/config.js)' | 'window.__APP_CONFIG__.VITE_API_URL' | 'import.meta.env.VITE_API_URL (compilado)' | 'default (/api)'
+  isAbsolute: boolean
+  resolvedFullUrl: string
+}
+
 /**
  * Obtiene la URL base de la API en tiempo de ejecución.
  * Prioridad:
@@ -29,4 +36,50 @@ export function getApiUrl(): string {
   }
 
   return '/api'
+}
+
+/**
+ * Provee diagnóstico detallado sobre el origen y resolución de la URL de la API.
+ */
+export function getApiConfigInfo(): ApiConfigInfo {
+  let url = '/api'
+  let source: ApiConfigInfo['source'] = 'default (/api)'
+
+  if (typeof window !== 'undefined' && window.__APP_CONFIG__?.API_URL) {
+    url = window.__APP_CONFIG__.API_URL.trim().replace(/\/+$/, '')
+    source = 'window.__APP_CONFIG__.API_URL (dist/config.js)'
+  } else if (typeof window !== 'undefined' && window.__APP_CONFIG__?.VITE_API_URL) {
+    url = window.__APP_CONFIG__.VITE_API_URL.trim().replace(/\/+$/, '')
+    source = 'window.__APP_CONFIG__.VITE_API_URL'
+  } else {
+    const envUrl = import.meta.env.VITE_API_URL
+    if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+      url = envUrl.trim().replace(/\/+$/, '')
+      source = 'import.meta.env.VITE_API_URL (compilado)'
+    }
+  }
+
+  const isAbsolute = /^https?:\/\//i.test(url)
+  const resolvedFullUrl = isAbsolute
+    ? url
+    : (typeof window !== 'undefined' ? `${window.location.origin}${url.startsWith('/') ? '' : '/'}${url}` : url)
+
+  return {
+    url,
+    source,
+    isAbsolute,
+    resolvedFullUrl
+  }
+}
+
+/**
+ * Permite cambiar la URL en memoria durante la sesión para pruebas inmediatas.
+ */
+export function setApiUrlOverride(newUrl: string): void {
+  if (typeof window !== 'undefined') {
+    if (!window.__APP_CONFIG__) {
+      window.__APP_CONFIG__ = {}
+    }
+    window.__APP_CONFIG__.API_URL = newUrl.trim()
+  }
 }

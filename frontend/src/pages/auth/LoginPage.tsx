@@ -4,6 +4,8 @@ import { useLogin, useLoginPin } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
 import { HardwareStatusBar } from '../../components/common/HardwareStatusBar'
+import { ApiConnectionModal } from '../../components/common/ApiConnectionModal'
+import { getApiUrl } from '../../config'
 
 type LoginMode = 'credential' | 'pin'
 
@@ -23,6 +25,7 @@ export default function LoginPage() {
   const [role, setRole] = useState('admin')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isApiModalOpen, setIsApiModalOpen] = useState(false)
 
   // PIN
   const [pin, setPin] = useState(['1', '2', '3', '4'])
@@ -422,7 +425,27 @@ export default function LoginPage() {
             )}
           </div>
 
-          <div className="pt-6 mt-6 border-t border-surface-container-high flex items-center justify-between text-[11px] text-secondary">
+          {/* Botón de Diagnóstico y Validación de Conexión API */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={() => setIsApiModalOpen(true)}
+              className="w-full py-2.5 px-3 bg-surface hover:bg-surface-container-high border border-surface-container-highest text-on-surface text-xs font-mono flex items-center justify-between transition-all group cursor-pointer shadow-2xs rounded-xs"
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="material-symbols-outlined text-primary text-base group-hover:scale-110 transition-transform">
+                  network_check
+                </span>
+                <span className="font-semibold text-on-surface">Validar Conexión con la API</span>
+              </div>
+              <span className="text-[11px] text-secondary font-mono truncate max-w-[210px] bg-surface-container-high px-2 py-0.5 border border-outline/10 rounded-xs">
+                {getApiUrl()}
+              </span>
+            </button>
+          </div>
+
+          <div className="pt-4 mt-2 border-t border-surface-container-high flex items-center justify-between text-[11px] text-secondary">
             <span>{branding.footerLeftText}</span>
             <span className="font-mono">{branding.footerRightText}</span>
           </div>
@@ -578,6 +601,11 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      <ApiConnectionModal
+        isOpen={isApiModalOpen}
+        onClose={() => setIsApiModalOpen(false)}
+      />
     </div>
   )
 }

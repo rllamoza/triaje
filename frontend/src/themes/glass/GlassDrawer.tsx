@@ -6,6 +6,8 @@ import { useThemeStore, THEME_OPTIONS } from '../../store/themeStore'
 import { useScannerStore } from '../../store/scannerStore'
 import { useNodeStatus } from '../../api/hooks'
 
+import { isRouteAllowedForRole } from '../../utils/navigationRoles'
+
 interface GlassDrawerProps {
   isOpen: boolean
   onClose: () => void
@@ -21,7 +23,7 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
   const location = useLocation()
 
   const navLinks = [
-    { path: '/admision', label: 'Registro de Pacientes', icon: 'person_add', badge: 'Nuevo' },
+    { path: '/admision', label: 'Registro de Pacientes (Acreditación)', icon: 'person_add', badge: 'Nuevo' },
     { path: '/triaje', label: 'Triaje Clínico & Vitals', icon: 'vital_signs', badge: 'RAC' },
     { path: '/queue', label: 'Cola de Espera Médica', icon: 'view_timeline' },
     { path: '/consulta', label: 'Consulta Médica', icon: 'stethoscope' },
@@ -29,7 +31,7 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
     { path: '/admin/personalizacion', label: 'Personalización & Branding', icon: 'palette' },
     { path: '/admin/telemetria', label: 'Telemetría & Red Mesh', icon: 'hub' },
     { path: '/admin/auditoria', label: 'Auditoría Forense & audi_triaje', icon: 'policy' },
-  ]
+  ].filter((l) => isRouteAllowedForRole(user?.role, l.path))
 
   return (
     <AnimatePresence>

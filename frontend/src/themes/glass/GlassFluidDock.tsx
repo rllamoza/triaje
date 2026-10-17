@@ -1,6 +1,9 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
+import { useAuthStore } from '../../store/authStore'
+import { isRouteAllowedForRole } from '../../utils/navigationRoles'
+
 interface NavTab {
   path: string
   label: string
@@ -19,8 +22,10 @@ const TABS: NavTab[] = [
 export function GlassFluidDock() {
   const location = useLocation()
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
 
   const currentPath = location.pathname === '/cola' ? '/queue' : location.pathname
+  const visibleTabs = TABS.filter((t) => isRouteAllowedForRole(user?.role, t.path))
 
   return (
     <div className="fixed bottom-4 inset-x-0 z-40 flex justify-center pointer-events-none px-3 pb-[env(safe-area-inset-bottom)]">
@@ -28,7 +33,7 @@ export function GlassFluidDock() {
         aria-label="Píldora Fluida Clínica de Navegación"
         className="pointer-events-auto relative w-full max-w-[390px] md:max-w-none md:w-auto flex items-center justify-between p-1 sm:p-1.5 rounded-full bg-white/95 backdrop-blur-2xl border border-[#cbdbf5] shadow-[0_12px_36px_rgba(10,37,64,0.18)]"
       >
-        {TABS.map((tab) => {
+        {visibleTabs.map((tab) => {
           const isActive = currentPath === tab.path
 
           return (

@@ -58,9 +58,27 @@ function campaigns_store(array $user): void {
     ]);
 
     $id = db()->lastInsertId();
-    $stmt = db()->prepare("SELECT * FROM campaigns WHERE id = :id");
-    $stmt->execute([':id' => $id]);
-    json_ok($stmt->fetch(), 201);
+
+    // Guardar especialidades si se proporcionaron
+    if (!empty($b['specialties']) && is_array($b['specialties'])) {
+        $stmtIns = db()->prepare("
+            INSERT INTO campaign_specialties (campaign_id, specialty_code, specialty_name, medico_id, consultorio, cupo_maximo, active, created_at, updated_at)
+            VALUES (:cid, :code, :name, :medico_id, :consultorio, :cupo, 1, NOW(), NOW())
+        ");
+        foreach ($b['specialties'] as $sp) {
+            if (empty($sp['specialty_code']) || empty($sp['specialty_name'])) continue;
+            $stmtIns->execute([
+                ':cid'         => $id,
+                ':code'        => strtoupper(trim($sp['specialty_code'])),
+                ':name'        => trim($sp['specialty_name']),
+                ':medico_id'   => !empty($sp['medico_id']) ? (int)$sp['medico_id'] : null,
+                ':consultorio' => !empty($sp['consultorio']) ? trim($sp['consultorio']) : 'Consultorio 01',
+                ':cupo'        => !empty($sp['cupo_maximo']) ? (int)$sp['cupo_maximo'] : 30,
+            ]);
+        }
+    }
+
+    campaigns_show((int)$id);
 }
 
 function campaigns_show(int $id): void {
@@ -72,6 +90,32 @@ function campaigns_show(int $id): void {
     $stmtS = db()->prepare("SELECT * FROM stations WHERE campaign_id = :id AND active = 1");
     $stmtS->execute([':id' => $id]);
     $c['stations'] = $stmtS->fetchAll();
+
+    // Cargar especialidades médicas asignadas con médicos y cupos
+    $stmtSpec = db()->prepare("
+        SELECT cs.*,
+               CONCAT(COALESCE(u.name, ''), ' ', COALESCE(u.apellidos, '')) as medico_nombre,
+               u.cmp_code as medico_cmp,
+               (
+                   SELECT COUNT(*) 
+                   FROM atenciones a 
+                   WHERE a.campaign_id = cs.campaign_id 
+                     AND (a.specialty_code = cs.specialty_code OR (cs.specialty_code = 'MED' AND a.specialty_code IS NULL))
+               ) as cupo_ocupado
+        FROM campaign_specialties cs
+        LEFT JOIN users u ON u.id = cs.medico_id
+        WHERE cs.campaign_id = :id AND cs.active = 1
+        ORDER BY cs.id
+    ");
+    $stmtSpec->execute([':id' => $id]);
+    $specs = $stmtSpec->fetchAll();
+    foreach ($specs as &$sp) {
+        $sp['cupo_maximo'] = (int)$sp['cupo_maximo'];
+        $sp['cupo_ocupado'] = (int)$sp['cupo_ocupado'];
+        $sp['cupo_disponible'] = max(0, $sp['cupo_maximo'] - $sp['cupo_ocupado']);
+    }
+    $c['specialties'] = $specs;
+
     json_ok($c);
 }
 
@@ -87,9 +131,31 @@ function campaigns_update(int $id): void {
             $params[":$f"] = $b[$f];
         }
     }
-    if (!$set) json_error('Nada que actualizar.', 422);
-    $set[] = "updated_at = NOW()";
-    db()->prepare("UPDATE campaigns SET " . implode(', ', $set) . " WHERE id = :id")->execute($params);
+    if ($set) {
+        $set[] = "updated_at = NOW()";
+        db()->prepare("UPDATE campaigns SET " . implode(', ', $set) . " WHERE id = :id")->execute($params);
+    }
+
+    // Sincronizar especialidades si vienen en el body
+    if (isset($b['specialties']) && is_array($b['specialties'])) {
+        db()->prepare("DELETE FROM campaign_specialties WHERE campaign_id = :cid")->execute([':cid' => $id]);
+        $stmtIns = db()->prepare("
+            INSERT INTO campaign_specialties (campaign_id, specialty_code, specialty_name, medico_id, consultorio, cupo_maximo, active, created_at, updated_at)
+            VALUES (:cid, :code, :name, :medico_id, :consultorio, :cupo, 1, NOW(), NOW())
+        ");
+        foreach ($b['specialties'] as $sp) {
+            if (empty($sp['specialty_code']) || empty($sp['specialty_name'])) continue;
+            $stmtIns->execute([
+                ':cid'         => $id,
+                ':code'        => strtoupper(trim($sp['specialty_code'])),
+                ':name'        => trim($sp['specialty_name']),
+                ':medico_id'   => !empty($sp['medico_id']) ? (int)$sp['medico_id'] : null,
+                ':consultorio' => !empty($sp['consultorio']) ? trim($sp['consultorio']) : 'Consultorio 01',
+                ':cupo'        => !empty($sp['cupo_maximo']) ? (int)$sp['cupo_maximo'] : 30,
+            ]);
+        }
+    }
+
     campaigns_show($id);
 }
 
@@ -161,4 +227,47 @@ function campaigns_store_station(int $id): void {
     $stmt = db()->prepare("SELECT * FROM stations WHERE id = :id");
     $stmt->execute([':id' => $sid]);
     json_ok($stmt->fetch(), 201);
+}
+
+function campaigns_specialties(int $id): void {
+    $stmt = db()->prepare("
+        SELECT cs.*,
+               u.name as medico_nombre,
+               u.email as medico_email,
+               COUNT(a.id) as cupo_ocupado,
+               GREATEST(0, cs.cupo_maximo - COUNT(a.id)) as cupo_disponible
+        FROM campaign_specialties cs
+        LEFT JOIN users u ON u.id = cs.medico_id
+        LEFT JOIN atenciones a ON a.campaign_id = cs.campaign_id AND a.specialty_code = cs.specialty_code
+        WHERE cs.campaign_id = :cid AND cs.active = 1
+        GROUP BY cs.id, cs.campaign_id, cs.specialty_code, cs.specialty_name, cs.medico_id, cs.consultorio, cs.cupo_maximo, cs.active, cs.created_at, cs.updated_at, u.name, u.email
+        ORDER BY cs.specialty_code ASC
+    ");
+    $stmt->execute([':cid' => $id]);
+    json_ok($stmt->fetchAll());
+}
+
+function campaigns_store_specialties(int $id): void {
+    $b = body();
+    $specialties = $b['specialties'] ?? $b;
+    if (!is_array($specialties)) {
+        json_error("Formato inválido de especialidades", 422);
+    }
+    db()->prepare("DELETE FROM campaign_specialties WHERE campaign_id = :cid")->execute([':cid' => $id]);
+    $stmtIns = db()->prepare("
+        INSERT INTO campaign_specialties (campaign_id, specialty_code, specialty_name, medico_id, consultorio, cupo_maximo, active, created_at, updated_at)
+        VALUES (:cid, :code, :name, :medico_id, :consultorio, :cupo, 1, NOW(), NOW())
+    ");
+    foreach ($specialties as $sp) {
+        if (empty($sp['specialty_code']) || empty($sp['specialty_name'])) continue;
+        $stmtIns->execute([
+            ':cid'         => $id,
+            ':code'        => strtoupper(trim($sp['specialty_code'])),
+            ':name'        => trim($sp['specialty_name']),
+            ':medico_id'   => !empty($sp['medico_id']) ? (int)$sp['medico_id'] : null,
+            ':consultorio' => !empty($sp['consultorio']) ? trim($sp['consultorio']) : 'Consultorio 01',
+            ':cupo'        => !empty($sp['cupo_maximo']) ? (int)$sp['cupo_maximo'] : 30,
+        ]);
+    }
+    campaigns_specialties($id);
 }

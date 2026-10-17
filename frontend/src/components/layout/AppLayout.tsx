@@ -52,19 +52,21 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
   }
 
   const campLinks = [
-    { path: '/admision', label: 'Registro de Pacientes', icon: 'person_add' },
-    { path: '/triaje', label: 'Triaje Clínico', icon: 'vital_signs' },
-    { path: '/queue', label: 'Cola de Espera Médica', icon: 'hourglass_empty' },
-    { path: '/consulta', label: 'Consulta Médica', icon: 'clinical_notes' },
-    { path: '/tickets', label: 'Ticket Térmico', icon: 'receipt_long' },
-  ]
+    { path: '/admision', label: 'Registro de Pacientes', icon: 'person_add', roles: ['admision', 'acreditacion', 'admin'] },
+    { path: '/triaje', label: 'Triaje Clínico', icon: 'vital_signs', roles: ['triaje', 'admin'] },
+    { path: '/queue', label: 'Cola de Espera Médica', icon: 'hourglass_empty', roles: ['admin', 'medico', 'triaje', 'admision', 'acreditacion', 'guardia'] },
+    { path: '/consulta', label: 'Consulta Médica', icon: 'clinical_notes', roles: ['medico', 'admin'] },
+    { path: '/tickets', label: 'Ticket Térmico', icon: 'receipt_long', roles: ['admision', 'acreditacion', 'triaje', 'admin'] },
+  ].filter((item) => !user ? false : user.role === 'admin' || item.roles.includes(user.role))
 
-  const adminLinks = [
+  const adminLinks = user?.role === 'admin' ? [
+    { path: '/admin/campanas', label: 'Gestión de Campañas', icon: 'campaign' },
+    { path: '/admin/pacientes', label: 'Gestión de Pacientes', icon: 'groups' },
     { path: '/admin/personalizacion', label: 'Personalización & Logos', icon: 'palette' },
     { path: '/admin/usuarios', label: 'Gestión de Usuarios', icon: 'manage_accounts' },
     { path: '/admin/telemetria', label: 'Integraciones (API & Webhooks)', icon: 'hub' },
     { path: '/admin/auditoria', label: 'Auditoría Forense & Dispositivos', icon: 'policy' },
-  ]
+  ] : []
 
   const handleMobileLogout = async () => {
     setMobileMenuOpen(false)
@@ -141,30 +143,34 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                 })}
               </nav>
 
-              <div className="px-4 pt-5 lg:pt-6 pb-2.5 text-[12px] lg:text-[13px] font-bold uppercase tracking-wider text-on-surface-variant">
-                Administración
-              </div>
-              <nav className="space-y-1 px-2.5">
-                {adminLinks.map((item) => {
-                  const isActive = location.pathname === item.path
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className={`flex items-center px-3 py-2 lg:px-3.5 lg:py-2.5 text-[13.5px] lg:text-[14px] transition-colors rounded-none ${
-                        isActive
-                          ? 'bg-primary-container text-on-primary-container font-semibold'
-                          : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-[20px] lg:text-[21px] mr-3 text-primary">
-                        {item.icon}
-                      </span>
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  )
-                })}
-              </nav>
+              {adminLinks.length > 0 && (
+                <>
+                  <div className="px-4 pt-5 lg:pt-6 pb-2.5 text-[12px] lg:text-[13px] font-bold uppercase tracking-wider text-on-surface-variant">
+                    Administración
+                  </div>
+                  <nav className="space-y-1 px-2.5">
+                    {adminLinks.map((item) => {
+                      const isActive = location.pathname === item.path
+                      return (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          className={`flex items-center px-3 py-2 lg:px-3.5 lg:py-2.5 text-[13.5px] lg:text-[14px] transition-colors rounded-none ${
+                            isActive
+                              ? 'bg-primary-container text-on-primary-container font-semibold'
+                              : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
+                          }`}
+                        >
+                          <span className="material-symbols-outlined text-[20px] lg:text-[21px] mr-3 text-primary">
+                            {item.icon}
+                          </span>
+                          <span className="truncate">{item.label}</span>
+                        </Link>
+                      )
+                    })}
+                  </nav>
+                </>
+              )}
             </div>
 
             {/* Terminal Local Status Box */}
@@ -312,31 +318,35 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                   })}
                 </nav>
 
-                <div className="px-4 pt-5 pb-2 text-[12.5px] font-bold uppercase tracking-wider text-on-surface-variant border-t border-surface-container-high mt-3">
-                  Administración
-                </div>
-                <nav className="space-y-1 px-2.5">
-                  {adminLinks.map((item) => {
-                    const isActive = location.pathname === item.path
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center px-3.5 py-3 text-[14px] transition-colors rounded-none ${
-                          isActive
-                            ? 'bg-primary-container text-on-primary-container font-semibold'
-                            : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
-                        }`}
-                      >
-                        <span className="material-symbols-outlined text-[22px] mr-3.5 text-primary">
-                          {item.icon}
-                        </span>
-                        {item.label}
-                      </Link>
-                    )
-                  })}
-                </nav>
+                {adminLinks.length > 0 && (
+                  <>
+                    <div className="px-4 pt-5 pb-2 text-[12.5px] font-bold uppercase tracking-wider text-on-surface-variant border-t border-surface-container-high mt-3">
+                      Administración
+                    </div>
+                    <nav className="space-y-1 px-2.5">
+                      {adminLinks.map((item) => {
+                        const isActive = location.pathname === item.path
+                        return (
+                          <Link
+                            key={item.path}
+                            to={item.path}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`flex items-center px-3.5 py-3 text-[14px] transition-colors rounded-none ${
+                              isActive
+                                ? 'bg-primary-container text-on-primary-container font-semibold'
+                                : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
+                            }`}
+                          >
+                            <span className="material-symbols-outlined text-[22px] mr-3.5 text-primary">
+                              {item.icon}
+                            </span>
+                            {item.label}
+                          </Link>
+                        )
+                      })}
+                    </nav>
+                  </>
+                )}
               </div>
 
               {/* Mobile Drawer Theme Selector */}

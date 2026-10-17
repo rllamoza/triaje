@@ -74,3 +74,19 @@ export const useBrandingStore = create<BrandingState>()(
     },
   ),
 )
+
+/**
+ * Resuelve el logotipo efectivo para el ticket térmico:
+ * Si se ha cargado un ticketLogoUrl específico se usa ese;
+ * si está vacío o no se escogió, retorna automáticamente el logoUrl principal.
+ */
+export function getEffectiveTicketLogo(branding: { ticketLogoUrl?: string; logoUrl?: string; selectedExportLogo?: string }): string {
+  if (branding.selectedExportLogo === 'ninguno') {
+    return ''
+  }
+  if (branding.ticketLogoUrl && branding.ticketLogoUrl.trim() !== '') {
+    return branding.ticketLogoUrl.trim()
+  }
+  return branding.logoUrl || ''
+}
+

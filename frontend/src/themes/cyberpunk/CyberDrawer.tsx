@@ -5,6 +5,8 @@ import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS } from '../../store/themeStore'
 import { useScannerStore } from '../../store/scannerStore'
 
+import { isRouteAllowedForRole } from '../../utils/navigationRoles'
+
 interface CyberDrawerProps {
   isOpen: boolean
   onClose: () => void
@@ -19,7 +21,7 @@ export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
   const location = useLocation()
 
   const navLinks = [
-    { path: '/admision', label: 'Matriz de Admisión', icon: 'person_add', badge: 'BIO-REG' },
+    { path: '/admision', label: 'Matriz de Acreditación', icon: 'person_add', badge: 'BIO-REG' },
     { path: '/triaje', label: 'Triaje Cuántico & Vitals', icon: 'insights', badge: 'RAC-Q' },
     { path: '/queue', label: 'Cola de Flujo Neuronal', icon: 'view_timeline' },
     { path: '/consulta', label: 'Diagnóstico Clínico', icon: 'stethoscope' },
@@ -27,7 +29,7 @@ export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
     { path: '/admin/personalizacion', label: 'Calibración Synth & HUD', icon: 'palette' },
     { path: '/admin/telemetria', label: 'Red Mesh & Webhooks', icon: 'hub' },
     { path: '/admin/auditoria', label: 'Caja Negra Forense & audi_triaje', icon: 'policy', badge: 'FORENSIC' },
-  ]
+  ].filter((l) => isRouteAllowedForRole(user?.role, l.path))
 
   return (
     <AnimatePresence>

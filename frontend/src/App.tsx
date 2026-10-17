@@ -11,6 +11,8 @@ import UsuariosPage from './pages/admin/UsuariosPage'
 import TelemetriaPage from './pages/admin/TelemetriaPage'
 import PersonalizacionPage from './pages/admin/PersonalizacionPage'
 import AuditoriaPage from './pages/admin/AuditoriaPage'
+import CampanasPage from './pages/admin/CampanasPage'
+import PacientesPage from './pages/admin/PacientesPage'
 import TicketPage from './pages/tickets/TicketPage'
 import { useAuthStore } from './store/authStore'
 
@@ -45,6 +47,15 @@ function AdminRoute() {
   return <Outlet />
 }
 
+function RoleRoute({ allowedRoles }: { allowedRoles: string[] }) {
+  const user = useAuthStore((s) => s.user)
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role !== 'admin' && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />
+  }
+  return <Outlet />
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -57,19 +68,35 @@ export default function App() {
           {/* Protected */}
           <Route element={<AppLayout />}>
             <Route path="/"                element={<HomeRedirect />} />
-            <Route path="/admision"        element={<BeneficiarioPage />} />
+
+            {/* Acreditación / Admisión - Exclusivo para voluntarios de acreditación y admin */}
+            <Route element={<RoleRoute allowedRoles={['admision', 'acreditacion']} />}>
+              <Route path="/admision" element={<BeneficiarioPage />} />
+            </Route>
+
+            {/* Triaje Clínico - Exclusivo para enfermería de triaje y admin */}
+            <Route element={<RoleRoute allowedRoles={['triaje']} />}>
+              <Route path="/triaje" element={<SignosVitalesPage />} />
+            </Route>
+
+            {/* Consulta Médica - Exclusivo para médicos y admin */}
+            <Route element={<RoleRoute allowedRoles={['medico']} />}>
+              <Route path="/consulta" element={<ConsultaPage />} />
+            </Route>
+
+            {/* Colas y Tickets */}
             <Route path="/queue"           element={<QueuePage />} />
             <Route path="/cola"            element={<QueuePage />} />
-            <Route path="/triaje"          element={<SignosVitalesPage />} />
-            <Route path="/consulta"        element={<ConsultaPage />} />
             <Route path="/tickets"         element={<TicketPage />} />
 
             {/* Admin only */}
             <Route element={<AdminRoute />}>
+              <Route path="/admin/campanas"        element={<CampanasPage />} />
+              <Route path="/admin/pacientes"       element={<PacientesPage />} />
               <Route path="/admin/personalizacion" element={<PersonalizacionPage />} />
-              <Route path="/admin/usuarios"    element={<UsuariosPage />} />
-              <Route path="/admin/telemetria"  element={<TelemetriaPage />} />
-              <Route path="/admin/auditoria"   element={<AuditoriaPage />} />
+              <Route path="/admin/usuarios"        element={<UsuariosPage />} />
+              <Route path="/admin/telemetria"      element={<TelemetriaPage />} />
+              <Route path="/admin/auditoria"       element={<AuditoriaPage />} />
             </Route>
           </Route>
 

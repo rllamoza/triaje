@@ -101,6 +101,13 @@ try {
     if ($method === 'POST' && preg_match('#^campaigns/(\d+)/stations$#', $path, $m)) {
         campaigns_store_station((int)$m[1]);
     }
+    if ($method === 'GET' && preg_match('#^campaigns/(\d+)/specialties$#', $path, $m)) {
+        campaigns_specialties((int)$m[1]);
+    }
+    if ($method === 'POST' && preg_match('#^campaigns/(\d+)/specialties$#', $path, $m)) {
+        campaigns_store_specialties((int)$m[1]);
+    }
+
     if ($method === 'GET' && preg_match('#^campaigns/(\d+)/cola$#', $path, $m)) {
         atenciones_cola((int)$m[1]);
     }
@@ -123,8 +130,9 @@ try {
     if ($method === 'POST' && $path === 'beneficiarios') {
         beneficiarios_store($user);
     }
-    if ($method === 'GET' && preg_match('#^beneficiarios/(\d+)$#', $path, $m)) {
-        beneficiarios_show((int)$m[1]);
+    if (preg_match('#^beneficiarios/(\d+)$#', $path, $m)) {
+        if ($method === 'GET') beneficiarios_show((int)$m[1]);
+        if ($method === 'PUT' || $method === 'PATCH') beneficiarios_update((int)$m[1]);
     }
     if ($method === 'GET' && preg_match('#^beneficiarios/(\d+)/historial$#', $path, $m)) {
         beneficiarios_historial((int)$m[1]);
@@ -190,9 +198,13 @@ try {
     }
 
     // Usuarios
+    if ($method === 'GET' && $path === 'medicos') {
+        users_medicos();
+    }
     if ($method === 'GET' && $path === 'users') {
         users_index();
     }
+
     if ($method === 'POST' && $path === 'users') {
         users_store();
     }

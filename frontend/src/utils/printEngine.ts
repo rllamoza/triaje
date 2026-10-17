@@ -67,7 +67,7 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
       return
     }
 
-    const maxMm = paperWidth === '58mm' ? '54mm' : '76mm'
+    const maxMm = paperWidth === '58mm' ? '54mm' : '78mm'
 
     // Crear un iframe invisible para aislar exclusivamente el ticket térmico
     const iframe = document.createElement('iframe')
@@ -110,7 +110,7 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
               padding: 0 !important;
               background: #ffffff !important;
               color: #000000 !important;
-              font-family: monospace, Courier, "Courier New", monospace !important;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, monospace !important;
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
@@ -120,8 +120,8 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
               margin: 0 auto !important;
               padding: 2mm 1.5mm !important;
               box-sizing: border-box !important;
-              font-size: 11px !important;
-              line-height: 1.25 !important;
+              font-size: 13px;
+              line-height: 1.35;
               color: #000000 !important;
               background: #ffffff !important;
             }

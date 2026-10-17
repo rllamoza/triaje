@@ -2,10 +2,13 @@ import { useState } from 'react'
 import { useScannerStore } from '../../store/scannerStore'
 import { PATIENT_DATABASE } from '../../services/patientRegistry'
 import { printThermalElement } from '../../utils/printEngine'
+import { useBrandingStore, getEffectiveTicketLogo } from '../../store/brandingStore'
+import { useAtenciones } from '../../api/hooks'
 
 interface QueuePatient {
   id: number
   ticket: string
+  especialidad?: string
   priority: 'rojo' | 'amarillo' | 'verde'
   paciente: string
   edad: string
@@ -22,7 +25,8 @@ interface QueuePatient {
 const mockPatients: QueuePatient[] = [
   {
     id: 1,
-    ticket: 'T-101',
+    ticket: 'MED-0001',
+    especialidad: 'Medicina General',
     priority: 'rojo',
     paciente: 'Mamani Quispe, Rosa',
     edad: '67 años',
@@ -37,7 +41,8 @@ const mockPatients: QueuePatient[] = [
   },
   {
     id: 2,
-    ticket: 'T-102',
+    ticket: 'PED-0001',
+    especialidad: 'Pediatría',
     priority: 'rojo',
     paciente: 'Huallpa Ccori, Dylan',
     edad: '3 años',
@@ -51,7 +56,8 @@ const mockPatients: QueuePatient[] = [
   },
   {
     id: 3,
-    ticket: 'T-104',
+    ticket: 'MED-0002',
+    especialidad: 'Medicina General',
     priority: 'amarillo',
     paciente: 'Quispe Condori, Juan',
     edad: '54 años',
@@ -66,7 +72,8 @@ const mockPatients: QueuePatient[] = [
   },
   {
     id: 4,
-    ticket: 'T-105',
+    ticket: 'GIN-0001',
+    especialidad: 'Ginecología',
     priority: 'amarillo',
     paciente: 'Ramos Condori, Hilda',
     edad: '31 años',
@@ -76,11 +83,12 @@ const mockPatients: QueuePatient[] = [
     vitals: ['PA: 110/70', 'FC: 92'],
     motivo: 'Gestante 28 semanas con cefalea y acúfenos',
     detalles: 'Sospecha de preeclampsia leve en altura.',
-    destino: 'Consultorio 2',
+    destino: 'Tópico Ginec.',
   },
   {
     id: 5,
-    ticket: 'T-107',
+    ticket: 'ODO-0001',
+    especialidad: 'Odontología',
     priority: 'verde',
     paciente: 'Yupanqui Champi, Pedro',
     edad: '45 años',
@@ -88,13 +96,14 @@ const mockPatients: QueuePatient[] = [
     hora: '08:20 hrs',
     espera: '50 min',
     vitals: ['PA: 120/80', 'SpO2: 94%'],
-    motivo: 'Control anual y solicitud de desparasitación',
-    detalles: 'Asintomático. Certificado médico comunal.',
-    destino: 'Consultorio 1',
+    motivo: 'Control anual y dolor en molar inferior',
+    detalles: 'Asintomático general. Limpieza y curación dental.',
+    destino: 'Box Dental',
   },
   {
     id: 6,
-    ticket: 'T-108',
+    ticket: 'OFT-0001',
+    especialidad: 'Oftalmología',
     priority: 'verde',
     paciente: 'Chavez Flores, María',
     edad: '62 años',
@@ -102,13 +111,16 @@ const mockPatients: QueuePatient[] = [
     hora: '08:35 hrs',
     espera: '35 min',
     vitals: ['PA: 125/82', 'SpO2: 93%'],
-    motivo: 'Artrosis de rodilla bilateral y lumbalgia crónica',
-    detalles: 'Dificultad para caminar largas distancias.',
-    destino: 'Consultorio 1',
+    motivo: 'Pérdida progresiva de agudeza visual y refracción',
+    detalles: 'Evaluación de catarata senil y medida de vista.',
+    destino: 'Módulo Visual',
   },
 ]
 
 export default function QueuePage() {
+  const branding = useBrandingStore()
+  const effectiveLogo = getEffectiveTicketLogo(branding)
+
   const { openScanner, showPatientDetail } = useScannerStore()
   const [filterPriority, setFilterPriority] = useState<string>('all')
   const [filterConsultorio, setFilterConsultorio] = useState<string>('all')
@@ -118,7 +130,70 @@ export default function QueuePage() {
   const [calledMessage, setCalledMessage] = useState<string | null>(null)
   const [showToast, setShowToast] = useState(true)
 
-  const patients = mockPatients.filter((p) => {
+  const { data: atencionesData } = useAtenciones()
+  const rawAtenciones: any[] = Array.isArray(atencionesData)
+    ? atencionesData
+    : (Array.isArray(atencionesData?.data) ? atencionesData.data : [])
+
+  const livePatients: QueuePatient[] = rawAtenciones.map((a: any) => {
+    const b = a.beneficiario || a
+    const ape = b?.apellidos || ''
+    const nom = b?.nombres || ''
+    const nombreCompleto = ape ? `${ape}, ${nom}`.trim() : (b?.nombres || 'Paciente')
+
+    let priority: 'rojo' | 'amarillo' | 'verde' = 'verde'
+    if (a.prioridad_color === 'rojo' || a.prioridad === 'I') priority = 'rojo'
+    else if (a.prioridad_color === 'amarillo' || a.prioridad === 'II') priority = 'amarillo'
+
+    const arrivalDate = a.arrival_time ? new Date(a.arrival_time) : new Date()
+    const hora = arrivalDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' hrs'
+
+    const diffMin = Math.max(1, Math.round((Date.now() - arrivalDate.getTime()) / (1000 * 60)))
+    const espera = diffMin > 120 ? `${Math.round(diffMin / 60)} h` : `${diffMin} min`
+
+    const vitals: string[] = []
+    if (a.presion_sistolica && a.presion_diastolica) {
+      vitals.push(`PA: ${a.presion_sistolica}/${a.presion_diastolica}`)
+    }
+    if (a.saturacion_o2_pct) {
+      vitals.push(`SpO2: ${a.saturacion_o2_pct}%`)
+    }
+    if (a.temperatura_c) {
+      vitals.push(`T°: ${a.temperatura_c}°C`)
+    }
+    if (a.frecuencia_cardiaca) {
+      vitals.push(`FC: ${a.frecuencia_cardiaca}`)
+    }
+    if (vitals.length === 0) {
+      vitals.push(a.status === 'en_espera_triaje' ? 'En espera de Triaje' : 'Sin signos')
+    }
+
+    return {
+      id: Number(a.id),
+      ticket: a.ticket_codigo || `MED-${String(a.ticket_number || a.id).padStart(4, '0')}`,
+      especialidad: a.specialty_name || 'Medicina General',
+      priority,
+      paciente: nombreCompleto,
+      edad: b?.edad_calculada ? `${b.edad_calculada} años` : 'Edad no reg.',
+      dni: b?.dni || '--------',
+      hora,
+      espera,
+      vitals,
+      motivo: a.triaje_motivo || a.notes || a.sintoma_principal || 'Evaluación médica',
+      detalles: a.observaciones_triaje || a.notes || 'Atención registrada en campaña.',
+      destino: a.consultorio || 'Consultorio 1',
+      alergia: a.alergias_activas
+        ? Array.isArray(a.alergias_activas)
+          ? a.alergias_activas.join(', ')
+          : String(a.alergias_activas)
+        : undefined,
+    }
+  })
+
+  // Usar pacientes reales de la base de datos si existen, de lo contrario mantener mockPatients
+  const sourcePatients = livePatients.length > 0 ? livePatients : mockPatients
+
+  const patients = sourcePatients.filter((p) => {
     if (filterPriority !== 'all' && p.priority !== filterPriority) return false
     if (filterConsultorio === 'c1' && p.destino !== 'Consultorio 1') return false
     if (filterConsultorio === 'c2' && p.destino !== 'Consultorio 2') return false
@@ -133,14 +208,25 @@ export default function QueuePage() {
     return true
   })
 
-  const countRojo = mockPatients.filter((p) => p.priority === 'rojo').length
-  const countAmarillo = mockPatients.filter((p) => p.priority === 'amarillo').length
-  const countVerde = mockPatients.filter((p) => p.priority === 'verde').length
+  const countRojo = sourcePatients.filter((p) => p.priority === 'rojo').length
+  const countAmarillo = sourcePatients.filter((p) => p.priority === 'amarillo').length
+  const countVerde = sourcePatients.filter((p) => p.priority === 'verde').length
 
   const handleCall = (p: QueuePatient) => {
-    setCalledMessage(`Llamando: ${p.ticket} - ${p.paciente} a ${p.destino}`)
-    setTimeout(() => setCalledMessage(null), 4000)
+    setCalledMessage(`Llamando por altavoz: Ticket ${p.ticket} (${p.especialidad || 'Consulta'}) - ${p.paciente} a ${p.destino}`)
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel()
+        const text = `Atención ticket ${p.ticket}, paciente ${p.paciente}, pasar a ${p.destino} para atención en ${p.especialidad || 'consulta médica'}.`
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.lang = 'es-PE'
+        utterance.rate = 0.92
+        window.speechSynthesis.speak(utterance)
+      } catch {}
+    }
+    setTimeout(() => setCalledMessage(null), 4500)
   }
+
 
   const handlePrintSlip = (p: QueuePatient) => {
     setThermalPatient(p)
@@ -906,28 +992,71 @@ export default function QueuePage() {
             {/* Thermal Paper Emulation */}
             <div
               id="queue-thermal-modal-receipt"
-              className="bg-[#ffffff] text-[#000000] p-4 text-center border-2 border-black space-y-2 text-xs font-mono font-bold select-none antialiased"
+              className="bg-[#ffffff] text-[#000000] p-4 text-center border-2 border-black space-y-2 select-none antialiased"
+              style={{
+                fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontSize: '11px',
+                lineHeight: 1.3,
+                color: '#000000',
+              }}
             >
-              <div className="font-black text-sm tracking-tight text-black uppercase">ONG SEMILLA SALUD</div>
-              <div className="text-[11px] font-bold text-black uppercase">CAMPAÑA VALLE SAGRADO 2025</div>
-              <div className="text-[10px] font-black text-black">********************************</div>
-              <div className="py-1">
-                <div className="text-4xl font-black text-black">#{thermalPatient.ticket}</div>
-                <div className={`text-xs font-black mt-1 uppercase ${
-                  thermalPatient.priority === 'rojo' ? 'text-error' : thermalPatient.priority === 'amarillo' ? 'text-[#b28600]' : 'text-tertiary'
+              {/* Header con Logotipo */}
+              <div className="pb-2 border-b-2 border-dashed border-black">
+                {effectiveLogo ? (
+                  <img
+                    src={effectiveLogo}
+                    alt="Logo Ticket"
+                    className="h-9 max-w-[150px] object-contain mx-auto mb-1 block grayscale contrast-200"
+                  />
+                ) : (
+                  <div className="text-xs font-black border border-black px-2 py-0.5 inline-block mb-1">
+                    [✚ ASISTENCIA MÉDICA]
+                  </div>
+                )}
+                <div className="font-black text-sm tracking-tight text-black uppercase leading-tight">
+                  {branding.exportHeader || 'ONG SEMILLA SALUD'}
+                </div>
+                <div className="text-[11px] font-bold text-black uppercase">
+                  {branding.exportSubheader || 'CAMPAÑA VALLE SAGRADO 2025'}
+                </div>
+              </div>
+
+              {/* Turno y Especialidad */}
+              <div className="py-2 border-2 border-black bg-neutral-100 my-2">
+                {thermalPatient.especialidad && (
+                  <div className="text-[11px] font-black text-black uppercase tracking-wide">
+                    {thermalPatient.especialidad}
+                  </div>
+                )}
+                <div className="text-3xl font-black text-black font-mono tracking-tight my-0.5">
+                  #{thermalPatient.ticket}
+                </div>
+                <div className={`text-[11px] font-black uppercase px-2 py-0.5 inline-block text-white ${
+                  thermalPatient.priority === 'rojo' ? 'bg-red-600' : thermalPatient.priority === 'amarillo' ? 'bg-amber-600' : 'bg-emerald-700'
                 }`}>
                   {thermalPatient.priority === 'rojo' ? 'ROJO - EMERGENCIA' : thermalPatient.priority === 'amarillo' ? 'AMARILLO - URGENTE' : 'VERDE - NORMAL'}
                 </div>
               </div>
-              <div className="text-[10px] font-black text-black">--------------------------------</div>
-              <div className="text-left text-xs space-y-1 text-black font-semibold">
-                <div><strong className="font-black text-black">PACIENTE:</strong> <span className="text-black">{thermalPatient.paciente}</span></div>
-                <div><strong className="font-black text-black">DNI:</strong> <span className="text-black">{thermalPatient.dni}</span></div>
-                <div><strong className="font-black text-black">HORA:</strong> <span className="text-black">{thermalPatient.hora}</span></div>
-                <div><strong className="font-black text-black">DESTINO:</strong> <span className="text-black">{thermalPatient.destino}</span></div>
+
+              {/* Filiación y Datos */}
+              <div className="text-left text-xs space-y-1.5 text-black py-1 border-b-2 border-dashed border-black font-medium">
+                <div><strong className="font-black text-black">PACIENTE:</strong> <span className="text-black font-bold">{thermalPatient.paciente}</span></div>
+                <div className="flex justify-between">
+                  <span><strong className="font-black text-black">DNI:</strong> {thermalPatient.dni}</span>
+                  <span><strong className="font-black text-black">EDAD:</strong> {thermalPatient.edad}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span><strong className="font-black text-black">HORA:</strong> {thermalPatient.hora}</span>
+                  <span><strong className="font-black text-black">DESTINO:</strong> <span className="font-bold">{thermalPatient.destino}</span></span>
+                </div>
+                {thermalPatient.motivo && (
+                  <div className="pt-1 text-[11px] text-neutral-800">
+                    <strong className="font-black text-black">MOTIVO:</strong> {thermalPatient.motivo}
+                  </div>
+                )}
               </div>
-              <div className="text-[10px] font-black text-black">--------------------------------</div>
-              <div className="text-[10px] leading-tight font-bold text-black">
+
+              <div className="text-[10px] leading-tight font-bold text-black pt-1">
                 Conserve este ticket. Esté atento a los altavoces y pantallas de llamado.
               </div>
             </div>

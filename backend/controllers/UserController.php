@@ -115,3 +115,14 @@ function users_reset_pin(int $id): void {
        ->execute([':pin' => password_hash_app($b['pin']), ':id' => $id]);
     json_ok(['message' => 'PIN actualizado']);
 }
+
+function users_medicos(): void {
+    $stmt = db()->prepare("
+        SELECT id, name, apellidos, cmp_code, dni, role, email
+        FROM users
+        WHERE role IN ('medico', 'admin') AND active = 1
+        ORDER BY name ASC
+    ");
+    $stmt->execute();
+    json_ok($stmt->fetchAll());
+}

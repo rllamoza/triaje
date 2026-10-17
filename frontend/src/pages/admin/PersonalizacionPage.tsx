@@ -493,71 +493,102 @@ export default function PersonalizacionPage() {
               </h2>
 
               <div className="space-y-4 text-[13.5px]">
-                <div>
-                  <label className="block font-semibold text-on-surface mb-1">
-                    Selección de Logotipo a Imprimir / Exportar
-                  </label>
-                  <select
-                    value={formData.selectedExportLogo}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        selectedExportLogo: e.target.value as typeof formData.selectedExportLogo,
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-surface-container-highest bg-surface-container-low text-on-surface focus:outline-none focus:border-primary cursor-pointer"
-                  >
-                    <option value="principal">Usar Logotipo Principal</option>
-                    <option value="isotipo">Usar Isotipo Cuadrado</option>
-                    <option value="ticket_personalizado">Usar Logo Monocromático Especial para Tickets</option>
-                    <option value="ninguno">Sin Logotipo (Solo Texto Institucional)</option>
-                  </select>
-                </div>
-
-                {formData.selectedExportLogo === 'ticket_personalizado' && (
-                  <div className="p-3 bg-surface-container-low border border-surface-container-high space-y-2">
-                    <label className="block font-semibold text-on-surface">
-                      Logo Monocromático para Ticket Térmico (58mm / 80mm)
+                {/* CONFIGURACIÓN DEL LOGO PARA TICKET TÉRMICO */}
+                <div className="p-4 bg-surface-container-low border-2 border-primary/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block font-bold text-on-surface flex items-center gap-2">
+                      <span className="material-symbols-outlined text-primary text-base">print</span>
+                      <span>Logo que irá en el Ticket Térmico</span>
                     </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={formData.ticketLogoUrl}
-                        onChange={(e) => setFormData({ ...formData, ticketLogoUrl: e.target.value })}
-                        placeholder="URL del logo monocromático"
-                        className="flex-1 px-3 py-1.5 text-xs border border-surface-container-highest bg-surface text-on-surface focus:outline-none focus:border-primary"
-                      />
-                      <input
-                        type="file"
-                        ref={ticketLogoFileRef}
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload('ticketLogoUrl', e.target.files?.[0] ?? null)}
-                        className="hidden"
-                      />
+                    {formData.ticketLogoUrl ? (
+                      <span className="px-2 py-0.5 text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        Logo Propio del Ticket
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 text-[11px] font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/40 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                        Fallback: Usa Logo Principal
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-xs text-on-surface-variant">
+                    Indique la imagen o logotipo exclusivo para la cabecera del ticket térmico (58mm/80mm). 
+                    <strong className="text-on-surface"> Si este campo queda vacío o no se escogió ningún logo, el sistema usará automáticamente el Logotipo Principal</strong>.
+                  </p>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={formData.ticketLogoUrl}
+                      onChange={(e) => setFormData({ ...formData, ticketLogoUrl: e.target.value })}
+                      placeholder="URL del logo para ticket (Dejar vacío para usar Logo Principal)"
+                      className="flex-1 px-3 py-2 text-xs border border-surface-container-highest bg-surface text-on-surface focus:outline-none focus:border-primary font-mono"
+                    />
+                    <input
+                      type="file"
+                      ref={ticketLogoFileRef}
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload('ticketLogoUrl', e.target.files?.[0] ?? null)}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => ticketLogoFileRef.current?.click()}
+                      className="px-3 py-2 bg-surface text-xs font-semibold border border-surface-container-highest hover:bg-surface-container-high flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">upload</span>
+                      <span>Subir</span>
+                    </button>
+                    {formData.ticketLogoUrl && (
                       <button
                         type="button"
-                        onClick={() => ticketLogoFileRef.current?.click()}
-                        className="px-3 py-1.5 bg-surface text-xs font-medium border border-surface-container-highest hover:bg-surface-container-high flex items-center gap-1.5 cursor-pointer"
+                        onClick={() => setFormData({ ...formData, ticketLogoUrl: '' })}
+                        title="Restablecer para usar el logotipo principal"
+                        className="px-2.5 py-2 bg-rose-500/10 text-rose-400 text-xs font-semibold border border-rose-500/30 hover:bg-rose-500/20 flex items-center gap-1 cursor-pointer"
                       >
-                        <span className="material-symbols-outlined text-sm">upload</span>
-                        <span>Subir</span>
+                        <span className="material-symbols-outlined text-sm">backspace</span>
+                        <span>Usar Principal</span>
                       </button>
-                    </div>
-                    <span className="text-[11px] text-on-surface-variant">Se recomienda imagen en blanco y negro o silueta para impresoras térmicas ESC/POS.</span>
+                    )}
                   </div>
-                )}
+
+                  {/* Visual preview of effective logo */}
+                  <div className="p-2.5 bg-surface border border-surface-container flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white flex items-center justify-center border border-surface-container-high p-1">
+                      {formData.ticketLogoUrl ? (
+                        <img src={formData.ticketLogoUrl} alt="Logo Ticket" className="max-h-full max-w-full object-contain filter grayscale contrast-200" />
+                      ) : formData.logoUrl ? (
+                        <img src={formData.logoUrl} alt="Logo Principal Fallback" className="max-h-full max-w-full object-contain filter grayscale contrast-200" />
+                      ) : (
+                        <span className="text-[9px] font-mono text-black font-bold">SIN LOGO</span>
+                      )}
+                    </div>
+                    <div className="text-xs">
+                      <div className="font-semibold text-on-surface">
+                        {formData.ticketLogoUrl ? 'Logotipo Personalizado para Tickets Activo' : 'Logotipo Principal Activo (Por Defecto)'}
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant">
+                        {formData.ticketLogoUrl
+                          ? 'Optimizado específicamente para bobinas térmicas ESC/POS.'
+                          : 'Se utilizará automáticamente el logotipo institucional cargado en Cabeceras.'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="p-3 bg-surface-container-low border border-surface-container-high space-y-2">
                   <label className="block font-semibold text-on-surface">
-                    Logo para Fichas Clínicas y Reportes de Cierre (PDF)
+                    Logo para Fichas Clínicas y Reportes de Cierre (PDF A4)
                   </label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={formData.pdfLogoUrl}
                       onChange={(e) => setFormData({ ...formData, pdfLogoUrl: e.target.value })}
-                      placeholder="URL del logo para documentos PDF"
-                      className="flex-1 px-3 py-1.5 text-xs border border-surface-container-highest bg-surface text-on-surface focus:outline-none focus:border-primary"
+                      placeholder="URL del logo para documentos PDF (Dejar vacío para usar Principal)"
+                      className="flex-1 px-3 py-1.5 text-xs border border-surface-container-highest bg-surface text-on-surface focus:outline-none focus:border-primary font-mono"
                     />
                     <input
                       type="file"
@@ -575,7 +606,7 @@ export default function PersonalizacionPage() {
                       <span>Subir</span>
                     </button>
                   </div>
-                  <span className="text-[11px] text-on-surface-variant">Sello de alta resolución para impresión en hojas A4 de historia clínica.</span>
+                  <span className="text-[11px] text-on-surface-variant">Sello de alta resolución para impresión en hojas A4 de historia clínica y hojas de referencia.</span>
                 </div>
 
                 <div>
@@ -622,63 +653,105 @@ export default function PersonalizacionPage() {
             {/* Live Preview Thermal Ticket */}
             <div className="bg-surface border border-surface-container-high p-5 flex flex-col justify-between">
               <div>
-                <h2 className="text-sm font-bold text-on-surface uppercase tracking-wider flex items-center gap-2 border-b border-surface-container-high pb-2 mb-4">
-                  <span className="material-symbols-outlined text-base text-primary">receipt</span>
-                  <span>Simulación de Ticket Térmico (58mm)</span>
+                <h2 className="text-sm font-bold text-on-surface uppercase tracking-wider flex items-center justify-between border-b border-surface-container-high pb-2 mb-4">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-base text-primary">receipt</span>
+                    <span>Simulación del Ticket Térmico</span>
+                  </div>
+                  <span className="text-[11px] font-mono px-2 py-0.5 bg-surface-container text-on-surface-variant border border-surface-container-highest">
+                    58mm / 80mm
+                  </span>
                 </h2>
 
-                {/* Thermal Ticket Preview */}
-                <div className="max-w-[290px] mx-auto bg-white text-black p-4 font-mono text-xs leading-snug border-2 border-dashed border-black shadow-lg antialiased">
-                  {/* Logo chosen */}
-                  <div className="text-center mb-2">
-                    {formData.selectedExportLogo !== 'ninguno' && (
-                      <div className="flex justify-center mb-1">
-                        {formData.selectedExportLogo === 'ticket_personalizado' && formData.ticketLogoUrl ? (
-                          <img src={formData.ticketLogoUrl} alt="Logo Ticket" className="h-11 w-auto object-contain filter grayscale contrast-200" />
-                        ) : formData.selectedExportLogo === 'isotipo' && formData.isotipoUrl ? (
-                          <img src={formData.isotipoUrl} alt="Isotipo Ticket" className="h-11 w-auto object-contain filter grayscale contrast-200" />
-                        ) : formData.logoUrl ? (
-                          <img src={formData.logoUrl} alt="Logo Principal Ticket" className="h-10 w-auto object-contain filter grayscale contrast-200" />
-                        ) : (
-                          <div className="text-xs uppercase font-black text-black">[ LOGO ]</div>
-                        )}
-                      </div>
-                    )}
-                    <div className="font-black text-sm uppercase text-black">{formData.exportHeader || 'ONG SEMILLA'}</div>
-                    <div className="text-[11px] font-bold text-black uppercase mt-0.5">{formData.exportSubheader || 'TRIAJE CLÍNICO'}</div>
-                    <div className="border-b-2 border-dashed border-black my-2" />
+                {/* Thermal Ticket Preview (Clean, ordered, high-clarity typography) */}
+                <div className="max-w-[310px] mx-auto bg-white text-black p-5 font-sans text-xs border-2 border-black shadow-xl antialiased">
+                  {/* Effective Logo */}
+                  <div className="text-center mb-2.5">
+                    <div className="flex justify-center mb-1.5">
+                      {formData.ticketLogoUrl ? (
+                        <img
+                          src={formData.ticketLogoUrl}
+                          alt="Logo Ticket Personalizado"
+                          className="h-12 w-auto object-contain filter grayscale contrast-200"
+                        />
+                      ) : formData.logoUrl ? (
+                        <img
+                          src={formData.logoUrl}
+                          alt="Logo Principal (Fallback)"
+                          className="h-12 w-auto object-contain filter grayscale contrast-200"
+                        />
+                      ) : (
+                        <div className="text-xs uppercase font-black text-black border border-black px-2 py-1">[ LOGO INSTITUCIONAL ]</div>
+                      )}
+                    </div>
+                    <div className="font-black text-[13px] uppercase text-black tracking-wide leading-tight">
+                      {formData.exportHeader || 'ONG SEMILLA'}
+                    </div>
+                    <div className="text-[11px] font-bold text-black uppercase tracking-tight mt-0.5">
+                      {formData.exportSubheader || 'TRIAJE CLÍNICO & ATENCIÓN INTEGRAL'}
+                    </div>
+                    <div className="border-b-2 border-dashed border-black my-2.5" />
                   </div>
 
-                  <div className="text-center my-3">
-                    <div className="text-xs font-black uppercase text-black">TURNO ASIGNADO</div>
-                    <div className="text-4xl font-black tracking-wider my-1 text-black">T-101</div>
-                    <div className="text-[11px] font-black bg-black text-white px-2 py-0.5 inline-block">
-                      PRIORIDAD I — ROJO (EMERGENCIA)
+                  {/* Ticket Code and Specialty */}
+                  <div className="text-center my-2 bg-black/5 p-2 border border-black/20">
+                    <div className="text-[11px] font-bold uppercase tracking-wider text-black">ESPECIALIDAD MÉDICA</div>
+                    <div className="text-sm font-black text-black uppercase">MEDICINA GENERAL</div>
+                    <div className="text-[10px] font-bold text-black uppercase">DR. MARCO HUAMAN QUISPE (CMP-89241)</div>
+
+                    <div className="my-1 border-t border-dashed border-black/30 pt-1">
+                      <div className="text-[10px] font-extrabold uppercase text-black">CÓDIGO DE TURNO</div>
+                      <div className="text-3xl font-black tracking-wider text-black font-mono">
+                        MED-0001
+                      </div>
+                    </div>
+
+                    <div className="mt-1 text-[11px] font-black bg-black text-white px-2 py-0.5 inline-block uppercase">
+                      PRIORIDAD I — EMERGENCIA
                     </div>
                   </div>
 
-                  <div className="border-b-2 border-dashed border-black my-2" />
+                  <div className="border-b-2 border-dashed border-black my-2.5" />
 
-                  <div className="space-y-1 text-xs text-black font-semibold">
-                    <div><strong className="font-black">PACIENTE:</strong> MAMANI QUISPE, ROSA</div>
-                    <div><strong className="font-black">DNI:</strong> 02817462 • <strong className="font-black">EDAD:</strong> 67 AÑOS</div>
-                    <div><strong className="font-black">HORA:</strong> 09:12 • <strong className="font-black">DESTINO:</strong> BOX 01</div>
+                  {/* Patient Info */}
+                  <div className="space-y-1.5 text-xs text-black">
+                    <div className="flex justify-between">
+                      <span className="font-bold text-black">PACIENTE:</span>
+                      <span className="font-black text-right text-black uppercase">MAMANI QUISPE, ROSA</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-bold text-black">DNI:</span>
+                      <span className="font-black text-black">02817462</span>
+                      <span className="font-bold text-black">EDAD:</span>
+                      <span className="font-black text-black">67 AÑOS</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-bold text-black">DESTINO:</span>
+                      <span className="font-black text-black">CONSULTORIO 01</span>
+                      <span className="font-bold text-black">HORA:</span>
+                      <span className="font-black text-black">09:15</span>
+                    </div>
                   </div>
 
-                  <div className="border-b-2 border-dashed border-black my-2" />
+                  <div className="border-b-2 border-dashed border-black my-2.5" />
 
-                  <div className="text-[10px] text-center text-black font-bold uppercase leading-snug">
-                    {formData.exportFooterLegal || 'Documento clínico de campo válido para transferencia'}
+                  {/* Footer */}
+                  <div className="text-[10px] text-center text-black font-bold uppercase leading-tight">
+                    {formData.exportFooterLegal || 'Conserve este ticket para ser llamado por altavoz a triaje y luego a consulta médica.'}
+                  </div>
+                  <div className="text-[9px] text-center text-black/70 font-mono mt-1">
+                    CUPOS ASIGNADOS CONFORME A CAPACIDAD OPERATIVA
                   </div>
                 </div>
               </div>
 
               <div className="mt-6 pt-4 border-t border-surface-container-high text-xs text-on-surface-variant text-center">
-                Este diseño es el que enviará el controlador ESC/POS a las impresoras térmicas conectadas por Bluetooth o USB.
+                El logotipo visualizado arriba se aplicará automáticamente en los tickets impresos desde Admisión y Triaje.
               </div>
             </div>
           </div>
         )}
+
 
         {/* Bottom Bar */}
         <div className="flex items-center justify-between pt-4 border-t border-surface-container-high">

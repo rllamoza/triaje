@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<LoginMode>('credential')
   const [credential, setCredential] = useState('admin@semilla.pe')
   const [password, setPassword] = useState('Admin2025!')
+  const [showPassword, setShowPassword] = useState(false)
   const [role, setRole] = useState('admin')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -53,8 +54,14 @@ export default function LoginPage() {
       setAuth({ ...data, campaign_id: selectedCampaignId, station_id: selectedStation })
       navigate('/admision')
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-      setError(msg ?? 'Credenciales inválidas. Compruebe usuario y contraseña.')
+      const axiosErr = err as any
+      if (axiosErr.response?.data?.message) {
+        setError(axiosErr.response.data.message)
+      } else if (axiosErr.code === 'ERR_NETWORK' || !axiosErr.response) {
+        setError(`Error de red o CORS al comunicar con ${getApiUrl()}. Verifique su conexión y configuración.`)
+      } else {
+        setError(axiosErr.message || 'Credenciales inválidas. Compruebe usuario y contraseña.')
+      }
     } finally {
       setLoading(false)
     }
@@ -78,8 +85,14 @@ export default function LoginPage() {
       setAuth({ ...data, campaign_id: selectedCampaignId, station_id: selectedStation })
       navigate('/queue')
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
-      setPinError(msg ?? 'PIN de guardia inválido. Intente con 1234, 8247 o 5519.')
+      const axiosErr = err as any
+      if (axiosErr.response?.data?.message) {
+        setPinError(axiosErr.response.data.message)
+      } else if (axiosErr.code === 'ERR_NETWORK' || !axiosErr.response) {
+        setPinError(`Error de red o CORS al comunicar con ${getApiUrl()}.`)
+      } else {
+        setPinError(axiosErr.message || 'PIN de guardia inválido. Intente con 1234, 8247 o 5519.')
+      }
     } finally {
       setLoading(false)
     }
@@ -233,17 +246,71 @@ export default function LoginPage() {
                     <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                       Contraseña Segura
                     </label>
-                    <span className="text-xs text-primary cursor-pointer hover:underline font-mono">Token Físico</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="text-xs text-primary hover:text-on-primary-fixed-variant flex items-center gap-1 font-mono transition-colors cursor-pointer select-none"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        {showPassword ? 'visibility_off' : 'visibility'}
+                      </span>
+                      <span>{showPassword ? 'Ocultar' : 'Ver contraseña'}</span>
+                    </button>
                   </div>
                   <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary focus-within:bg-surface transition-colors">
                     <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">lock</span>
                     <input
-                      className="w-full bg-transparent py-2.5 pl-10 pr-3 text-xs text-on-surface focus:outline-none font-mono rounded-none"
-                      type="password"
+                      className="w-full bg-transparent py-2.5 pl-10 pr-10 text-xs text-on-surface focus:outline-none font-mono rounded-none"
+                      type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-2.5 text-secondary hover:text-on-surface p-1 transition-colors flex items-center justify-center cursor-pointer"
+                      title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                    >
+                      <span className="material-symbols-outlined text-lg">
+                        {showPassword ? 'visibility_off' : 'visibility'}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Accesos Rápidos de Prueba */}
+                <div className="bg-surface-container-lowest p-2.5 border border-surface-container-high space-y-1.5">
+                  <div className="text-[10px] uppercase font-bold text-secondary tracking-wider flex items-center justify-between">
+                    <span>Cuentas de Prueba (1 Clic)</span>
+                    <span className="text-[10px] text-primary font-mono">BD Remota</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {[
+                      { label: 'Admin', email: 'admin@semilla.pe', pass: 'Admin2025!', r: 'admin', st: 'ADM-01' },
+                      { label: 'Médico', email: 'mhuaman@semilla.pe', pass: 'Med2025!', r: 'medico', st: 'MED-01' },
+                      { label: 'Triaje', email: 'sbenavides@semilla.pe', pass: 'Enf2025!', r: 'triaje', st: 'TRJ-01' },
+                      { label: 'Admisión', email: 'atorres@semilla.pe', pass: 'Adm2025!', r: 'admision', st: 'ADM-01' },
+                    ].map((demo) => (
+                      <button
+                        key={demo.label}
+                        type="button"
+                        onClick={() => {
+                          setCredential(demo.email)
+                          setPassword(demo.pass)
+                          setRole(demo.r)
+                          setSelectedStation(demo.st)
+                          setError('')
+                        }}
+                        className={`text-[11px] py-1 px-1.5 border text-center transition-all cursor-pointer font-medium ${
+                          credential === demo.email
+                            ? 'bg-primary text-on-primary border-primary font-semibold'
+                            : 'bg-surface hover:bg-surface-container text-on-surface border-surface-container-high'
+                        }`}
+                      >
+                        {demo.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
 

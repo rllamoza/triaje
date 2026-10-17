@@ -53,6 +53,9 @@ export interface Beneficiario {
   sexo: 'M' | 'F' | 'O'
   idioma_principal: string
   tipo_seguro: string
+  comunidad?: string
+  altitud_residencia?: number | null
+  estado_civil?: string | null
   celular: string | null
   grupo_sanguineo: string | null
   rh_factor: '+' | '-' | null
@@ -62,15 +65,37 @@ export interface Beneficiario {
   campaign_id: number
 }
 
+export interface CampaignSpecialty {
+  id?: number
+  campaign_id?: number
+  specialty_code: string
+  specialty_name: string
+  medico_id: number | null
+  consultorio: string
+  cupo_maximo: number
+  active?: boolean
+  medico_nombre?: string | null
+  medico_email?: string | null
+  cupo_ocupado?: number
+  cupo_disponible?: number
+}
+
 export interface Atencion {
   id: number
   ticket_number: number
+  ticket_codigo?: string
+  specialty_code?: string
+  specialty_name?: string
+  medico_id?: number | null
+  consultorio?: string
+  medico_asignado_nombre?: string
   beneficiario_id: number
   campaign_id: number
   station_id: number | null
   arrival_time: string
   status: string
   seguro_usado: string | null
+  notes?: string | null
   triage_start_at: string | null
   triage_end_at: string | null
   medico_start_at: string | null
@@ -80,6 +105,7 @@ export interface Atencion {
   triaje?: Triaje
   station?: Station
 }
+
 
 export interface Triaje {
   id: number
@@ -199,10 +225,48 @@ export const useCampaignStations = (id: number) => {
   })
 }
 
+export const useCampaignSpecialties = (id: number) => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<CampaignSpecialty[]>({
+    queryKey: ['campaigns', id, 'specialties'],
+    queryFn: () => api.get(`/campaigns/${id}/specialties`).then((r) => r.data),
+    enabled: !!id && !!token,
+  })
+}
+
+export const useStoreCampaignSpecialties = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ campaignId, specialties }: { campaignId: number; specialties: CampaignSpecialty[] }) =>
+      api.post(`/campaigns/${campaignId}/specialties`, { specialties }).then((r) => r.data),
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ['campaigns', vars.campaignId, 'specialties'] })
+      qc.invalidateQueries({ queryKey: ['campaigns'] })
+    },
+  })
+}
+
 export const useActivateCampaign = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: number) => api.post(`/campaigns/${id}/activate`).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['campaigns'] }),
+  })
+}
+
+export const useStoreCampaign = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) => api.post('/campaigns', data).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['campaigns'] }),
+  })
+}
+
+export const useUpdateCampaign = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: number } & Record<string, unknown>) =>
+      api.put(`/campaigns/${id}`, data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['campaigns'] }),
   })
 }
@@ -234,11 +298,47 @@ export const useCheckDuplicate = () =>
         .then((r) => r.data),
   })
 
+export const useBeneficiarios = (params?: { search?: string; campaign_id?: number; page?: number }) => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{ data: Beneficiario[]; total: number; page: number; last_page: number }>({
+    queryKey: ['beneficiarios', params],
+    queryFn: () => api.get('/beneficiarios', { params }).then((r) => r.data),
+    enabled: !!token,
+  })
+}
+
+export const useBeneficiario = (id: number) => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<Beneficiario & { atenciones?: Atencion[] }>({
+    queryKey: ['beneficiarios', id],
+    queryFn: () => api.get(`/beneficiarios/${id}`).then((r) => r.data),
+    enabled: !!id && !!token,
+  })
+}
+
+export const useBeneficiarioHistorial = (id: number) => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery({
+    queryKey: ['beneficiarios', id, 'historial'],
+    queryFn: () => api.get(`/beneficiarios/${id}/historial`).then((r) => r.data),
+    enabled: !!id && !!token,
+  })
+}
+
 export const useStoreBeneficiario = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (data: Record<string, unknown>) =>
       api.post('/beneficiarios', data).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['beneficiarios'] }),
+  })
+}
+
+export const useUpdateBeneficiario = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...data }: { id: number } & Record<string, unknown>) =>
+      api.put(`/beneficiarios/${id}`, data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['beneficiarios'] }),
   })
 }
@@ -250,6 +350,7 @@ export const useAtenciones = (params?: Record<string, unknown>) => {
     queryKey: ['atenciones', params],
     queryFn: () => api.get('/atenciones', { params }).then((r) => r.data),
     enabled: !!token,
+    refetchInterval: 8000,
   })
 }
 
@@ -270,13 +371,20 @@ export const useStoreAtencion = () => {
       campaign_id: number
       station_id?: number
       seguro_usado?: string
+      notes?: string
+      specialty_code?: string
+      specialty_name?: string
+      medico_id?: number | null
+      consultorio?: string
     }) => api.post('/atenciones', data).then((r) => r.data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['atenciones'] })
       qc.invalidateQueries({ queryKey: ['queue'] })
+      qc.invalidateQueries({ queryKey: ['campaigns'] })
     },
   })
 }
+
 
 export const useUpdateAtencionStatus = () => {
   const qc = useQueryClient()
@@ -386,6 +494,16 @@ export const useUsers = () => {
     enabled: !!token,
   })
 }
+
+export const useMedicos = () => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<Array<{ id: number; name: string; apellidos: string; cmp_code: string | null; dni: string | null; role: string; email: string }>>({
+    queryKey: ['medicos'],
+    queryFn: () => api.get('/medicos').then((r) => r.data),
+    enabled: !!token,
+  })
+}
+
 
 export const useStoreUser = () => {
   const qc = useQueryClient()

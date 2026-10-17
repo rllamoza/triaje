@@ -159,7 +159,7 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
                   ? 'Médico Evaluador'
                   : user?.role === 'triaje'
                   ? 'Enfermería Triaje'
-                  : 'Admisión & Filiación'}
+                  : 'Acreditación & Admisión'}
               </div>
             </div>
 
@@ -195,10 +195,10 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
                       {user?.full_name ?? 'Usuario del Sistema'}
                     </div>
                     <div className="text-[12.5px] text-on-surface-variant truncate">
-                      {user?.cmp_code ? `CMP: ${user.cmp_code}` : user?.dni ? `DNI: ${user.dni}` : 'Personal de Brigada'}
+                      {user?.cmp_code ? `CMP: ${user.cmp_code}` : user?.dni ? `DNI: ${user.dni}` : 'Voluntario de Campaña'}
                     </div>
                     <span className="inline-block px-2 py-0.5 mt-1 text-[11.5px] font-bold uppercase tracking-wider bg-primary-container text-on-primary-container">
-                      {user?.role ?? 'Operador'}
+                      {user?.role === 'admision' ? 'Acreditación / Admisión' : user?.role ?? 'Operador'}
                     </span>
                   </div>
                 </div>
@@ -206,53 +206,137 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
 
               {/* Navigation Options */}
               <div className="py-1">
-                <Link
-                  to="/admin/personalizacion"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-primary">palette</span>
-                  <div>
-                    <div className="text-[14px] font-semibold leading-none">Personalización &amp; Logos</div>
-                    <div className="text-[12px] text-on-surface-variant mt-1">Títulos, subtítulos y logotipos exportables</div>
-                  </div>
-                </Link>
+                {user?.role === 'admin' ? (
+                  <>
+                    <Link
+                      to="/admin/campanas"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-primary">campaign</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Gestión de Campañas</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Crear, activar y administrar misiones médicas</div>
+                      </div>
+                    </Link>
 
-                <Link
-                  to="/admin/usuarios"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-secondary">manage_accounts</span>
-                  <div>
-                    <div className="text-[14px] font-semibold leading-none">Gestión de Usuarios</div>
-                    <div className="text-[12px] text-on-surface-variant mt-1">Roles, permisos y PIN de guardia</div>
-                  </div>
-                </Link>
+                    <Link
+                      to="/admin/pacientes"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-secondary">groups</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Gestión de Pacientes</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Padrón de beneficiarios, historial y edición</div>
+                      </div>
+                    </Link>
 
-                <Link
-                  to="/admin/telemetria"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-tertiary">hub</span>
-                  <div>
-                    <div className="text-[14px] font-semibold leading-none">Integraciones &amp; Telemetría</div>
-                    <div className="text-[12px] text-on-surface-variant mt-1">Webhooks, Starlink y sincronización P2P</div>
-                  </div>
-                </Link>
+                    <Link
+                      to="/admin/personalizacion"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-primary">palette</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Personalización &amp; Logos</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Títulos, subtítulos y logotipos exportables</div>
+                      </div>
+                    </Link>
 
-                <Link
-                  to="/admin/auditoria"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
-                >
-                  <span className="material-symbols-outlined text-[20px] text-primary">policy</span>
-                  <div>
-                    <div className="text-[14px] font-semibold leading-none">Auditoría Forense &amp; Red</div>
-                    <div className="text-[12px] text-on-surface-variant mt-1">Logs inmutables, IP, dispositivos y audi_triaje</div>
-                  </div>
-                </Link>
+                    <Link
+                      to="/admin/usuarios"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-secondary">manage_accounts</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Gestión de Usuarios</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Roles, permisos y PIN de guardia</div>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/admin/telemetria"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-tertiary">hub</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Integraciones &amp; Telemetría</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Webhooks, Starlink y sincronización P2P</div>
+                      </div>
+                    </Link>
+
+                    <Link
+                      to="/admin/auditoria"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-primary">policy</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Auditoría Forense &amp; Red</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Logs inmutables, IP, dispositivos y audi_triaje</div>
+                      </div>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    {(user?.role === 'admision' || user?.role === 'acreditacion') && (
+                      <Link
+                        to="/admision"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                      >
+                        <span className="material-symbols-outlined text-[20px] text-primary">person_add</span>
+                        <div>
+                          <div className="text-[14px] font-semibold leading-none">Registro de Pacientes (Acreditación)</div>
+                          <div className="text-[12px] text-on-surface-variant mt-1">Mesa en blanco, validación DNI y turnos</div>
+                        </div>
+                      </Link>
+                    )}
+
+                    {user?.role === 'triaje' && (
+                      <Link
+                        to="/triaje"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                      >
+                        <span className="material-symbols-outlined text-[20px] text-primary">vital_signs</span>
+                        <div>
+                          <div className="text-[14px] font-semibold leading-none">Triaje Clínico</div>
+                          <div className="text-[12px] text-on-surface-variant mt-1">Atención de pacientes registrados en lista</div>
+                        </div>
+                      </Link>
+                    )}
+
+                    {user?.role === 'medico' && (
+                      <Link
+                        to="/consulta"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                      >
+                        <span className="material-symbols-outlined text-[20px] text-primary">clinical_notes</span>
+                        <div>
+                          <div className="text-[14px] font-semibold leading-none">Consulta Médica</div>
+                          <div className="text-[12px] text-on-surface-variant mt-1">Diagnóstico, anamnesis y receta médica</div>
+                        </div>
+                      </Link>
+                    )}
+
+                    <Link
+                      to="/queue"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-secondary">hourglass_empty</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Cola de Espera Médica</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Flujo y tiempo en sala de campaña</div>
+                      </div>
+                    </Link>
+                  </>
+                )}
               </div>
 
               {/* Theme Selector Section */}

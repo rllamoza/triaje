@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import QRCode from 'qrcode'
-import { useBrandingStore } from '../../store/brandingStore'
+import { useBrandingStore, getEffectiveTicketLogo } from '../../store/brandingStore'
 import { useScannerStore } from '../../store/scannerStore'
 import { PATIENT_DATABASE, generatePatientQrPayload, type DetailedPatient } from '../../services/patientRegistry'
 import { usePrinterStatus, usePrintDirectTicket } from '../../api/hooks'
@@ -8,6 +8,7 @@ import { detectDevice, printThermalElement } from '../../utils/printEngine'
 
 export default function TicketPage() {
   const branding = useBrandingStore()
+  const effectiveLogo = getEffectiveTicketLogo(branding)
   const { openScanner, showPatientDetail } = useScannerStore()
 
   // Consulta de impresoras reales conectadas
@@ -706,9 +707,9 @@ export default function TicketPage() {
 
             {/* 1. Encabezado Médico e Identidad Institucional */}
             <div className="text-center flex flex-col items-center gap-1 border-b-2 border-[#000000] pb-3">
-              {branding.ticketLogoUrl ? (
+              {effectiveLogo ? (
                 <img
-                  src={branding.ticketLogoUrl}
+                  src={effectiveLogo}
                   alt="Logo Ticket"
                   className="h-12 w-auto max-w-[170px] object-contain mb-1 filter grayscale contrast-200"
                 />

@@ -4,6 +4,6 @@
  * SIN necesidad de volver a compilar el proyecto.
  */
 window.__APP_CONFIG__ = {
-  // URL base del backend. Puede ser ruta relativa (ej: '/api') o absoluta (ej: 'http://192.168.1.50:8000/api')
-  API_URL: '/api'
+  // URL base del backend. Puede ser ruta relativa (ej: '/api') o absoluta (ej: 'https://apitriaje.semillaperu.org')
+  API_URL: 'https://apitriaje.semillaperu.org'
 };

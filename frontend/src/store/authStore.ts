@@ -8,7 +8,7 @@ interface AuthUser {
   full_name: string
   cmp_code: string | null
   dni: string | null
-  role: 'admin' | 'medico' | 'triaje' | 'admision' | 'guardia'
+  role: 'admin' | 'medico' | 'triaje' | 'admision' | 'guardia' | 'acreditacion'
   station_default: string | null
 }
 

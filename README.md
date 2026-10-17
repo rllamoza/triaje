@@ -2,11 +2,11 @@
 
 Plataforma integral de triaje clínico, filiación médica, colas de atención, impresión de tickets térmicos ESC/POS y telemetría de campo diseñada bajo la estética **IBM Carbon Clinical** para brigadas médicas rurales en entornos de conectividad limitada o nula.
 
-**Versión Actual:** `v0.3.0`
+**Versión Actual:** `v1.0.1`
 
 ---
 
-## 🚀 Arquitectura Tecnológica (v0.3.0)
+## 🚀 Arquitectura Tecnológica (v1.0.1)
 
 - **Frontend**: React 19, TypeScript, Vite, Tailwind CSS, TanStack React Query, Zustand (persistencia local), Dexie.js (IndexedDB).
 - **Backend API**: PHP 8 Nativo y Ligero (**Zero-Laravel, Zero-Composer**), Arquitectura Front-Controller, PDO MySQL/SQLite, autenticación por tokens y PIN de guardia.
@@ -80,14 +80,14 @@ Acceder en el navegador:
 
 ## 🔑 Credenciales de Acceso por Defecto
 
-| Rol | Correo / Usuario | Contraseña | PIN de Guardia |
+| Rol | Correo / Credencial | Contraseña | PIN de Guardia |
 | :--- | :--- | :--- | :--- |
-| **Administrador** | `admin@semilla.pe` | `Admin2025!` | `1234` |
-| **Médico General** | `medico@semilla.pe` | `Medico2025!` | `1234` |
-| **Enfermera Triaje**| `enfermera@semilla.pe` | `Enfermera2025!` | `1234` |
-| **Admisión** | `admision@semilla.pe` | `Admision2025!` | `1234` |
+| **Administrador** | `admin@semilla.pe` (o `ADMIN-001`) | `Admin2025!` | `1234` |
+| **Médico General** | `mhuaman@semilla.pe` (o `CMP-89241`) | `Med2025!` | `8247` |
+| **Enfermera Triaje**| `sbenavides@semilla.pe` (o `CMP-92017`) | `Enf2025!` | `5519` |
+| **Admisión** | `atorres@semilla.pe` | `Adm2025!` | — |
 
 ---
 
 ## 📄 Notas de la Versión
-Consulte el archivo [RELEASE_NOTES_v0.3.md](file:///c:/Users/sistemas3/Documents/APPS/triaje/RELEASE_NOTES_v0.3.md) para ver la lista completa de cambios y mejoras introducidas en esta versión.
+Consulte el archivo [RELEASE_NOTES_v1.0.1.md](file:///c:/Users/sistemas3/Documents/APPS/triaje/RELEASE_NOTES_v1.0.1.md) para ver la lista completa de cambios, arquitectura clínica y mejoras introducidas en esta versión. Consulte [RELEASE_NOTES_v0.3.md](file:///c:/Users/sistemas3/Documents/APPS/triaje/RELEASE_NOTES_v0.3.md) para el historial previo.

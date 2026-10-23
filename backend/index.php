@@ -31,6 +31,7 @@ require_once __DIR__ . '/controllers/ConsultaController.php';
 require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/TicketController.php';
 require_once __DIR__ . '/controllers/AuditController.php';
+require_once __DIR__ . '/controllers/MedicamentoController.php';
 
 // 3. Normalizar la ruta solicitada
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -181,6 +182,18 @@ try {
     }
     if ($method === 'GET' && $path === 'medicamentos') {
         consultas_medicamentos();
+    }
+
+    // Catálogo de medicamentos de la campaña (Excel / sincronización externa) - admin
+    if ($method === 'GET' && $path === 'admin/medicamentos') medicamentos_admin_index($user);
+    if ($method === 'POST' && $path === 'admin/medicamentos/import') medicamentos_import($user);
+    if ($method === 'POST' && $path === 'admin/medicamentos/copy') medicamentos_copy($user);
+    if ($method === 'GET' && $path === 'admin/medicamentos/sync-config') medicamentos_sync_config_get($user);
+    if (($method === 'PUT' || $method === 'POST') && $path === 'admin/medicamentos/sync-config') medicamentos_sync_config_save($user);
+    if ($method === 'POST' && $path === 'admin/medicamentos/sync-test') medicamentos_sync_test($user);
+    if ($method === 'POST' && $path === 'admin/medicamentos/sync') medicamentos_sync_run($user);
+    if (($method === 'PUT' || $method === 'PATCH') && preg_match('#^admin/medicamentos/(\d+)$#', $path, $m)) {
+        medicamentos_update($user, (int)$m[1]);
     }
 
     // Tickets & Impresoras

@@ -13,6 +13,7 @@ import PersonalizacionPage from './pages/admin/PersonalizacionPage'
 import AuditoriaPage from './pages/admin/AuditoriaPage'
 import CampanasPage from './pages/admin/CampanasPage'
 import PacientesPage from './pages/admin/PacientesPage'
+import MedicamentosPage from './pages/admin/MedicamentosPage'
 import TicketPage from './pages/tickets/TicketPage'
 import { useAuthStore } from './store/authStore'
 
@@ -93,6 +94,7 @@ export default function App() {
             <Route element={<AdminRoute />}>
               <Route path="/admin/campanas"        element={<CampanasPage />} />
               <Route path="/admin/pacientes"       element={<PacientesPage />} />
+              <Route path="/admin/medicamentos"    element={<MedicamentosPage />} />
               <Route path="/admin/personalizacion" element={<PersonalizacionPage />} />
               <Route path="/admin/usuarios"        element={<UsuariosPage />} />
               <Route path="/admin/telemetria"      element={<TelemetriaPage />} />

@@ -62,6 +62,7 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
   const adminLinks = user?.role === 'admin' ? [
     { path: '/admin/campanas', label: 'Gestión de Campañas', icon: 'campaign' },
     { path: '/admin/pacientes', label: 'Gestión de Pacientes', icon: 'groups' },
+    { path: '/admin/medicamentos', label: 'Medicamentos de Campaña', icon: 'medication' },
     { path: '/admin/personalizacion', label: 'Personalización & Logos', icon: 'palette' },
     { path: '/admin/usuarios', label: 'Gestión de Usuarios', icon: 'manage_accounts' },
     { path: '/admin/telemetria', label: 'Integraciones (API & Webhooks)', icon: 'hub' },

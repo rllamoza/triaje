@@ -1031,7 +1031,7 @@ export default function QueuePage() {
                 <div className="text-3xl font-black text-black font-mono tracking-tight my-0.5">
                   #{thermalPatient.ticket}
                 </div>
-                <div className={`text-[11px] font-black uppercase px-2 py-0.5 inline-block text-white ${
+                <div className={`text-[11px] font-black uppercase px-2 py-0.5 inline-block text-white thermal-inverted print:bg-black print:text-white ${
                   thermalPatient.priority === 'rojo' ? 'bg-red-600' : thermalPatient.priority === 'amarillo' ? 'bg-amber-600' : 'bg-emerald-700'
                 }`}>
                   {thermalPatient.priority === 'rojo' ? 'ROJO - EMERGENCIA' : thermalPatient.priority === 'amarillo' ? 'AMARILLO - URGENTE' : 'VERDE - NORMAL'}

@@ -170,8 +170,9 @@ function consultas_firmar(int $id, array $user): void {
 
 function consultas_medicamentos(): void {
     $q = get_param('q');
-    $sql = "SELECT id, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion
-            FROM medicamentos WHERE activo = 1";
+    $cid = med_campaign_id();
+    $sql = "SELECT id, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion, stock_actual
+            FROM medicamentos WHERE activo = 1 AND campaign_id = $cid";
     if ($q) {
         $sql .= " AND (nombre_generico LIKE :q1 OR nombre_comercial LIKE :q2)";
         $stmt = db()->prepare($sql . " LIMIT 50");

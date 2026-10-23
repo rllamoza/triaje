@@ -1147,7 +1147,7 @@ export default function SignosVitalesPage() {
                     </div>
                   </div>
 
-                  <div style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', backgroundColor: '#000000', color: '#ffffff', padding: '2px 6px', display: 'inline-block', marginTop: '2px' }}>
+                  <div className="thermal-inverted" style={{ fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', backgroundColor: '#000000', color: '#ffffff', padding: '2px 6px', display: 'inline-block', marginTop: '2px' }}>
                     {priority === 1
                       ? 'PRIORIDAD I: EMERGENCIA (ROJO)'
                       : priority === 2
@@ -1330,7 +1330,7 @@ export default function SignosVitalesPage() {
               </div>
             </div>
 
-            <div style={{ fontSize: '10.5px', fontWeight: 900, textTransform: 'uppercase', backgroundColor: '#000000', color: '#ffffff', padding: '2px 4px', display: 'inline-block', marginTop: '2px' }}>
+            <div className="thermal-inverted" style={{ fontSize: '10.5px', fontWeight: 900, textTransform: 'uppercase', backgroundColor: '#000000', color: '#ffffff', padding: '2px 4px', display: 'inline-block', marginTop: '2px' }}>
               {priority === 1
                 ? 'PRIORIDAD I: EMERGENCIA (ROJO)'
                 : priority === 2

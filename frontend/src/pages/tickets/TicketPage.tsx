@@ -749,13 +749,16 @@ export default function TicketPage() {
             )}
 
             {/* 3. Indicador Manchester de Prioridad (Bloque Invertido Blanco sobre Negro) */}
-            <div className="bg-[#000000] text-[#ffffff] px-3 py-2.5 text-center flex flex-col gap-0.5 my-2">
-              <div className="text-sm font-black tracking-wider text-white">
+            <div
+              style={{ backgroundColor: '#000000', color: '#ffffff' }}
+              className="thermal-inverted ticket-inverted bg-[#000000] text-[#ffffff] px-3 py-2.5 text-center flex flex-col gap-0.5 my-2 border-2 border-[#000000]"
+            >
+              <div style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }} className="text-sm font-black tracking-wider text-white">
                 ★ ★ ★ {currentPatient.prioridadLabel.toUpperCase()} ★ ★ ★
               </div>
-              <div className="text-[11px] font-mono font-bold flex items-center justify-center gap-2 text-white">
-                <span>TIEMPO APROX. ESPERA:</span>
-                <strong className="underline text-yellow-300">~{currentPatient.espera}</strong>
+              <div style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }} className="text-[11px] font-mono font-bold flex items-center justify-center gap-2 text-white">
+                <span style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }} className="text-white">TIEMPO APROX. ESPERA:</span>
+                <strong style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }} className="underline text-white font-black">~{currentPatient.espera}</strong>
               </div>
             </div>
 
@@ -803,11 +806,14 @@ export default function TicketPage() {
 
             {/* 5. Alerta Médica de Alergias Críticas (Negativo de Alto Contraste) */}
             {currentPatient.alergias && currentPatient.alergias.toLowerCase() !== 'ninguna' && (
-              <div className="bg-[#000000] text-[#ffffff] p-2.5 text-center my-2 border-2 border-red-600">
-                <div className="text-xs font-black tracking-wider text-red-400">
+              <div
+                style={{ backgroundColor: '#000000', color: '#ffffff' }}
+                className="thermal-inverted ticket-inverted bg-[#000000] text-[#ffffff] p-2.5 text-center my-2 border-2 border-[#000000]"
+              >
+                <div style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }} className="text-xs font-black tracking-wider text-white">
                   ! ! ! ALERTA MÉDICA: ALERGIA SEVERA ! ! !
                 </div>
-                <div className="text-xs font-black font-mono mt-0.5 uppercase tracking-wide text-white">
+                <div style={{ color: '#ffffff', WebkitTextFillColor: '#ffffff' }} className="text-xs font-black font-mono mt-0.5 uppercase tracking-wide text-white">
                   {currentPatient.alergias}
                 </div>
               </div>

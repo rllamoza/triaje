@@ -935,7 +935,7 @@ export default function ConsultaPage() {
                     <option value="">-- Seleccione del vademécum o ingrese manual --</option>
                     {medicamentosList.map((m) => (
                       <option key={m.id} value={String(m.id)}>
-                        {m.nombre_generico} {m.concentracion ? `• ${m.concentracion}` : ''} ({m.forma_farmaceutica})
+                        {m.nombre_generico} {m.concentracion ? `• ${m.concentracion}` : ''} ({m.forma_farmaceutica}){m.stock_actual != null ? ` — stock: ${m.stock_actual}` : ''}
                       </option>
                     ))}
                   </select>

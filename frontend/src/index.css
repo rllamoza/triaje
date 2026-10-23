@@ -106,3 +106,77 @@ input:focus, select:focus, textarea:focus {
 .animate-pulse-subtle {
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* ================================================================
+   BLOQUES DE ALTO CONTRASTE TÉRMICO (INVERTIDO BLANCO SOBRE NEGRO)
+   Garantiza que el texto sea 100% blanco puro tanto en pantalla
+   como en cualquier impresión o diálogo de impresión
+   ================================================================ */
+.thermal-inverted,
+.ticket-inverted,
+.bg-black-inverted {
+  background-color: #000000 !important;
+  background: #000000 !important;
+  color: #ffffff !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+.thermal-inverted *,
+.ticket-inverted *,
+.bg-black-inverted * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+/* ================================================================
+   REGLAS DE IMPRESIÓN Y CONTRASTE PARA TICKETS TÉRMICOS (80mm / 58mm)
+   ================================================================ */
+@media print {
+  html, body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Bloques de Alto Contraste / Invertidos (Fondo Negro con Texto Blanco Puro) */
+  .thermal-inverted,
+  .ticket-inverted,
+  .bg-black-inverted,
+  .bg-black,
+  .bg-\[\#000000\],
+  [class*="bg-black"],
+  [class*="bg-[#000000]"] {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Asegurar que ningún hijo dentro de un bloque negro se sobreescriba a texto oscuro */
+  .thermal-inverted *,
+  .ticket-inverted *,
+  .bg-black-inverted *,
+  .bg-black *,
+  .bg-\[\#000000\] *,
+  [class*="bg-black"] *,
+  [class*="bg-[#000000]"] * {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .text-white,
+  .text-\[\#ffffff\],
+  [class*="text-white"],
+  [class*="text-[#ffffff]"] {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+  }
+}
+

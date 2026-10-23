@@ -138,6 +138,29 @@ export interface Medicamento {
   concentracion: string | null
   forma_farmaceutica: string
   via_administracion: string
+  stock_actual?: number
+}
+
+export interface MedicamentoAdmin extends Medicamento {
+  codigo: string | null
+  stock_actual: number
+  stock_minimo: number
+  activo: number | boolean
+  origen: string
+  stock_updated_at: string | null
+}
+
+export interface MedSyncConfig {
+  host: string
+  port: string
+  database: string
+  username: string
+  table: string
+  col_codigo: string
+  col_stock: string
+  last_sync_at: string
+  last_sync_result: string
+  has_password: boolean
 }
 
 export interface NodeStatus {
@@ -427,11 +450,84 @@ export const useStoreTriaje = () => {
 }
 
 /* ── Consulta ─────────────────────────────────────────────────── */
-export const useMedicamentos = (q?: string) =>
-  useQuery<Medicamento[]>({
-    queryKey: ['medicamentos', q],
-    queryFn: () => api.get('/medicamentos', { params: q ? { q } : {} }).then((r) => r.data),
+export const useMedicamentos = (q?: string) => {
+  const campaignId = useAuthStore((s) => s.campaignId)
+  return useQuery<Medicamento[]>({
+    queryKey: ['medicamentos', campaignId, q],
+    queryFn: () =>
+      api
+        .get('/medicamentos', { params: { ...(q ? { q } : {}), ...(campaignId ? { campaign_id: campaignId } : {}) } })
+        .then((r) => r.data),
   })
+}
+
+export const useMedicamentosAdmin = (campaignId: number | null, q?: string) =>
+  useQuery<MedicamentoAdmin[]>({
+    queryKey: ['medicamentos-admin', campaignId, q],
+    enabled: !!campaignId,
+    queryFn: () =>
+      api.get('/admin/medicamentos', { params: { campaign_id: campaignId, ...(q ? { q } : {}) } }).then((r) => r.data),
+  })
+
+export const useImportMedicamentos = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { campaign_id: number; items: Record<string, unknown>[]; modo: 'actualizar' | 'reemplazar' }) =>
+      api.post('/admin/medicamentos/import', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+    },
+  })
+}
+
+export const useCopyMedicamentos = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { campaign_id: number; from_campaign_id: number; con_stock: boolean }) =>
+      api.post('/admin/medicamentos/copy', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+    },
+  })
+}
+
+export const useMedSyncConfig = (campaignId: number | null) =>
+  useQuery<MedSyncConfig>({
+    queryKey: ['medicamentos-sync-config', campaignId],
+    enabled: !!campaignId,
+    queryFn: () =>
+      api.get('/admin/medicamentos/sync-config', { params: { campaign_id: campaignId } }).then((r) => r.data),
+  })
+
+export const useSaveMedSyncConfig = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) =>
+      api.put('/admin/medicamentos/sync-config', data).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['medicamentos-sync-config'] }),
+  })
+}
+
+export const useTestMedSync = () =>
+  useMutation({
+    mutationFn: (campaignId: number) =>
+      api.post('/admin/medicamentos/sync-test', { campaign_id: campaignId }).then((r) => r.data),
+  })
+
+export const useRunMedSync = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (campaignId: number) =>
+      api.post('/admin/medicamentos/sync', { campaign_id: campaignId }).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos-sync-config'] })
+    },
+  })
+}
 
 export const useStoreConsulta = () => {
   const qc = useQueryClient()

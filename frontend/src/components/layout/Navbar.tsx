@@ -233,6 +233,18 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
                     </Link>
 
                     <Link
+                      to="/admin/medicamentos"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-primary">medication</span>
+                      <div>
+                        <div className="text-[14px] font-semibold leading-none">Medicamentos de Campaña</div>
+                        <div className="text-[12px] text-on-surface-variant mt-1">Importar Excel y sincronizar stock</div>
+                      </div>
+                    </Link>
+
+                    <Link
                       to="/admin/personalizacion"
                       onClick={() => setIsMenuOpen(false)}
                       className="w-full px-4 py-3 flex items-center gap-3.5 text-on-surface hover:bg-surface-container transition-colors text-left"

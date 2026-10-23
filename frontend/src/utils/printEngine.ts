@@ -126,8 +126,61 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
               background: #ffffff !important;
             }
             .thermal-isolated-wrapper * {
-              color: #000000 !important;
               border-color: #000000 !important;
+            }
+
+            /* BLOQUES CON FONDO NEGRO: Fondo negro puro y texto 100% blanco nítido */
+            .thermal-isolated-wrapper .thermal-inverted,
+            .thermal-isolated-wrapper .ticket-inverted,
+            .thermal-isolated-wrapper [class*="thermal-inverted"],
+            .thermal-isolated-wrapper .bg-black,
+            .thermal-isolated-wrapper .bg-\[\#000000\],
+            .thermal-isolated-wrapper [class*="bg-black"],
+            .thermal-isolated-wrapper [class*="bg-[#000000]"],
+            .thermal-isolated-wrapper [style*="background-color: #000000"],
+            .thermal-isolated-wrapper [style*="background-color:#000000"],
+            .thermal-isolated-wrapper [style*="background-color: rgb(0, 0, 0)"],
+            .thermal-isolated-wrapper [style*="background: #000000"],
+            .thermal-isolated-wrapper [style*="background:#000000"],
+            .thermal-isolated-wrapper [style*="background: rgb(0, 0, 0)"] {
+              background-color: #000000 !important;
+              background: #000000 !important;
+              color: #ffffff !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            /* TODOS los textos e hijos dentro de bloques negros deben ser BLANCO PURO de alto contraste */
+            .thermal-isolated-wrapper .thermal-inverted *,
+            .thermal-isolated-wrapper .ticket-inverted *,
+            .thermal-isolated-wrapper [class*="thermal-inverted"] *,
+            .thermal-isolated-wrapper .bg-black *,
+            .thermal-isolated-wrapper .bg-\[\#000000\] *,
+            .thermal-isolated-wrapper [class*="bg-black"] *,
+            .thermal-isolated-wrapper [class*="bg-[#000000]"] *,
+            .thermal-isolated-wrapper [style*="background-color: #000000"] *,
+            .thermal-isolated-wrapper [style*="background-color:#000000"] *,
+            .thermal-isolated-wrapper [style*="background-color: rgb(0, 0, 0)"] *,
+            .thermal-isolated-wrapper [style*="background: #000000"] *,
+            .thermal-isolated-wrapper [style*="background:#000000"] *,
+            .thermal-isolated-wrapper [style*="background: rgb(0, 0, 0)"] * {
+              color: #ffffff !important;
+              -webkit-text-fill-color: #ffffff !important;
+              text-shadow: none !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            /* Elementos con clases o estilos de texto blanco explícito */
+            .thermal-isolated-wrapper .text-white,
+            .thermal-isolated-wrapper .text-\[\#ffffff\],
+            .thermal-isolated-wrapper [class*="text-white"],
+            .thermal-isolated-wrapper [class*="text-[#ffffff]"],
+            .thermal-isolated-wrapper [style*="color: #ffffff"],
+            .thermal-isolated-wrapper [style*="color:#ffffff"],
+            .thermal-isolated-wrapper [style*="color: rgb(255, 255, 255)"] {
+              color: #ffffff !important;
+              -webkit-text-fill-color: #ffffff !important;
             }
           </style>
         </head>

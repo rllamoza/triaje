@@ -3,6 +3,7 @@ import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-d
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS, applyThemeToDom } from '../../store/themeStore'
+import { useFeatureStore } from '../../store/featureStore'
 import { useScannerStore } from '../../store/scannerStore'
 import { Navbar } from './Navbar'
 import { GlassHeader, GlassFluidDock, GlassDrawer, GlassFab } from '../../themes/glass'
@@ -19,6 +20,7 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
   const { isAuthenticated, user, logout: logoutStore } = useAuthStore()
   const branding = useBrandingStore()
   const { theme: currentTheme, setTheme } = useThemeStore()
+  const { triajeEnabled } = useFeatureStore()
   const {
     isScannerOpen,
     closeScanner,
@@ -139,6 +141,11 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                         {item.icon}
                       </span>
                       <span className="truncate">{item.label}</span>
+                      {item.path === '/triaje' && !triajeEnabled && (
+                        <span className="ml-auto text-[10px] font-mono uppercase px-1.5 py-0.2 bg-error-container text-on-error-container border border-error/30 font-bold">
+                          OFF
+                        </span>
+                      )}
                     </Link>
                   )
                 })}

@@ -22,34 +22,7 @@ export default function LoginPage() {
   const [mode, setMode] = useState<LoginMode>('credential')
   const [credential, setCredential] = useState('admin@semilla.pe')
   const [password, setPassword] = useState('Admin2025!')
-  const [showPassword, setShowPassword] = useState(false);
-
-  // State to control visibility of the login form (left column)
-  const [showLoginForm, setShowLoginForm] = useState(false);
-
-  // Admin toggle button to show/hide the login form
-  const adminToggle = (
-    <button
-      type="button"
-      onClick={() => setShowLoginForm(prev => !prev)}
-      className="absolute top-2 right-2 text-xs text-primary hover:underline"
-    >
-      {showLoginForm ? 'Ocultar Formulario' : 'Mostrar Formulario'}
-    </button>
-  );
-
-  const [showLoginForm, setShowLoginForm] = useState(false);
-
-  // Admin toggle to temporarily show the login form (left column)
-  const adminToggle = (
-    <button
-      type="button"
-      onClick={() => setShowLoginForm((prev) => !prev)}
-      className="absolute top-2 right-2 text-xs text-primary hover:underline"
-    >
-      {showLoginForm ? 'Ocultar Formulario' : 'Mostrar Formulario'}
-    </button>
-  );
+  const [showPassword, setShowPassword] = useState(false)
   const [role, setRole] = useState('admin')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -184,8 +157,158 @@ export default function LoginPage() {
 
       {/* Main Split Grid */}
       <div className="w-full grid grid-cols-12 min-h-[calc(100vh-42px)] flex-1">
-        {/* Left Column: Login Form */}
-        <div className="col-span-12 lg:col-span-5 bg-surface p-8 lg:p-12 flex flex-col justify-between border-r border-surface-container-high">
+        {/* Left Column: Contexto Operativo & Campaña */}
+        <div className="col-span-12 lg:col-span-7 bg-surface-container-low p-8 lg:p-12 flex flex-col justify-between space-y-8 border-b lg:border-b-0 lg:border-r border-surface-container-high order-2 lg:order-1">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs uppercase tracking-widest text-secondary font-semibold font-mono">
+                  Contexto Clínico // Entorno Operativo
+                </div>
+                <h2 className="text-xl font-semibold text-on-surface">Campaña Activa &amp; Asignación de Box</h2>
+              </div>
+              <div className="flex items-center gap-2 bg-surface px-3 py-1.5 text-xs font-mono text-on-surface border border-surface-container-high shadow-xs">
+                <span className="material-symbols-outlined text-sm text-primary">pin_drop</span>
+                <span>Nodo: Valle Sagrado Sector 04</span>
+              </div>
+            </div>
+
+            {/* Campaign Selection Cards */}
+            <div className="space-y-3">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                Seleccionar Brigada / Campaña
+              </label>
+
+              <div className="grid grid-cols-1 gap-3">
+                {/* Active Campaign 1 */}
+                <div
+                  onClick={() => setSelectedCampaignId(1)}
+                  className={`cursor-pointer p-4 transition-all relative border ${
+                    selectedCampaignId === 1
+                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
+                      : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 text-[10px] font-bold bg-tertiary text-on-tertiary uppercase tracking-wider">
+                          En Curso
+                        </span>
+                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-CUS-02</span>
+                      </div>
+                      <h3 className="text-base font-semibold text-on-surface">Cusco - Valle Sagrado 2025</h3>
+                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
+                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
+                        Salón Comunal Rumichaca • Urubamba, Cusco (2,870 msnm)
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-light font-mono text-primary">142</span>
+                      <div className="text-[11px] text-secondary">Pacientes hoy</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 flex items-center justify-between text-xs bg-surface-container px-3 py-2 border-t border-surface-container-high">
+                    <span className="text-secondary font-mono">Triajes activos: 3 | Farmacia: Abierta</span>
+                    {selectedCampaignId === 1 && (
+                      <span className="text-primary font-semibold flex items-center gap-1">
+                        <span className="material-symbols-outlined text-sm">check_circle</span> Seleccionada
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Scheduled Campaign 2 */}
+                <div
+                  onClick={() => setSelectedCampaignId(2)}
+                  className={`cursor-pointer p-4 transition-all border ${
+                    selectedCampaignId === 2
+                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
+                      : 'bg-surface border-surface-container-high opacity-75 hover:opacity-100'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-on-surface uppercase tracking-wider">
+                          Programada
+                        </span>
+                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-PUN-01</span>
+                      </div>
+                      <h3 className="text-base font-medium text-on-surface">Puno - Altiplano 2025</h3>
+                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
+                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
+                        Centro Cívico Ilave • El Collao, Puno (3,850 msnm)
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs font-mono text-secondary">Inicio: 12 Mayo</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Closed Campaign 3 */}
+                <div className="bg-surface p-4 border border-surface-container-high opacity-40 select-none">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-secondary uppercase tracking-wider">
+                          Cerrada
+                        </span>
+                        <span className="text-xs font-mono text-secondary">ID: CMP-2024-HVC-09</span>
+                      </div>
+                      <h3 className="text-base font-medium text-on-surface">Huancavelica - Pampas</h3>
+                      <p className="text-xs text-secondary flex items-center gap-1">
+                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
+                        Hospital de Apoyo Tayacaja • Campaña Finalizada
+                      </p>
+                    </div>
+                    <span className="text-xs font-mono text-secondary">Archivado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Station / Box assignment */}
+            <div className="space-y-3 pt-2">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                Puesto de Trabajo Asignado (Box de Terreno)
+              </label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { id: 'ADM-01', name: 'Admisión 01', desc: 'Filiación DNI', icon: 'badge' },
+                  { id: 'TRJ-01', name: 'Triaje Box 1', desc: 'Somatometría', icon: 'vital_signs' },
+                  { id: 'MED-01', name: 'Consultorio 1', desc: 'Med. General', icon: 'stethoscope' },
+                  { id: 'FAR-01', name: 'Farmacia', desc: 'Botiquín', icon: 'medication' },
+                ].map((st) => (
+                  <div
+                    key={st.id}
+                    onClick={() => setSelectedStation(st.id)}
+                    className={`p-3 text-left border cursor-pointer transition-all ${
+                      selectedStation === st.id
+                        ? 'bg-surface border-primary shadow-xs ring-1 ring-primary'
+                        : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-primary text-base">{st.icon}</span>
+                    <div className="text-xs font-bold text-on-surface mt-1">{st.name}</div>
+                    <div className="text-[10px] text-secondary">{st.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-surface-container-high flex items-center justify-between text-xs text-secondary font-mono">
+            <span>{branding.footerCenterText}</span>
+            <span className="text-tertiary font-semibold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-tertiary" /> Red Mesh Estable
+            </span>
+          </div>
+        </div>
+
+        {/* Right Column: Login Form */}
+        <div className="col-span-12 lg:col-span-5 bg-surface p-8 lg:p-12 flex flex-col justify-between order-1 lg:order-2 shadow-xs">
           <div className="space-y-6">
             {/* Brand Header */}
             <div className="flex items-start gap-4">
@@ -542,156 +665,6 @@ export default function LoginPage() {
           <div className="pt-4 mt-2 border-t border-surface-container-high flex items-center justify-between text-[11px] text-secondary">
             <span>{branding.footerLeftText}</span>
             <span className="font-mono">{branding.footerRightText}</span>
-          </div>
-        </div>
-
-        {/* Right Column: Paso 02 // Entorno Operativo */}
-        <div className="col-span-12 lg:col-span-7 bg-surface-container-low p-8 lg:p-12 flex flex-col justify-between space-y-8">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-secondary font-semibold font-mono">
-                  Paso 02 // Entorno Operativo
-                </div>
-                <h2 className="text-xl font-semibold text-on-surface">Campaña Activa &amp; Asignación de Box</h2>
-              </div>
-              <div className="flex items-center gap-2 bg-surface px-3 py-1.5 text-xs font-mono text-on-surface border border-surface-container-high shadow-xs">
-                <span className="material-symbols-outlined text-sm text-primary">pin_drop</span>
-                <span>Nodo: Valle Sagrado Sector 04</span>
-              </div>
-            </div>
-
-            {/* Campaign Selection Cards */}
-            <div className="space-y-3">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                Seleccionar Brigada / Campaña
-              </label>
-
-              <div className="grid grid-cols-1 gap-3">
-                {/* Active Campaign 1 */}
-                <div
-                  onClick={() => setSelectedCampaignId(1)}
-                  className={`cursor-pointer p-4 transition-all relative border ${
-                    selectedCampaignId === 1
-                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
-                      : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-tertiary text-on-tertiary uppercase tracking-wider">
-                          En Curso
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-CUS-02</span>
-                      </div>
-                      <h3 className="text-base font-semibold text-on-surface">Cusco - Valle Sagrado 2025</h3>
-                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Salón Comunal Rumichaca • Urubamba, Cusco (2,870 msnm)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-light font-mono text-primary">142</span>
-                      <div className="text-[11px] text-secondary">Pacientes hoy</div>
-                    </div>
-                  </div>
-                  <div className="mt-3 pt-3 flex items-center justify-between text-xs bg-surface-container px-3 py-2 border-t border-surface-container-high">
-                    <span className="text-secondary font-mono">Triajes activos: 3 | Farmacia: Abierta</span>
-                    {selectedCampaignId === 1 && (
-                      <span className="text-primary font-semibold flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm">check_circle</span> Seleccionada
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Scheduled Campaign 2 */}
-                <div
-                  onClick={() => setSelectedCampaignId(2)}
-                  className={`cursor-pointer p-4 transition-all border ${
-                    selectedCampaignId === 2
-                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
-                      : 'bg-surface border-surface-container-high opacity-75 hover:opacity-100'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-on-surface uppercase tracking-wider">
-                          Programada
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-PUN-01</span>
-                      </div>
-                      <h3 className="text-base font-medium text-on-surface">Puno - Altiplano 2025</h3>
-                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Centro Cívico Ilave • El Collao, Puno (3,850 msnm)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xs font-mono text-secondary">Inicio: 12 Mayo</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Closed Campaign 3 */}
-                <div className="bg-surface p-4 border border-surface-container-high opacity-40 select-none">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-secondary uppercase tracking-wider">
-                          Cerrada
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2024-HVC-09</span>
-                      </div>
-                      <h3 className="text-base font-medium text-on-surface">Huancavelica - Pampas</h3>
-                      <p className="text-xs text-secondary flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Hospital de Apoyo Tayacaja • Campaña Finalizada
-                      </p>
-                    </div>
-                    <span className="text-xs font-mono text-secondary">Archivado</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Station / Box assignment */}
-            <div className="space-y-3 pt-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                Puesto de Trabajo Asignado (Box de Terreno)
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { id: 'ADM-01', name: 'Admisión 01', desc: 'Filiación DNI', icon: 'badge' },
-                  { id: 'TRJ-01', name: 'Triaje Box 1', desc: 'Somatometría', icon: 'vital_signs' },
-                  { id: 'MED-01', name: 'Consultorio 1', desc: 'Med. General', icon: 'stethoscope' },
-                  { id: 'FAR-01', name: 'Farmacia', desc: 'Botiquín', icon: 'medication' },
-                ].map((st) => (
-                  <div
-                    key={st.id}
-                    onClick={() => setSelectedStation(st.id)}
-                    className={`p-3 text-left border cursor-pointer transition-all ${
-                      selectedStation === st.id
-                        ? 'bg-surface border-primary shadow-xs ring-1 ring-primary'
-                        : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-primary text-base">{st.icon}</span>
-                    <div className="text-xs font-bold text-on-surface mt-1">{st.name}</div>
-                    <div className="text-[10px] text-secondary">{st.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-4 border-t border-surface-container-high flex items-center justify-between text-xs text-secondary font-mono">
-            <span>{branding.footerCenterText}</span>
-            <span className="text-tertiary font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary" /> Red Mesh Estable
-            </span>
           </div>
         </div>
       </div>

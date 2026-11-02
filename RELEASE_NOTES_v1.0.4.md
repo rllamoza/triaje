@@ -1,21 +1,88 @@
-# Release 1.0.4 – 2026-11-02
-
-## Nuevas funcionalidades
-- **Login simplificado**: por defecto solo se muestra la columna derecha (entorno operativo). Se incluye botón de administrador para alternar la visualización del formulario de credenciales.
-- **Módulo Triaje activable/desactivable**: se añadió una bandera de características (`isTriajeEnabled`) gestionada desde la página de Personalización. Los usuarios pueden activar o desactivar el módulo de Triaje sin eliminar la opción.
-- **Registro de beneficiario**: al completar exitosamente el registro se guarda automáticamente el ticket asignado y se muestra un modal de impresión del ticket térmico.
-- **Re‑impresión de ticket**: en la gestión de usuarios se agregó botón “Re‑imprimir” que abre el mismo modal de ticket para imprimir nuevamente.
-- **Feature Store**: nuevo store de Zustand (`featureStore.ts`) para gestionar flags globales con persistencia en `localStorage`.
-- **TicketModal**: componente reutilizable que muestra la información del ticket y permite imprimir usando `printThermalElement`.
-
-## Mejoras
-- Refactorización de componentes y lógica de estado para mayor claridad.
-- Añadido `adminToggle` en la página de login para mayor flexibilidad operativa.
-
-## Corrección de errores
-- Se ajustó la lógica de limpieza del formulario de registro.
-- Se corrigieron problemas de visualización en la UI al desactivar el módulo de Triaje.
+# 📋 NOTAS DE LA VERSIÓN v1.0.4 — SEMILLA TRIAJE CLÍNICO
+**Fecha de Publicación:** 02 de Noviembre de 2026  
+**Rama:** `main` | **Tag:** `v1.0.4`  
+**Estado de Compilación:** `✓ 100% Producción Aprobada (Vite + TypeScript 0 Errores)`
 
 ---
 
-Para más detalles, consulte la documentación en `README.md` y los comentarios en el código fuente.
+## 🎯 Resumen Ejecutivo del Release v1.0.4
+
+La versión **v1.0.4** introduce cuatro mejoras arquitectónicas y operativas de alto impacto orientadas a optimizar el rendimiento en campo de las brigadas médicas rurales, flexibilizar el flujo de admisión y permitir control administrativo dinámico de módulos:
+
+1. **Reubicación Ergonómica del Formulario de Ingreso (Login a la Derecha):**  
+   Se rediseñó la pantalla de acceso para que el formulario de credenciales y PIN rápido se ubique en la columna derecha (`lg:col-span-5`), mientras que el contexto operativo y selección de carpa/box se ubica a la izquierda (`lg:col-span-7`).
+2. **Grabar e Imprimir Directo en Registro de Beneficiarios:**  
+   Al completar la filiación de un paciente, el sistema graba sus datos en base de datos local/remota y dispara de inmediato el motor universal de impresión térmica (`TicketModal`), generando el comprobante con código de turno y QR clínico en papel térmico de 80mm/58mm.
+3. **Gestor Modular de Activación / Desactivación de Triaje:**  
+   Nuevo panel administrativo en **Personalización (Pestaña 4: Activar / Desactivar Módulos)**.  
+   - El módulo de triaje permanece **desactivado por defecto**, agilizando el flujo directo de Admisión a Consulta Médica sin retención en triaje.
+   - El administrador puede activarlo con un check en cualquier momento, además de configurar selectivamente sus opciones internas:
+     - *Somatometría Antropométrica (Peso, Talla, IMC).*
+     - *Signos Vitales Básicos (PA Sistólica/Diastólica, FC, Temperatura).*
+     - *Oximetría y Respiración (SpO2 altitudinal y Frecuencia Respiratoria).*
+     - *Pruebas Auxiliares Rápidas (Glucosa capilar y Escala Glasgow).*
+     - *Emisión de Ticket Térmico en Box de Triaje.*
+4. **Reimpresión Universal de Tickets en Gestión de Usuarios:**  
+   En el panel de **Gestión de Personal & Usuarios (`/admin/usuarios`)**, se habilitó:
+   - Botón general de **"Reimprimir Ticket"** en la barra superior con buscador en tiempo real de todos los pacientes y turnos de la campaña por DNI o código de ticket.
+   - Botón directo de **Reimpresión de Credencial / Turno** por cada profesional médico o voluntario en la tabla del personal activo.
+
+---
+
+## 🛠️ Detalles Técnicos de Implementación
+
+### 1. `frontend/src/pages/auth/LoginPage.tsx`
+- Se corrigieron los errores de declaración duplicada que bloqueaban el empaquetado de Vite (`Identifier showLoginForm has already been declared`).
+- Se reordenó la cuadrícula responsiva:
+  - **Izquierda (`lg:col-span-7`, `order-2 lg:order-1`):** Entorno Operativo, Campaña Activa, selección de brigadas y puestos de carpa.
+  - **Derecha (`lg:col-span-5`, `order-1 lg:order-2`):** Brand Header, selector Credencial/PIN, campos de acceso, accesos rápidos y botón de validación de API.
+
+### 2. `frontend/src/components/common/TicketModal.tsx`
+- Componente modal reutilizable que integra:
+  - Generación de código QR dinámico de alta resolución para validación clínica.
+  - Driver de impresión aislado `printThermalElement` compatible con Windows Spooler, Android Bluetooth (RawBT), iOS AirPrint y terminales térmicos POS de 80mm y 58mm.
+  - Opción `autoPrint` para disparar la orden de impresión inmediatamente tras la confirmación del registro.
+
+### 3. `frontend/src/store/featureStore.ts`
+- Store de estado reactivo construido con **Zustand** y middleware `persist` en `localStorage`:
+  - `triajeEnabled: boolean` (inicializado en `false` según especificación).
+  - `triajeOptions`: objeto granular con flags booleanos para somatometría, signos básicos, oximetría, glucosa/glasgow e impresión en triaje.
+  - Métodos `setTriajeEnabled`, `setTriajeOption`, `setModuleEnabled` y `resetDefaults`.
+
+### 4. `frontend/src/pages/admision/BeneficiarioPage.tsx`
+- Se actualizó el flujo de guardado `handleSubmit`:
+  - Al completar la acreditación, el botón **"Grabar e Imprimir Ticket de Atención"** registra el paciente y la atención médica.
+  - Despliega automáticamente `TicketModal` con el comprobante térmico listo para corte.
+  - En el panel lateral de *Registrados Recientes*, se integró un botón de reimpresión rápida por fila.
+
+### 5. `frontend/src/pages/admin/PersonalizacionPage.tsx`
+- Se implementó la **Pestaña 4: Activar / Desactivar Módulos**:
+  - Switch maestro con indicador visual `ACTIVADO / DESACTIVADO` y badge de estado `Triaje OFF`.
+  - Matriz de checkboxes para las opciones internas de triaje.
+  - Toggles adicionales para los módulos de Consulta Médica y Farmacia.
+
+### 6. `frontend/src/pages/triaje/SignosVitalesPage.tsx`
+- Detección reactiva de `triajeEnabled`:
+  - Si el módulo está desactivado, muestra una barra de aviso destacada con acceso en un clic para su activación por el administrador.
+  - Respeta las sub-opciones: ajusta los campos obligatorios de `getMissingFields` y la visibilidad de los botones de impresión en el box.
+
+### 7. `frontend/src/pages/admin/UsuariosPage.tsx`
+- Inclusión del buscador y modal de reimpresión de tickets para pacientes de la campaña.
+- Botón de reimpresión de credencial de turno en la lista de personal asistencial.
+
+---
+
+## 📦 Verificación de Integridad y Compilación
+
+```bash
+$ npm run build
+> tsc -b && vite build
+✓ 636 modules transformed.
+dist/index.html                     5.53 kB │ gzip:   1.43 kB
+dist/assets/index-DsEwJef9.css     15.63 kB │ gzip:   2.84 kB
+dist/assets/index-DlFcyPdw.js   2,719.96 kB │ gzip: 754.00 kB
+✓ built in 5.65s (0 errors)
+```
+
+---
+*Desarrollado para la Plataforma de Asistencia Médica Rural — ONG Semilla.*

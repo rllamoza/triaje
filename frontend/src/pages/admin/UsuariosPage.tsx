@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { useUsers, useStoreUser } from '../../api/hooks'
+import { useUsers, useStoreUser, useAtenciones } from '../../api/hooks'
+import { TicketModal, type TicketInfo } from '../../components/common/TicketModal'
 
 interface StaffUser {
   id: number
@@ -110,6 +111,17 @@ export default function UsuariosPage() {
   const [newPin, setNewPin] = useState('4582')
   const [modalMessage, setModalMessage] = useState<string | null>(null)
 
+  // Estados para Reimpresión de Tickets (Pacientes / Personal)
+  const [selectedTicketToPrint, setSelectedTicketToPrint] = useState<TicketInfo | null>(null)
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false)
+  const [isReprintSearchModalOpen, setIsReprintSearchModalOpen] = useState(false)
+  const [reprintSearchQuery, setReprintSearchQuery] = useState('')
+
+  const { data: atencionesData } = useAtenciones({ per_page: 200 })
+  const atencionesList: any[] = Array.isArray(atencionesData)
+    ? atencionesData
+    : (Array.isArray(atencionesData?.data) ? atencionesData.data : [])
+
   const { data: apiUsers } = useUsers()
   const createUser = useStoreUser()
 
@@ -181,14 +193,25 @@ export default function UsuariosPage() {
           </h1>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowModal(true)}
-          className="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer rounded-none shadow-xs"
-        >
-          <span className="material-symbols-outlined text-[18px]">person_add</span>
-          <span>+ Nuevo Usuario / Voluntario</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsReprintSearchModalOpen(true)}
+            className="h-10 px-4 bg-surface hover:bg-surface-container border border-surface-container-highest text-on-surface text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer rounded-none shadow-xs"
+          >
+            <span className="material-symbols-outlined text-[18px] text-primary">print</span>
+            <span>Reimprimir Ticket</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowModal(true)}
+            className="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer rounded-none shadow-xs"
+          >
+            <span className="material-symbols-outlined text-[18px]">person_add</span>
+            <span>+ Nuevo Usuario / Voluntario</span>
+          </button>
+        </div>
       </div>
 
       {/* Operational Summary Bento */}
@@ -486,13 +509,35 @@ export default function UsuariosPage() {
                     </div>
                   </td>
                   <td className="py-3.5 px-4 text-right">
-                    <button
-                      type="button"
-                      className="p-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
-                      title="Editar usuario"
-                    >
-                      <span className="material-symbols-outlined text-[18px]">edit</span>
-                    </button>
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedTicketToPrint({
+                            ticket: `VOL-${String(u.id).padStart(3, '0')}`,
+                            paciente: u.full_name,
+                            dni: u.dni,
+                            comunidad: u.station,
+                            hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            especialidad: u.role === 'medico' ? 'Médico Evaluador' : u.role === 'triaje' ? 'Enfermería Triaje' : 'Admisión & Filiación',
+                            consultorio: u.station,
+                            medico: u.cmp_code || 'Colegiado / Personal',
+                          })
+                          setIsTicketModalOpen(true)
+                        }}
+                        className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-surface-container-high"
+                        title="Reimprimir ticket de turno / credencial"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">print</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="p-1.5 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
+                        title="Editar usuario"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )
@@ -624,6 +669,135 @@ export default function UsuariosPage() {
           </div>
         </div>
       )}
+
+      {/* Modal: Búsqueda y Reimpresión de Tickets de Pacientes */}
+      {isReprintSearchModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-surface border border-surface-container-high max-w-2xl w-full p-6 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-2xl">print</span>
+                <div>
+                  <h3 className="text-base font-bold text-on-surface uppercase tracking-wider">
+                    Reimpresión de Tickets de Atención
+                  </h3>
+                  <p className="text-xs text-on-surface-variant">
+                    Seleccione un paciente de la lista o busque por DNI o código de ticket para reimprimir.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsReprintSearchModalOpen(false)}
+                className="text-secondary hover:text-on-surface cursor-pointer p-1"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            {/* Buscador en vivo */}
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-secondary text-[18px]">
+                search
+              </span>
+              <input
+                type="text"
+                placeholder="Buscar por DNI, nombre de paciente o código de ticket (Ej. MED-0001)..."
+                value={reprintSearchQuery}
+                onChange={(e) => setReprintSearchQuery(e.target.value)}
+                className="w-full h-10 pl-9 pr-3 bg-surface-container-low text-xs text-on-surface border border-surface-container-high focus:outline-none focus:border-primary font-mono"
+                autoFocus
+              />
+            </div>
+
+            {/* Lista de Tickets Disponibles */}
+            <div className="max-h-80 overflow-y-auto divide-y divide-surface-container-high border border-surface-container-high bg-surface">
+              {atencionesList
+                .filter((atn) => {
+                  if (!reprintSearchQuery.trim()) return true
+                  const q = reprintSearchQuery.toLowerCase()
+                  const nom = `${atn.nombres || atn.beneficiario?.nombres || ''} ${atn.apellidos || atn.beneficiario?.apellidos || ''}`.toLowerCase()
+                  const dni = (atn.dni || atn.beneficiario?.dni || '').toLowerCase()
+                  const tkt = (atn.ticket_codigo || `T-${atn.ticket_number || ''}`).toLowerCase()
+                  return nom.includes(q) || dni.includes(q) || tkt.includes(q)
+                })
+                .slice(0, 15)
+                .map((atn) => {
+                  const ape = atn.apellidos || atn.beneficiario?.apellidos || 'PACIENTE'
+                  const nom = atn.nombres || atn.beneficiario?.nombres || ''
+                  const doc = atn.dni || atn.beneficiario?.dni || '00000000'
+                  const tkt = atn.ticket_codigo || `T-${atn.ticket_number || '0001'}`
+                  const esp = atn.specialty_name || 'Medicina General'
+                  const hora = atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '09:00'
+                  return (
+                    <div key={atn.id} className="p-3 hover:bg-surface-container flex items-center justify-between text-xs transition-colors">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-primary bg-primary-container px-1.5 py-0.5 text-[11px]">
+                            {tkt}
+                          </span>
+                          <span className="font-bold text-on-surface uppercase">
+                            {ape}, {nom}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-secondary font-mono mt-0.5">
+                          DNI: {doc} • Esp: {esp} • Hora: {hora}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedTicketToPrint({
+                            ticket: tkt,
+                            paciente: `${ape}, ${nom}`,
+                            dni: doc,
+                            comunidad: atn.comunidad || 'Comunidad General',
+                            hora,
+                            especialidad: esp,
+                            consultorio: atn.consultorio || 'Consultorio 01',
+                            medico: atn.medico_asignado_nombre || 'Médico Asignado',
+                          })
+                          setIsTicketModalOpen(true)
+                        }}
+                        className="px-3 py-1.5 bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-bold text-xs uppercase flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                      >
+                        <span className="material-symbols-outlined text-sm">print</span>
+                        <span>Reimprimir</span>
+                      </button>
+                    </div>
+                  )
+                })}
+              {atencionesList.length === 0 && (
+                <div className="p-8 text-center text-xs text-on-surface-variant font-mono">
+                  No hay tickets de atención registrados en la campaña actual.
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setIsReprintSearchModalOpen(false)}
+                className="px-4 py-2 bg-surface-container text-xs font-semibold uppercase cursor-pointer"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TicketModal Compartido para Impresión Térmica */}
+      <TicketModal
+        isOpen={isTicketModalOpen}
+        onClose={() => {
+          setIsTicketModalOpen(false)
+          setSelectedTicketToPrint(null)
+        }}
+        info={selectedTicketToPrint}
+        autoPrint={true}
+        nextLabel="Cerrar"
+      />
     </div>
   )
 }

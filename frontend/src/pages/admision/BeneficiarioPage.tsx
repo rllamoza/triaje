@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { TicketModal, type TicketInfo } from '../../components/common/TicketModal'
 import {
   useStoreBeneficiario,
   useReniecLookup,
@@ -39,16 +40,7 @@ export default function BeneficiarioPage() {
   const [submitting, setSubmitting] = useState(false)
   const [lastAssignedTicket, setLastAssignedTicket] = useState<string | null>(null)
   const [ticketModalOpen, setTicketModalOpen] = useState(false)
-  const [assignedTicketInfo, setAssignedTicketInfo] = useState<{
-    ticket: string
-    paciente: string
-    dni: string
-    comunidad: string
-    hora: string
-    especialidad?: string
-    medico?: string
-    consultorio?: string
-  } | null>(null)
+  const [assignedTicketInfo, setAssignedTicketInfo] = useState<TicketInfo | null>(null)
 
   // Inicia en blanco (sin especialidad preseleccionada) para que el voluntario indique la necesaria
   const [selectedSpecialtyCode, setSelectedSpecialtyCode] = useState<string>('')
@@ -941,22 +933,22 @@ export default function BeneficiarioPage() {
                 className="w-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-bold py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs rounded-none cursor-pointer disabled:opacity-50"
               >
                 <span className="material-symbols-outlined text-lg">
-                  {submitting ? 'sync' : 'how_to_reg'}
+                  {submitting ? 'sync' : 'print'}
                 </span>
-                <span>{submitting ? 'Guardando en BD...' : 'Registrar Paciente y Asignar Turno'}</span>
+                <span>{submitting ? 'Guardando en BD...' : 'Grabar e Imprimir Ticket de Atención'}</span>
               </button>
 
               <div className="p-3 bg-surface-container-low text-[11px] text-on-surface-variant text-center border border-surface-container-high leading-relaxed">
-                <div className="flex items-center justify-center gap-1 font-bold text-secondary mb-1">
-                  <span className="material-symbols-outlined text-[15px]">info</span>
-                  <span>Sin impresión en Admisión / Acreditación</span>
+                <div className="flex items-center justify-center gap-1 font-bold text-primary mb-1">
+                  <span className="material-symbols-outlined text-[15px]">print</span>
+                  <span>Impresión Térmica en Admisión Habilitada</span>
                 </div>
                 {projectedTicketCode ? (
-                  <>El turno <strong className="text-primary font-mono">{projectedTicketCode}</strong> se generará al registrar. </>
+                  <>Turno proyectado: <strong className="text-primary font-mono">{projectedTicketCode}</strong>. </>
                 ) : (
                   <>Complete los datos del paciente y elija la especialidad requerida. </>
                 )}
-                El paciente pasará a la <strong>lista de Triaje</strong> donde se evaluarán signos vitales y se imprimirá su ticket definitivo.
+                Al registrar, se grabarán los datos y se imprimirá automáticamente el comprobante de turno clínico.
               </div>
             </div>
           </div>
@@ -988,9 +980,31 @@ export default function BeneficiarioPage() {
                           DNI: {doc} • {esp}
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 text-[11px] font-mono font-bold bg-primary-container text-on-primary-container border border-primary/20 whitespace-nowrap">
-                        {tkt}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="px-2 py-0.5 text-[11px] font-mono font-bold bg-primary-container text-on-primary-container border border-primary/20 whitespace-nowrap">
+                          {tkt}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAssignedTicketInfo({
+                              ticket: tkt,
+                              paciente: `${ape}, ${nom}`,
+                              dni: doc,
+                              comunidad: atn.comunidad || 'Comunidad General',
+                              hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--',
+                              especialidad: esp,
+                              consultorio: atn.consultorio || 'Consultorio 01',
+                              medico: atn.medico_asignado_nombre || 'Médico Asignado',
+                            })
+                            setTicketModalOpen(true)
+                          }}
+                          className="p-1 hover:bg-surface-container border border-surface-container-high text-primary cursor-pointer"
+                          title="Reimprimir ticket de este paciente"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">print</span>
+                        </button>
+                      </div>
                     </div>
                   )
                 })
@@ -1004,82 +1018,21 @@ export default function BeneficiarioPage() {
         </div>
       </div>
 
-      {/* Modal Emergente con el Nuevo Número de Ticket Asignado */}
-      {ticketModalOpen && assignedTicketInfo && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-surface border-2 border-primary shadow-2xl w-full max-w-md p-6 text-on-surface text-center animate-fade-in">
-            <div className="w-16 h-16 mx-auto mb-3 bg-tertiary-container text-tertiary flex items-center justify-center rounded-full border border-tertiary/30">
-              <span className="material-symbols-outlined text-3xl">check_circle</span>
-            </div>
-
-            <div className="text-xs uppercase tracking-widest text-secondary font-bold font-mono">
-              Admisión Completada con Éxito
-            </div>
-
-            <h2 className="text-xl font-black uppercase text-on-surface mt-1">
-              Nuevo Turno Asignado
-            </h2>
-
-            {/* Recuadro de Turno Gigante */}
-            <div className="my-4 p-4 bg-primary/10 border-2 border-dashed border-primary">
-              <span className="text-[11px] uppercase tracking-wider font-semibold text-secondary block">
-                CÓDIGO DE ATENCIÓN MÉDICA
-              </span>
-              <span className="text-5xl font-mono font-black text-primary my-1 block tracking-wider">
-                #{assignedTicketInfo.ticket}
-              </span>
-              <div className="text-xs font-bold uppercase text-on-surface mt-1">
-                {assignedTicketInfo.especialidad}
-              </div>
-              <div className="text-xs font-mono text-on-surface-variant">
-                Destino: {assignedTicketInfo.consultorio || 'Consultorio 01'} • {assignedTicketInfo.medico || 'Médico Asignado'}
-              </div>
-            </div>
-
-            {/* Datos del Paciente */}
-            <div className="bg-surface-container p-3 border border-surface-container-high text-xs text-left mb-4 space-y-1.5">
-              <div className="flex justify-between">
-                <span className="text-on-surface-variant font-medium">Paciente:</span>
-                <strong className="text-on-surface uppercase">{assignedTicketInfo.paciente}</strong>
-              </div>
-              <div className="flex justify-between font-mono">
-                <span className="text-on-surface-variant">DNI:</span>
-                <strong className="text-on-surface">{assignedTicketInfo.dni}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-on-surface-variant">Comunidad:</span>
-                <span className="text-on-surface capitalize">{assignedTicketInfo.comunidad}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-on-surface-variant">Hora de Ingreso:</span>
-                <span className="text-on-surface font-mono">{assignedTicketInfo.hora}</span>
-              </div>
-            </div>
-
-            {/* Aviso de flujo */}
-            <div className="p-3 bg-secondary-container/30 border border-secondary/30 text-xs text-left mb-5">
-              <div className="flex items-center gap-1.5 font-bold text-secondary mb-1">
-                <span className="material-symbols-outlined text-[16px]">campaign</span>
-                <span>Instrucciones para el Paciente</span>
-              </div>
-              <p className="text-[11.5px] text-on-surface leading-relaxed">
-                El paciente debe aguardar en la sala de espera. <strong>Será llamado en Triaje por su apellido</strong> para la evaluación de constantes vitales y la entrega de su ticket físico.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setTicketModalOpen(false)
-                setAssignedTicketInfo(null)
-              }}
-              className="w-full py-3.5 bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-bold text-xs uppercase tracking-wider shadow-md cursor-pointer transition-colors"
-            >
-              Aceptar y Registrar Siguiente Paciente
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Modal de Impresión Térmica Inmediata del Ticket Asignado */}
+      <TicketModal
+        isOpen={ticketModalOpen}
+        onClose={() => {
+          setTicketModalOpen(false)
+          setAssignedTicketInfo(null)
+        }}
+        info={assignedTicketInfo}
+        autoPrint={true}
+        onNext={() => {
+          setTicketModalOpen(false)
+          setAssignedTicketInfo(null)
+        }}
+        nextLabel="Aceptar y Registrar Siguiente Paciente"
+      />
 
     </div>
   )

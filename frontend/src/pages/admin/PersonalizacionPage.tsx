@@ -1,9 +1,20 @@
 import { useState, useRef } from 'react'
 import { useBrandingStore, DEFAULT_BRANDING } from '../../store/brandingStore'
+import { useFeatureStore } from '../../store/featureStore'
 
 export default function PersonalizacionPage() {
   const branding = useBrandingStore()
   const { updateBranding, resetDefaults } = branding
+  const featureStore = useFeatureStore()
+  const {
+    triajeEnabled,
+    triajeOptions,
+    setTriajeEnabled,
+    setTriajeOption,
+    consultaEnabled,
+    farmaciaEnabled,
+    setModuleEnabled,
+  } = featureStore
 
   // Form local state
   const [formData, setFormData] = useState({
@@ -25,7 +36,7 @@ export default function PersonalizacionPage() {
     selectedExportLogo: branding.selectedExportLogo,
   })
 
-  const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion'>('cabecera')
+  const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion' | 'modulos'>('cabecera')
   const [savedSuccess, setSavedSuccess] = useState(false)
 
   // File input refs
@@ -153,6 +164,23 @@ export default function PersonalizacionPage() {
         >
           <span className="material-symbols-outlined text-[20px]">receipt_long</span>
           <span>3. Documentos a Exportar (Tickets &amp; PDF)</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('modulos')}
+          className={`px-5 py-3 text-[14px] font-bold flex items-center gap-2.5 border-b-2 transition-colors cursor-pointer ${
+            activeTab === 'modulos'
+              ? 'border-primary text-primary bg-surface'
+              : 'border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[20px]">toggle_on</span>
+          <span>4. Activar / Desactivar Módulos</span>
+          {!triajeEnabled && (
+            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-error-container text-on-error-container border border-error/30 font-bold ml-1">
+              Triaje OFF
+            </span>
+          )}
         </button>
       </div>
 
@@ -747,6 +775,229 @@ export default function PersonalizacionPage() {
 
               <div className="mt-6 pt-4 border-t border-surface-container-high text-xs text-on-surface-variant text-center">
                 El logotipo visualizado arriba se aplicará automáticamente en los tickets impresos desde Admisión y Triaje.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: ACTIVACIÓN Y DESACTIVACIÓN DE MÓDULOS */}
+        {activeTab === 'modulos' && (
+          <div className="space-y-6">
+            {/* Banner Informativo */}
+            <div className="p-4 bg-surface border border-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="flex items-start gap-3">
+                <span className="material-symbols-outlined text-primary text-2xl mt-0.5">tune</span>
+                <div>
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-on-surface">
+                    Gestión Modular de la Brigada Clínica
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                    Active o desactive los módulos operativos del sistema según las necesidades del campamento médico.
+                    Si desactiva un módulo, la opción no se elimina pero su toma de datos se deshabilita para agilizar la atención.
+                  </p>
+                </div>
+              </div>
+              <div className="shrink-0 flex items-center gap-2">
+                <span className="text-xs font-mono font-semibold text-secondary">Estado Global:</span>
+                <span className={`px-2.5 py-1 text-xs font-bold uppercase font-mono ${
+                  triajeEnabled ? 'bg-tertiary-container text-on-tertiary-container' : 'bg-error-container text-on-error-container'
+                }`}>
+                  {triajeEnabled ? 'Triaje Activo' : 'Triaje Desactivado'}
+                </span>
+              </div>
+            </div>
+
+            {/* Tarjeta Principal: MÓDULO DE TRIAJE */}
+            <div className={`p-6 border-2 transition-all ${
+              triajeEnabled
+                ? 'bg-surface border-tertiary shadow-xs'
+                : 'bg-surface-container-low border-surface-container-high'
+            }`}>
+              {/* Switch Principal */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-surface-container-high">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-2xl text-primary">vital_signs</span>
+                    <h3 className="text-base font-bold text-on-surface uppercase tracking-wide">
+                      Módulo de Triaje &amp; Signos Vitales
+                    </h3>
+                  </div>
+                  <p className="text-xs text-on-surface-variant max-w-2xl leading-relaxed">
+                    Controla la toma y evaluación de signos vitales (presión arterial, pulso, temperatura, oximetría, somatometría).
+                    Cuando está <strong>desactivado</strong>, los pacientes registrados en Admisión pasan directamente a la atención de consulta médica sin retención obligatoria en la carpa de triaje.
+                  </p>
+                </div>
+
+                <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                  <input
+                    type="checkbox"
+                    checked={triajeEnabled}
+                    onChange={(e) => setTriajeEnabled(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-tertiary"></div>
+                  <span className="ml-3 text-xs font-bold font-mono uppercase tracking-wider text-on-surface">
+                    {triajeEnabled ? 'ACTIVADO' : 'DESACTIVADO'}
+                  </span>
+                </label>
+              </div>
+
+              {/* Sub-opciones dentro del Módulo de Triaje */}
+              <div className="mt-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm text-secondary">checklist</span>
+                    <span>Opciones y Formularios Específicos Dentro de Triaje</span>
+                  </h4>
+                  <span className="text-[11px] text-on-surface-variant font-mono">
+                    {triajeEnabled ? 'Configurables en tiempo real' : 'Se aplicarán al activar el módulo'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* Sub-opción: Somatometría */}
+                  <label className={`p-3.5 border flex items-start gap-3 cursor-pointer transition-colors ${
+                    triajeOptions.somatometria ? 'bg-surface border-primary/40' : 'bg-surface-container border-surface-container-high opacity-75'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={triajeOptions.somatometria}
+                      onChange={(e) => setTriajeOption('somatometria', e.target.checked)}
+                      className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">
+                        Somatometría Antropométrica (Peso, Talla e IMC)
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5 leading-snug">
+                        Calcula automáticamente el Índice de Masa Corporal y clasifica según normativas OMS en campamento.
+                      </div>
+                    </div>
+                  </label>
+
+                  {/* Sub-opción: Signos Vitales Básicos */}
+                  <label className={`p-3.5 border flex items-start gap-3 cursor-pointer transition-colors ${
+                    triajeOptions.signosVitales ? 'bg-surface border-primary/40' : 'bg-surface-container border-surface-container-high opacity-75'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={triajeOptions.signosVitales}
+                      onChange={(e) => setTriajeOption('signosVitales', e.target.checked)}
+                      className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">
+                        Signos Vitales Básicos (Presión, FC y Temperatura)
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5 leading-snug">
+                        PA Sistólica / Diastólica con alertas de crisis hipertensiva, pulso y termometría clínica.
+                      </div>
+                    </div>
+                  </label>
+
+                  {/* Sub-opción: Oximetría y Frecuencia Respiratoria */}
+                  <label className={`p-3.5 border flex items-start gap-3 cursor-pointer transition-colors ${
+                    triajeOptions.oximetriaRespiracion ? 'bg-surface border-primary/40' : 'bg-surface-container border-surface-container-high opacity-75'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={triajeOptions.oximetriaRespiracion}
+                      onChange={(e) => setTriajeOption('oximetriaRespiracion', e.target.checked)}
+                      className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">
+                        Oximetría y Respiración (SpO2 en Altura y FR)
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5 leading-snug">
+                        Monitoreo de saturación de oxígeno adaptado a zonas rurales andinas y frecuencia respiratoria.
+                      </div>
+                    </div>
+                  </label>
+
+                  {/* Sub-opción: Exámenes Auxiliares */}
+                  <label className={`p-3.5 border flex items-start gap-3 cursor-pointer transition-colors ${
+                    triajeOptions.examenesAuxiliares ? 'bg-surface border-primary/40' : 'bg-surface-container border-surface-container-high opacity-75'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={triajeOptions.examenesAuxiliares}
+                      onChange={(e) => setTriajeOption('examenesAuxiliares', e.target.checked)}
+                      className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-on-surface">
+                        Pruebas Auxiliares Rápidas (Glucosa Capilar y Glasgow)
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5 leading-snug">
+                        Glucómetro digital rápido y evaluación de nivel de consciencia en la carpa de clasificación.
+                      </div>
+                    </div>
+                  </label>
+
+                  {/* Sub-opción: Impresión de Ticket Térmico en Triaje */}
+                  <label className={`p-3.5 border flex items-start gap-3 cursor-pointer transition-colors md:col-span-2 ${
+                    triajeOptions.imprimirTicketTriaje ? 'bg-surface border-primary/40' : 'bg-surface-container border-surface-container-high opacity-75'
+                  }`}>
+                    <input
+                      type="checkbox"
+                      checked={triajeOptions.imprimirTicketTriaje}
+                      onChange={(e) => setTriajeOption('imprimirTicketTriaje', e.target.checked)}
+                      className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-on-surface flex items-center gap-2">
+                        <span>Emisión de Ticket Físico en Box de Triaje</span>
+                        <span className="material-symbols-outlined text-sm text-primary">print</span>
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5 leading-snug">
+                        Permite imprimir el ticket térmico con QR clínico una vez registrados los signos vitales. Si está desactivado, el ticket original entregado en Admisión continúa como único comprobante.
+                      </div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Módulos Adicionales del Sistema */}
+            <div className="bg-surface p-6 border border-surface-container-high space-y-4">
+              <h3 className="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-2">
+                <span className="material-symbols-outlined text-sm text-secondary">grid_view</span>
+                <span>Otros Módulos Clínicos Disponibles en la Campaña</span>
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-surface-container-low border border-surface-container-high flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-on-surface">Consulta Médica Especializada</div>
+                    <div className="text-[11px] text-on-surface-variant mt-0.5">Diagnóstico, evolución clínica y receta</div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={consultaEnabled}
+                      onChange={(e) => setModuleEnabled('consulta', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+
+                <div className="p-4 bg-surface-container-low border border-surface-container-high flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-on-surface">Farmacia &amp; Entrega de Medicamentos</div>
+                    <div className="text-[11px] text-on-surface-variant mt-0.5">Dispensación de fármacos con stock</div>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={farmaciaEnabled}
+                      onChange={(e) => setModuleEnabled('farmacia', e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
               </div>
             </div>
           </div>

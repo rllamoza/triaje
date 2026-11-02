@@ -12,6 +12,7 @@ export default function SignosVitalesPage() {
 
   const branding = useBrandingStore()
   const effectiveLogo = getEffectiveTicketLogo(branding)
+  const { triajeEnabled, triajeOptions, setTriajeEnabled } = useFeatureStore()
 
   const { data: atencionesData } = useAtenciones({ per_page: 200 })
   const atencionesList: any[] = Array.isArray(atencionesData)
@@ -229,16 +230,24 @@ export default function SignosVitalesPage() {
   // Validación rigurosa de campos obligatorios
   const getMissingFields = () => {
     const missing: string[] = []
-    if (!paSistolica.trim() || isNaN(Number(paSistolica))) missing.push('Presión Sistólica')
-    if (!paDiastolica.trim() || isNaN(Number(paDiastolica))) missing.push('Presión Diastólica')
-    if (!fc.trim() || isNaN(Number(fc))) missing.push('Frecuencia Cardíaca')
-    if (!temperatura.trim() || isNaN(Number(temperatura))) missing.push('Temperatura')
-    if (!spo2.trim() || isNaN(Number(spo2))) missing.push('SpO2')
-    if (!fr.trim() || isNaN(Number(fr))) missing.push('Frecuencia Respiratoria')
-    if (!glucosa.trim() || isNaN(Number(glucosa))) missing.push('Glucemia')
-    if (!peso.trim() || isNaN(Number(peso))) missing.push('Peso')
-    if (!talla.trim() || isNaN(Number(talla))) missing.push('Talla')
-    if (!glasgow.trim() || isNaN(Number(glasgow))) missing.push('Escala Glasgow')
+    if (triajeOptions.signosVitales) {
+      if (!paSistolica.trim() || isNaN(Number(paSistolica))) missing.push('Presión Sistólica')
+      if (!paDiastolica.trim() || isNaN(Number(paDiastolica))) missing.push('Presión Diastólica')
+      if (!fc.trim() || isNaN(Number(fc))) missing.push('Frecuencia Cardíaca')
+      if (!temperatura.trim() || isNaN(Number(temperatura))) missing.push('Temperatura')
+    }
+    if (triajeOptions.oximetriaRespiracion) {
+      if (!spo2.trim() || isNaN(Number(spo2))) missing.push('SpO2')
+      if (!fr.trim() || isNaN(Number(fr))) missing.push('Frecuencia Respiratoria')
+    }
+    if (triajeOptions.examenesAuxiliares) {
+      if (!glucosa.trim() || isNaN(Number(glucosa))) missing.push('Glucemia')
+      if (!glasgow.trim() || isNaN(Number(glasgow))) missing.push('Escala Glasgow')
+    }
+    if (triajeOptions.somatometria) {
+      if (!peso.trim() || isNaN(Number(peso))) missing.push('Peso')
+      if (!talla.trim() || isNaN(Number(talla))) missing.push('Talla')
+    }
     return missing
   }
 
@@ -369,6 +378,32 @@ export default function SignosVitalesPage() {
 
   return (
     <div className="flex flex-col w-full pb-16 text-on-surface">
+      {/* Alerta de Módulo Desactivado por Administración */}
+      {!triajeEnabled && (
+        <div className="bg-error-container/40 border-2 border-error/50 p-4 mb-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="material-symbols-outlined text-error text-2xl mt-0.5">pause_circle</span>
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-error flex items-center gap-2">
+                <span>Módulo de Triaje Desactivado</span>
+                <span className="px-1.5 py-0.2 bg-error text-white text-[10px] font-mono">OFFLINE</span>
+              </div>
+              <p className="text-xs text-on-error-container mt-0.5 leading-relaxed">
+                La captura de constantes vitales está desactivada por el Administrador. El flujo regular asigna el ticket en Admisión e ingresa directamente a Consulta Médica. Si desea habilitar la toma de datos de triaje, actívelo aquí.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setTriajeEnabled(true)}
+            className="px-4 py-2 bg-tertiary hover:bg-tertiary-fixed text-on-tertiary text-xs font-bold uppercase tracking-wider shrink-0 cursor-pointer flex items-center gap-1.5 shadow-sm"
+          >
+            <span className="material-symbols-outlined text-base">toggle_on</span>
+            <span>Activar Módulo de Triaje</span>
+          </button>
+        </div>
+      )}
+
       {/* Barra de Llamado a Triaje por Apellido */}
       <div className="bg-surface p-4 mb-5 border-2 border-primary/50 shadow-xs flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -970,25 +1005,39 @@ export default function SignosVitalesPage() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => handleSave(true)}
-                className="w-full sm:w-auto bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-semibold py-3 px-6 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer rounded-none"
-              >
-                <span className="material-symbols-outlined text-base">print</span>
-                <span>{saving ? 'Registrando e Imprimiendo...' : 'Confirmar Triaje & Imprimir Ticket'}</span>
-              </button>
+              {triajeOptions.imprimirTicketTriaje ? (
+                <>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => handleSave(true)}
+                    className="w-full sm:w-auto bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-semibold py-3 px-6 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer rounded-none"
+                  >
+                    <span className="material-symbols-outlined text-base">print</span>
+                    <span>{saving ? 'Registrando e Imprimiendo...' : 'Confirmar Triaje & Imprimir Ticket'}</span>
+                  </button>
 
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => handleSave(false)}
-                className="w-full sm:w-auto bg-surface hover:bg-surface-container text-on-surface font-semibold py-3 px-5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors border border-surface-container-high cursor-pointer rounded-none"
-              >
-                <span className="material-symbols-outlined text-base">check</span>
-                <span>Guardar Sin Impresión</span>
-              </button>
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => handleSave(false)}
+                    className="w-full sm:w-auto bg-surface hover:bg-surface-container text-on-surface font-semibold py-3 px-5 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors border border-surface-container-high cursor-pointer rounded-none"
+                  >
+                    <span className="material-symbols-outlined text-base">check</span>
+                    <span>Guardar Sin Impresión</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={() => handleSave(false)}
+                  className="w-full sm:w-auto bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-semibold py-3 px-6 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs cursor-pointer rounded-none"
+                >
+                  <span className="material-symbols-outlined text-base">check</span>
+                  <span>{saving ? 'Guardando en BD...' : 'Confirmar y Guardar Triaje'}</span>
+                </button>
+              )}
             </div>
 
             <button

@@ -2,7 +2,7 @@
 
 Plataforma integral de triaje clínico, filiación médica, colas de atención, impresión de tickets térmicos ESC/POS y telemetría de campo diseñada bajo la estética **IBM Carbon Clinical** para brigadas médicas rurales en entornos de conectividad limitada o nula.
 
-**Versión Actual:** `v1.0.1`
+5: **Versión Actual:** `v1.0.4`
 
 ---
 

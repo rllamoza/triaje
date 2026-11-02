@@ -22,7 +22,34 @@ export default function LoginPage() {
   const [mode, setMode] = useState<LoginMode>('credential')
   const [credential, setCredential] = useState('admin@semilla.pe')
   const [password, setPassword] = useState('Admin2025!')
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+
+  // State to control visibility of the login form (left column)
+  const [showLoginForm, setShowLoginForm] = useState(false);
+
+  // Admin toggle button to show/hide the login form
+  const adminToggle = (
+    <button
+      type="button"
+      onClick={() => setShowLoginForm(prev => !prev)}
+      className="absolute top-2 right-2 text-xs text-primary hover:underline"
+    >
+      {showLoginForm ? 'Ocultar Formulario' : 'Mostrar Formulario'}
+    </button>
+  );
+
+  const [showLoginForm, setShowLoginForm] = useState(false);
+
+  // Admin toggle to temporarily show the login form (left column)
+  const adminToggle = (
+    <button
+      type="button"
+      onClick={() => setShowLoginForm((prev) => !prev)}
+      className="absolute top-2 right-2 text-xs text-primary hover:underline"
+    >
+      {showLoginForm ? 'Ocultar Formulario' : 'Mostrar Formulario'}
+    </button>
+  );
   const [role, setRole] = useState('admin')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)

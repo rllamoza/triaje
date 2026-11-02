@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useFeatureStore } from '../../store/featureStore'
 import { useSearchParams } from 'react-router-dom'
 import QRCode from 'qrcode'
 import { useStoreTriaje, useAtenciones } from '../../api/hooks'

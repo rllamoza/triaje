@@ -137,8 +137,6 @@ input:focus, select:focus, textarea:focus {
 @media print {
   @page {
     margin: 0;
-    margin-left: 7px;
-    margin-right: 2px;
   }
 
   .thermal-isolated-wrapper,
@@ -146,12 +144,19 @@ input:focus, select:focus, textarea:focus {
   #thermal-receipt-printable,
   #queue-thermal-modal-receipt,
   #receta-thermal-printable {
-    margin-left: 7px !important;
-    padding-left: 7px !important;
-    margin-right: 2px !important;
-    padding-right: 2px !important;
+    margin: 0 auto !important;
+    padding-left: 3mm !important;
+    padding-right: 3mm !important;
+    max-width: 68mm !important;
+    box-sizing: border-box !important;
   }
   html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
     background: #ffffff !important;
     color: #000000 !important;
     -webkit-print-color-adjust: exact !important;

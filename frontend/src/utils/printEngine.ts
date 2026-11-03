@@ -67,7 +67,7 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
       return
     }
 
-    const maxMm = paperWidth === '58mm' ? '54mm' : '78mm'
+    const maxMm = paperWidth === '58mm' ? '48mm' : '68mm'
 
     // Crear un iframe invisible para aislar exclusivamente el ticket térmico
     const iframe = document.createElement('iframe')
@@ -103,15 +103,15 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
           <style>
             @page {
               size: ${paperWidth} auto;
-              margin: 0mm;
-              margin-left: 7px;
-              margin-right: 2px;
+              margin: 0;
             }
             html, body {
               margin: 0 !important;
               padding: 0 !important;
-              padding-left: 7px !important;
-              padding-right: 2px !important;
+              width: 100% !important;
+              display: flex !important;
+              justify-content: center !important;
+              align-items: flex-start !important;
               background: #ffffff !important;
               color: #000000 !important;
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, monospace !important;
@@ -119,10 +119,10 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
               print-color-adjust: exact !important;
             }
             .thermal-isolated-wrapper {
-              width: calc(${maxMm} - 9px) !important;
-              max-width: calc(${maxMm} - 9px) !important;
-              margin: 0 2px 0 7px !important;
-              padding: 2mm 2px 2mm 7px !important;
+              width: 100% !important;
+              max-width: ${maxMm} !important;
+              margin: 0 auto !important;
+              padding: 2mm 3mm !important;
               box-sizing: border-box !important;
               font-size: 13px;
               line-height: 1.35;

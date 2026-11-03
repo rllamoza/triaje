@@ -29,6 +29,7 @@ export interface BrandingState {
   // Características y Legibilidad del Ticket Térmico
   ticketShowQr: boolean
   ticketPatientFontSize: 'normal' | 'grande' | 'extra-grande'
+  ticketPaperWidth: '80mm' | '58mm'
 
   // Acciones
   updateBranding: (data: Partial<Omit<BrandingState, 'updateBranding' | 'resetDefaults'>>) => void
@@ -60,6 +61,7 @@ export const DEFAULT_BRANDING = {
   selectedExportLogo: 'principal' as const,
   ticketShowQr: false,
   ticketPatientFontSize: 'grande' as const,
+  ticketPaperWidth: '80mm' as const,
 }
 
 export const useBrandingStore = create<BrandingState>()(

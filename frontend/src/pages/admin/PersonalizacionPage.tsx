@@ -40,6 +40,7 @@ export default function PersonalizacionPage() {
     selectedExportLogo: branding.selectedExportLogo,
     ticketShowQr: branding.ticketShowQr ?? false,
     ticketPatientFontSize: branding.ticketPatientFontSize ?? 'grande',
+    ticketPaperWidth: branding.ticketPaperWidth ?? '80mm',
   })
 
   const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion' | 'modulos'>('cabecera')
@@ -788,6 +789,48 @@ export default function PersonalizacionPage() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Selector de Ancho del Rollo y Centrado */}
+                  <div className="p-3.5 bg-surface-container-low border border-surface-container-high space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-base text-primary">straighten</span>
+                        <span>Ancho de Rollo y Centrado del Ticket</span>
+                      </label>
+                      <span className="text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 bg-primary-container text-on-primary-container">
+                        {formData.ticketPaperWidth === '58mm' ? '58mm (Portátil)' : '80mm (Estándar POS)'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                      El sistema calcula el centrado automático para que los bordes y textos salgan perfectamente centrados y no se corten en ningún lateral del papel.
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      {[
+                        { val: '80mm', title: '80mm (Estándar POS)', sub: 'Impresoras de mostrador (Epson, Star, Bixolon)' },
+                        { val: '58mm', title: '58mm (Portátil / Mini)', sub: 'Impresoras móviles bluetooth compactas' },
+                      ].map((pw) => (
+                        <button
+                          key={pw.val}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, ticketPaperWidth: pw.val as '80mm' | '58mm' })}
+                          className={`p-2.5 border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                            formData.ticketPaperWidth === pw.val
+                              ? 'bg-primary/10 border-primary ring-1 ring-primary shadow-xs'
+                              : 'bg-surface border-surface-container-highest hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs text-on-surface">{pw.title}</span>
+                            {formData.ticketPaperWidth === pw.val && (
+                              <span className="material-symbols-outlined text-xs text-primary font-bold">check</span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-on-surface-variant mt-0.5">{pw.sub}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -801,7 +844,7 @@ export default function PersonalizacionPage() {
                     <span>Simulación del Ticket Térmico</span>
                   </div>
                   <span className="text-[11px] font-mono px-2 py-0.5 bg-surface-container text-on-surface-variant border border-surface-container-highest">
-                    58mm / 80mm
+                    {formData.ticketPaperWidth || '80mm'} • Centrado Activo
                   </span>
                 </h2>
 

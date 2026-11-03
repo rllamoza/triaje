@@ -67,7 +67,8 @@ export function TicketModal({
   const handlePrint = async () => {
     setPrinting(true)
     try {
-      const ok = await printThermalElement('assigned-ticket-printable', '80mm')
+      const paperWidth = branding.ticketPaperWidth || '80mm'
+      const ok = await printThermalElement('assigned-ticket-printable', paperWidth)
       if (ok) {
         setPrinted(true)
       }
@@ -146,8 +147,13 @@ export function TicketModal({
         <div className="hidden">
           <div
             id="assigned-ticket-printable"
-            className="p-2 pl-[7px] ml-[7px] pr-[2px] mr-[2px] text-black bg-white font-mono text-xs"
-            style={{ marginLeft: '7px', paddingLeft: '7px', marginRight: '2px', paddingRight: '2px' }}
+            className="p-3 text-black bg-white font-mono text-xs mx-auto"
+            style={{
+              width: '100%',
+              maxWidth: branding.ticketPaperWidth === '58mm' ? '48mm' : '68mm',
+              margin: '0 auto',
+              boxSizing: 'border-box',
+            }}
           >
             <div className="text-center pb-2 border-b border-black">
               {effectiveLogo && (
@@ -197,9 +203,9 @@ export function TicketModal({
               </div>
 
               <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
-                <span className="font-black text-black text-[11px] uppercase">DNI:</span>
+                <span className="font-black text-black text-[11px] uppercase shrink-0">DNI:</span>
                 <strong
-                  className={`font-mono font-black text-black ${
+                  className={`font-mono font-black text-black text-right ${
                     branding.ticketPatientFontSize === 'extra-grande'
                       ? 'text-base'
                       : branding.ticketPatientFontSize === 'normal'
@@ -212,9 +218,9 @@ export function TicketModal({
               </div>
 
               <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
-                <span className="font-black text-black text-[11px] uppercase">COMUNIDAD:</span>
+                <span className="font-black text-black text-[11px] uppercase shrink-0">COMUNIDAD:</span>
                 <span
-                  className={`font-bold text-black uppercase ${
+                  className={`font-bold text-black uppercase text-right truncate max-w-[65%] ${
                     branding.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
                   }`}
                 >
@@ -223,9 +229,9 @@ export function TicketModal({
               </div>
 
               <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
-                <span className="font-black text-black text-[11px] uppercase">HORA:</span>
+                <span className="font-black text-black text-[11px] uppercase shrink-0">HORA:</span>
                 <span
-                  className={`font-mono font-bold text-black ${
+                  className={`font-mono font-bold text-black text-right ${
                     branding.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
                   }`}
                 >
@@ -234,9 +240,9 @@ export function TicketModal({
               </div>
 
               <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
-                <span className="font-black text-black text-[11px] uppercase">MÉDICO:</span>
+                <span className="font-black text-black text-[11px] uppercase shrink-0">MÉDICO:</span>
                 <span
-                  className={`font-bold text-black uppercase ${
+                  className={`font-bold text-black uppercase text-right truncate max-w-[65%] ${
                     branding.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
                   }`}
                 >

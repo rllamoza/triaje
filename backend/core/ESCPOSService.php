@@ -160,7 +160,7 @@ class ESCPOSService
         $out .= self::FONT_A;           // Font A nativa 12x24 (la más grande y legible)
         $out .= self::DOUBLE_STRIKE_ON; // Activar doble impacto térmico (letras más oscuras y nítidas)
         $out .= self::LINE_SPACING;     // Espaciado vertical óptimo para que no se peguen las letras
-        $out .= "\x1D\x4C\x05\x00";     // GS L 5 0: Margen izquierdo de 5 puntos/píxeles desde el borde físico
+        $out .= "\x1D\x4C\x07\x00";     // GS L 7 0: Margen izquierdo desplazado 2 puntos adicionales a la derecha (total 7 puntos/píxeles)
 
         // 1. Cabecera
         $out .= self::CENTER . self::BOLD_ON;

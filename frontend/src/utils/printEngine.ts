@@ -104,10 +104,12 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
             @page {
               size: ${paperWidth} auto;
               margin: 0mm;
+              margin-left: 5px;
             }
             html, body {
               margin: 0 !important;
               padding: 0 !important;
+              padding-left: 5px !important;
               background: #ffffff !important;
               color: #000000 !important;
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, monospace !important;
@@ -115,10 +117,10 @@ export function printThermalElement(elementId = 'thermal-receipt-printable', pap
               print-color-adjust: exact !important;
             }
             .thermal-isolated-wrapper {
-              width: ${maxMm} !important;
-              max-width: ${maxMm} !important;
-              margin: 0 auto !important;
-              padding: 2mm 1.5mm !important;
+              width: calc(${maxMm} - 5px) !important;
+              max-width: calc(${maxMm} - 5px) !important;
+              margin: 0 0 0 5px !important;
+              padding: 2mm 1.5mm 2mm 5px !important;
               box-sizing: border-box !important;
               font-size: 13px;
               line-height: 1.35;

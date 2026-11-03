@@ -144,7 +144,7 @@ export function TicketModal({
 
         {/* Elemento Térmico Invisible / Printable Aislado para el Driver */}
         <div className="hidden">
-          <div id="assigned-ticket-printable" className="p-2 text-black bg-white font-mono text-xs">
+          <div id="assigned-ticket-printable" className="p-2 pl-[5px] ml-[5px] text-black bg-white font-mono text-xs" style={{ marginLeft: '5px', paddingLeft: '5px' }}>
             <div className="text-center pb-2 border-b border-black">
               {effectiveLogo && (
                 <img

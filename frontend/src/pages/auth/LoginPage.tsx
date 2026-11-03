@@ -33,8 +33,8 @@ export default function LoginPage() {
   const [responsable, setResponsable] = useState('Dr. M. Benavides (Med. General)')
   const [pinError, setPinError] = useState('')
 
-  // Campaigns & Stations
-  const [selectedCampaignId, setSelectedCampaignId] = useState<number>(1)
+  // Campaigns & Stations por defecto
+  const [selectedCampaignId] = useState<number>(1)
   const [selectedStation, setSelectedStation] = useState('ADM-01')
 
   const loginMutation = useLogin()
@@ -155,492 +155,339 @@ export default function LoginPage() {
       {/* Top Hardware Telemetry Bar */}
       <HardwareStatusBar variant="full" />
 
-      {/* Main Split Grid */}
-      <div className="w-full grid grid-cols-12 min-h-[calc(100vh-42px)] flex-1">
-        {/* Left Column: Contexto Operativo & Campaña */}
-        <div className="col-span-12 lg:col-span-7 bg-surface-container-low p-8 lg:p-12 flex flex-col justify-between space-y-8 border-b lg:border-b-0 lg:border-r border-surface-container-high order-2 lg:order-1">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-secondary font-semibold font-mono">
-                  Contexto Clínico // Entorno Operativo
-                </div>
-                <h2 className="text-xl font-semibold text-on-surface">Campaña Activa &amp; Asignación de Box</h2>
-              </div>
-              <div className="flex items-center gap-2 bg-surface px-3 py-1.5 text-xs font-mono text-on-surface border border-surface-container-high shadow-xs">
-                <span className="material-symbols-outlined text-sm text-primary">pin_drop</span>
-                <span>Nodo: Valle Sagrado Sector 04</span>
-              </div>
+      {/* Main Container: Únicamente Formulario de Login Centrado (Sin panel de la izquierda) */}
+      <div className="w-full flex-1 flex items-center justify-center p-4 sm:p-6 md:p-8 bg-surface-container-low min-h-[calc(100vh-42px)]">
+        <div className="w-full max-w-xl bg-surface p-6 sm:p-10 border border-surface-container-high shadow-lg space-y-6">
+          {/* Brand Header */}
+          <div className="flex items-start gap-4 pb-2 border-b border-surface-container-high">
+            <div className="w-12 h-12 flex-shrink-0 bg-inverse-surface flex items-center justify-center p-1.5 shadow-sm">
+              {branding.isotipoUrl ? (
+                <img
+                  alt={branding.appName}
+                  className="w-full h-full object-contain"
+                  src={branding.isotipoUrl}
+                />
+              ) : (
+                <span className="material-symbols-outlined text-white text-2xl">local_hospital</span>
+              )}
             </div>
-
-            {/* Campaign Selection Cards */}
-            <div className="space-y-3">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                Seleccionar Brigada / Campaña
-              </label>
-
-              <div className="grid grid-cols-1 gap-3">
-                {/* Active Campaign 1 */}
-                <div
-                  onClick={() => setSelectedCampaignId(1)}
-                  className={`cursor-pointer p-4 transition-all relative border ${
-                    selectedCampaignId === 1
-                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
-                      : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-tertiary text-on-tertiary uppercase tracking-wider">
-                          En Curso
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-CUS-02</span>
-                      </div>
-                      <h3 className="text-base font-semibold text-on-surface">Cusco - Valle Sagrado 2025</h3>
-                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Salón Comunal Rumichaca • Urubamba, Cusco (2,870 msnm)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-2xl font-light font-mono text-primary">142</span>
-                      <div className="text-[11px] text-secondary">Pacientes hoy</div>
-                    </div>
-                  </div>
-                  <div className="mt-3 pt-3 flex items-center justify-between text-xs bg-surface-container px-3 py-2 border-t border-surface-container-high">
-                    <span className="text-secondary font-mono">Triajes activos: 3 | Farmacia: Abierta</span>
-                    {selectedCampaignId === 1 && (
-                      <span className="text-primary font-semibold flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm">check_circle</span> Seleccionada
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Scheduled Campaign 2 */}
-                <div
-                  onClick={() => setSelectedCampaignId(2)}
-                  className={`cursor-pointer p-4 transition-all border ${
-                    selectedCampaignId === 2
-                      ? 'bg-surface border-primary shadow-sm ring-1 ring-primary'
-                      : 'bg-surface border-surface-container-high opacity-75 hover:opacity-100'
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-on-surface uppercase tracking-wider">
-                          Programada
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2025-PUN-01</span>
-                      </div>
-                      <h3 className="text-base font-medium text-on-surface">Puno - Altiplano 2025</h3>
-                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Centro Cívico Ilave • El Collao, Puno (3,850 msnm)
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="text-xs font-mono text-secondary">Inicio: 12 Mayo</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Closed Campaign 3 */}
-                <div className="bg-surface p-4 border border-surface-container-high opacity-40 select-none">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-highest text-secondary uppercase tracking-wider">
-                          Cerrada
-                        </span>
-                        <span className="text-xs font-mono text-secondary">ID: CMP-2024-HVC-09</span>
-                      </div>
-                      <h3 className="text-base font-medium text-on-surface">Huancavelica - Pampas</h3>
-                      <p className="text-xs text-secondary flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
-                        Hospital de Apoyo Tayacaja • Campaña Finalizada
-                      </p>
-                    </div>
-                    <span className="text-xs font-mono text-secondary">Archivado</span>
-                  </div>
-                </div>
+            <div>
+              <div className="text-xs uppercase tracking-widest text-primary font-semibold">
+                {branding.loginTitle}
               </div>
-            </div>
-
-            {/* Station / Box assignment */}
-            <div className="space-y-3 pt-2">
-              <label className="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
-                Puesto de Trabajo Asignado (Box de Terreno)
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { id: 'ADM-01', name: 'Admisión 01', desc: 'Filiación DNI', icon: 'badge' },
-                  { id: 'TRJ-01', name: 'Triaje Box 1', desc: 'Somatometría', icon: 'vital_signs' },
-                  { id: 'MED-01', name: 'Consultorio 1', desc: 'Med. General', icon: 'stethoscope' },
-                  { id: 'FAR-01', name: 'Farmacia', desc: 'Botiquín', icon: 'medication' },
-                ].map((st) => (
-                  <div
-                    key={st.id}
-                    onClick={() => setSelectedStation(st.id)}
-                    className={`p-3 text-left border cursor-pointer transition-all ${
-                      selectedStation === st.id
-                        ? 'bg-surface border-primary shadow-xs ring-1 ring-primary'
-                        : 'bg-surface border-surface-container-high hover:border-surface-container-highest'
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-primary text-base">{st.icon}</span>
-                    <div className="text-xs font-bold text-on-surface mt-1">{st.name}</div>
-                    <div className="text-[10px] text-secondary">{st.desc}</div>
-                  </div>
-                ))}
-              </div>
+              <h1 className="text-2xl font-semibold text-on-surface tracking-tight">
+                {branding.appName} • Asistencia Médica
+              </h1>
+              <p className="text-xs text-secondary mt-0.5">
+                {branding.loginSubtitle}
+              </p>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-surface-container-high flex items-center justify-between text-xs text-secondary font-mono">
-            <span>{branding.footerCenterText}</span>
-            <span className="text-tertiary font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary" /> Red Mesh Estable
-            </span>
+          {/* Mode Switcher Tabs */}
+          <div className="flex bg-surface-container p-1 gap-1 border border-surface-container-high">
+            <button
+              type="button"
+              className={`flex-1 py-2 px-3 text-xs font-semibold transition-all flex items-center justify-center gap-2 rounded-none cursor-pointer ${
+                mode === 'credential'
+                  ? 'text-on-surface bg-surface shadow-xs border border-surface-container-high'
+                  : 'text-secondary hover:text-on-surface'
+              }`}
+              onClick={() => setMode('credential')}
+            >
+              <span className="material-symbols-outlined text-base text-primary">badge</span>
+              Credencial Médica
+            </button>
+            <button
+              type="button"
+              className={`flex-1 py-2 px-3 text-xs font-semibold transition-all flex items-center justify-center gap-2 rounded-none cursor-pointer ${
+                mode === 'pin'
+                  ? 'text-on-surface bg-surface shadow-xs border border-surface-container-high'
+                  : 'text-secondary hover:text-on-surface'
+              }`}
+              onClick={() => setMode('pin')}
+            >
+              <span className="material-symbols-outlined text-base text-error">emergency</span>
+              Guardia / PIN Rápido
+            </button>
           </div>
-        </div>
 
-        {/* Right Column: Login Form */}
-        <div className="col-span-12 lg:col-span-5 bg-surface p-8 lg:p-12 flex flex-col justify-between order-1 lg:order-2 shadow-xs">
-          <div className="space-y-6">
-            {/* Brand Header */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 flex-shrink-0 bg-inverse-surface flex items-center justify-center p-1.5 shadow-sm">
-                {branding.isotipoUrl ? (
-                  <img
-                    alt={branding.appName}
-                    className="w-full h-full object-contain"
-                    src={branding.isotipoUrl}
+          {/* Credential Form */}
+          {mode === 'credential' ? (
+            <form className="space-y-4" onSubmit={handleCredentialLogin}>
+              {error && (
+                <div className="p-3 bg-error-container text-on-error-container text-xs flex items-center gap-2 border border-error/30">
+                  <span className="material-symbols-outlined text-error text-base">error</span>
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <div className="space-y-1">
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                  DNI o Código de Colegiado
+                </label>
+                <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary focus-within:bg-surface transition-colors">
+                  <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">person</span>
+                  <input
+                    className="w-full bg-transparent py-2.5 pl-10 pr-3 text-xs text-on-surface focus:outline-none font-mono placeholder:text-secondary/60 rounded-none"
+                    placeholder="Ej. 45892301 ó CMP-89241"
+                    type="text"
+                    value={credential}
+                    onChange={(e) => setCredential(e.target.value)}
+                    required
                   />
-                ) : (
-                  <span className="material-symbols-outlined text-white text-2xl">local_hospital</span>
-                )}
-              </div>
-              <div>
-                <div className="text-xs uppercase tracking-widest text-primary font-semibold">
-                  {branding.loginTitle}
                 </div>
-                <h1 className="text-2xl font-semibold text-on-surface tracking-tight">
-                  {branding.appName} • Asistencia Médica
-                </h1>
-                <p className="text-xs text-secondary mt-0.5">
-                  {branding.loginSubtitle}
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between items-center">
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                    Contraseña Segura
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="text-xs text-primary hover:text-on-primary-fixed-variant flex items-center gap-1 font-mono transition-colors cursor-pointer select-none"
+                  >
+                    <span className="material-symbols-outlined text-sm">
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                    <span>{showPassword ? 'Ocultar' : 'Ver contraseña'}</span>
+                  </button>
+                </div>
+                <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary focus-within:bg-surface transition-colors">
+                  <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">lock</span>
+                  <input
+                    className="w-full bg-transparent py-2.5 pl-10 pr-10 text-xs text-on-surface focus:outline-none font-mono rounded-none"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-2.5 text-secondary hover:text-on-surface p-1 transition-colors flex items-center justify-center cursor-pointer"
+                    title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+                  >
+                    <span className="material-symbols-outlined text-lg">
+                      {showPassword ? 'visibility_off' : 'visibility'}
+                    </span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Accesos Rápidos de Prueba */}
+              <div className="bg-surface-container-lowest p-2.5 border border-surface-container-high space-y-1.5">
+                <div className="text-[10px] uppercase font-bold text-secondary tracking-wider flex items-center justify-between">
+                  <span>Cuentas de Prueba (1 Clic)</span>
+                  <span className="text-[10px] text-primary font-mono">BD Remota</span>
+                </div>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[
+                    { label: 'Admin', email: 'admin@semilla.pe', pass: 'Admin2025!', r: 'admin', st: 'ADM-01' },
+                    { label: 'Médico', email: 'mhuaman@semilla.pe', pass: 'Med2025!', r: 'medico', st: 'MED-01' },
+                    { label: 'Triaje', email: 'sbenavides@semilla.pe', pass: 'Enf2025!', r: 'triaje', st: 'TRJ-01' },
+                    { label: 'Admisión', email: 'atorres@semilla.pe', pass: 'Adm2025!', r: 'admision', st: 'ADM-01' },
+                  ].map((demo) => (
+                    <button
+                      key={demo.label}
+                      type="button"
+                      onClick={() => {
+                        setCredential(demo.email)
+                        setPassword(demo.pass)
+                        setRole(demo.r)
+                        setSelectedStation(demo.st)
+                        setError('')
+                      }}
+                      className={`text-[11px] py-1 px-1.5 border text-center transition-all cursor-pointer font-medium ${
+                        credential === demo.email
+                          ? 'bg-primary text-on-primary border-primary font-semibold'
+                          : 'bg-surface hover:bg-surface-container text-on-surface border-surface-container-high'
+                      }`}
+                    >
+                      {demo.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                  Rol Funcional en Carpa
+                </label>
+                <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary">
+                  <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">medical_services</span>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full bg-transparent py-2.5 pl-10 pr-8 text-xs text-on-surface focus:outline-none appearance-none font-medium cursor-pointer rounded-none"
+                  >
+                    <option value="admin">Administrador General de Operaciones</option>
+                    <option value="medico">Médico Evaluador / Especialista</option>
+                    <option value="triaje">Enfermería de Triaje &amp; Somatometría</option>
+                    <option value="admision">Admisión, Filiación &amp; Empadronamiento</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-3 text-secondary pointer-events-none text-base">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              {/* Quick hardware reader badges */}
+              <div className="bg-surface-container-low p-3.5 space-y-2.5 border border-surface-container-high">
+                <div className="text-xs font-semibold text-on-surface flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-primary text-base">contactless</span>
+                    Validación Rápida de Campo
+                  </span>
+                  <span className="text-[10px] text-tertiary bg-tertiary-container px-1.5 py-0.5 font-mono">
+                    LECTOR DNIe LISTO
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    className="bg-surface hover:bg-surface-container border border-surface-container-high p-2 text-left flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-secondary text-base">fingerprint</span>
+                    <span className="text-xs text-on-surface font-medium">Lector Biométrico</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="bg-surface hover:bg-surface-container border border-surface-container-high p-2 text-left flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-secondary text-base">nfc</span>
+                    <span className="text-xs text-on-surface font-medium">Aproximar DNIe</span>
+                  </button>
+                </div>
+              </div>
+
+              <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                <input
+                  defaultChecked
+                  type="checkbox"
+                  className="mt-0.5 accent-primary h-4 w-4 rounded-none cursor-pointer"
+                />
+                <span className="text-xs text-on-surface-variant leading-tight">
+                  Guardar credenciales en este nodo local para operar en contingencia Mesh sin conexión WAN.
+                </span>
+              </label>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-semibold py-3 px-4 text-xs uppercase tracking-wider flex items-center justify-between transition-colors shadow-xs rounded-none cursor-pointer"
+              >
+                <span>{loading ? 'Validando credenciales...' : 'Iniciar Sesión e Ingresar al Puesto'}</span>
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </form>
+          ) : (
+            <form className="space-y-5" onSubmit={handlePinLogin}>
+              {pinError && (
+                <div className="p-3 bg-error-container text-on-error-container text-xs flex items-center gap-2 border border-error/30">
+                  <span className="material-symbols-outlined text-error text-base">error</span>
+                  <span>{pinError}</span>
+                </div>
+              )}
+
+              <div className="bg-error-container p-3.5 border border-error/30">
+                <div className="flex items-center gap-2 text-error font-bold text-xs uppercase tracking-wider">
+                  <span className="material-symbols-outlined text-base">warning</span>
+                  Modo Guardia de Emergencia
+                </div>
+                <p className="text-xs text-on-error-container mt-1 leading-snug">
+                  Habilitado exclusivamente para atención crítica inmediata ante caída severa de red en triaje rural.
                 </p>
               </div>
-            </div>
 
-            {/* Mode Switcher Tabs */}
-            <div className="flex bg-surface-container p-1 gap-1 border border-surface-container-high">
-              <button
-                type="button"
-                className={`flex-1 py-2 px-3 text-xs font-semibold transition-all flex items-center justify-center gap-2 rounded-none cursor-pointer ${
-                  mode === 'credential'
-                    ? 'text-on-surface bg-surface shadow-xs border border-surface-container-high'
-                    : 'text-secondary hover:text-on-surface'
-                }`}
-                onClick={() => setMode('credential')}
-              >
-                <span className="material-symbols-outlined text-base text-primary">badge</span>
-                Credencial Médica
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-2 px-3 text-xs font-semibold transition-all flex items-center justify-center gap-2 rounded-none cursor-pointer ${
-                  mode === 'pin'
-                    ? 'text-on-surface bg-surface shadow-xs border border-surface-container-high'
-                    : 'text-secondary hover:text-on-surface'
-                }`}
-                onClick={() => setMode('pin')}
-              >
-                <span className="material-symbols-outlined text-base text-error">emergency</span>
-                Guardia / PIN Rápido
-              </button>
-            </div>
-
-            {/* Credential Form */}
-            {mode === 'credential' ? (
-              <form className="space-y-4" onSubmit={handleCredentialLogin}>
-                {error && (
-                  <div className="p-3 bg-error-container text-on-error-container text-xs flex items-center gap-2 border border-error/30">
-                    <span className="material-symbols-outlined text-error text-base">error</span>
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                <div className="space-y-1">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
                   <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                    DNI o Código de Colegiado
+                    PIN de Contingencia (4 Dígitos)
                   </label>
-                  <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary focus-within:bg-surface transition-colors">
-                    <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">person</span>
-                    <input
-                      className="w-full bg-transparent py-2.5 pl-10 pr-3 text-xs text-on-surface focus:outline-none font-mono placeholder:text-secondary/60 rounded-none"
-                      placeholder="Ej. 45892301 ó CMP-89241"
-                      type="text"
-                      value={credential}
-                      onChange={(e) => setCredential(e.target.value)}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between items-center">
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                      Contraseña Segura
-                    </label>
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="text-xs text-primary hover:text-on-primary-fixed-variant flex items-center gap-1 font-mono transition-colors cursor-pointer select-none"
-                    >
-                      <span className="material-symbols-outlined text-sm">
-                        {showPassword ? 'visibility_off' : 'visibility'}
-                      </span>
-                      <span>{showPassword ? 'Ocultar' : 'Ver contraseña'}</span>
-                    </button>
-                  </div>
-                  <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary focus-within:bg-surface transition-colors">
-                    <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">lock</span>
-                    <input
-                      className="w-full bg-transparent py-2.5 pl-10 pr-10 text-xs text-on-surface focus:outline-none font-mono rounded-none"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute right-2.5 text-secondary hover:text-on-surface p-1 transition-colors flex items-center justify-center cursor-pointer"
-                      title={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
-                    >
-                      <span className="material-symbols-outlined text-lg">
-                        {showPassword ? 'visibility_off' : 'visibility'}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Accesos Rápidos de Prueba */}
-                <div className="bg-surface-container-lowest p-2.5 border border-surface-container-high space-y-1.5">
-                  <div className="text-[10px] uppercase font-bold text-secondary tracking-wider flex items-center justify-between">
-                    <span>Cuentas de Prueba (1 Clic)</span>
-                    <span className="text-[10px] text-primary font-mono">BD Remota</span>
-                  </div>
-                  <div className="grid grid-cols-4 gap-1.5">
-                    {[
-                      { label: 'Admin', email: 'admin@semilla.pe', pass: 'Admin2025!', r: 'admin', st: 'ADM-01' },
-                      { label: 'Médico', email: 'mhuaman@semilla.pe', pass: 'Med2025!', r: 'medico', st: 'MED-01' },
-                      { label: 'Triaje', email: 'sbenavides@semilla.pe', pass: 'Enf2025!', r: 'triaje', st: 'TRJ-01' },
-                      { label: 'Admisión', email: 'atorres@semilla.pe', pass: 'Adm2025!', r: 'admision', st: 'ADM-01' },
-                    ].map((demo) => (
-                      <button
-                        key={demo.label}
-                        type="button"
-                        onClick={() => {
-                          setCredential(demo.email)
-                          setPassword(demo.pass)
-                          setRole(demo.r)
-                          setSelectedStation(demo.st)
-                          setError('')
-                        }}
-                        className={`text-[11px] py-1 px-1.5 border text-center transition-all cursor-pointer font-medium ${
-                          credential === demo.email
-                            ? 'bg-primary text-on-primary border-primary font-semibold'
-                            : 'bg-surface hover:bg-surface-container text-on-surface border-surface-container-high'
-                        }`}
-                      >
-                        {demo.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                    Rol Funcional en Carpa
-                  </label>
-                  <div className="relative bg-surface-container flex items-center border border-surface-container-high focus-within:border-primary">
-                    <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">medical_services</span>
-                    <select
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
-                      className="w-full bg-transparent py-2.5 pl-10 pr-8 text-xs text-on-surface focus:outline-none appearance-none font-medium cursor-pointer rounded-none"
-                    >
-                      <option value="admin">Administrador General de Operaciones</option>
-                      <option value="medico">Médico Evaluador / Especialista</option>
-                      <option value="triaje">Enfermería de Triaje &amp; Somatometría</option>
-                      <option value="admision">Admisión, Filiación &amp; Empadronamiento</option>
-                    </select>
-                    <span className="material-symbols-outlined absolute right-3 text-secondary pointer-events-none text-base">
-                      expand_more
-                    </span>
-                  </div>
-                </div>
-
-                {/* Quick hardware reader badges */}
-                <div className="bg-surface-container-low p-3.5 space-y-2.5 border border-surface-container-high">
-                  <div className="text-xs font-semibold text-on-surface flex items-center justify-between">
-                    <span className="flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-primary text-base">contactless</span>
-                      Validación Rápida de Campo
-                    </span>
-                    <span className="text-[10px] text-tertiary bg-tertiary-container px-1.5 py-0.5 font-mono">
-                      LECTOR DNIe LISTO
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      className="bg-surface hover:bg-surface-container border border-surface-container-high p-2 text-left flex items-center gap-2 transition-colors cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-secondary text-base">fingerprint</span>
-                      <span className="text-xs text-on-surface font-medium">Lector Biométrico</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="bg-surface hover:bg-surface-container border border-surface-container-high p-2 text-left flex items-center gap-2 transition-colors cursor-pointer"
-                    >
-                      <span className="material-symbols-outlined text-secondary text-base">nfc</span>
-                      <span className="text-xs text-on-surface font-medium">Aproximar DNIe</span>
-                    </button>
-                  </div>
-                </div>
-
-                <label className="flex items-start gap-2.5 cursor-pointer select-none">
-                  <input
-                    defaultChecked
-                    type="checkbox"
-                    className="mt-0.5 accent-primary h-4 w-4 rounded-none cursor-pointer"
-                  />
-                  <span className="text-xs text-on-surface-variant leading-tight">
-                    Guardar credenciales en este nodo local para operar en contingencia Mesh sin conexión WAN.
+                  <span className="text-[11px] text-secondary font-mono">
+                    Admin: 1234
                   </span>
-                </label>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-semibold py-3 px-4 text-xs uppercase tracking-wider flex items-center justify-between transition-colors shadow-xs rounded-none cursor-pointer"
-                >
-                  <span>{loading ? 'Validando credenciales...' : 'Iniciar Sesión e Ingresar al Puesto'}</span>
-                  <span className="material-symbols-outlined text-base">arrow_forward</span>
-                </button>
-              </form>
-            ) : (
-              <form className="space-y-5" onSubmit={handlePinLogin}>
-                {pinError && (
-                  <div className="p-3 bg-error-container text-on-error-container text-xs flex items-center gap-2 border border-error/30">
-                    <span className="material-symbols-outlined text-error text-base">error</span>
-                    <span>{pinError}</span>
-                  </div>
-                )}
-
-                <div className="bg-error-container p-3.5 border border-error/30">
-                  <div className="flex items-center gap-2 text-error font-bold text-xs uppercase tracking-wider">
-                    <span className="material-symbols-outlined text-base">warning</span>
-                    Modo Guardia de Emergencia
-                  </div>
-                  <p className="text-xs text-on-error-container mt-1 leading-snug">
-                    Habilitado exclusivamente para atención crítica inmediata ante caída severa de red en triaje rural.
-                  </p>
                 </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                      PIN de Contingencia (4 Dígitos)
-                    </label>
-                    <span className="text-[11px] text-secondary font-mono">
-                      Admin: 1234
-                    </span>
-                  </div>
-                  <div className="flex justify-center gap-3">
-                    {[0, 1, 2, 3].map((i) => (
-                      <input
-                        key={i}
-                        id={`pin-box-${i}`}
-                        type="password"
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength={1}
-                        value={pin[i]}
-                        onFocus={(e) => e.target.select()}
-                        onChange={(e) => handlePinChange(i, e.target.value)}
-                        onKeyDown={(e) => handlePinKeyDown(i, e)}
-                        onPaste={handlePinPaste}
-                        className="w-12 h-14 bg-surface-container border border-surface-container-high text-center text-2xl font-mono font-bold text-on-surface focus:bg-surface focus:border-primary focus:outline-none rounded-none shadow-xs"
-                      />
-                    ))}
-                  </div>
-
-                  {/* Quick Preset PIN Chips */}
-                  <div className="pt-2">
-                    <div className="text-[11px] text-on-surface-variant mb-1.5 font-medium">
-                      PINs rápidos configurados:
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handleSelectPinPreset('1234', 'Dr. Administrador de Guardia')}
-                        className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
-                      >
-                        ⚡ 1234 (Admin)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectPinPreset('8247', 'Dr. Marco Huamán Quispe')}
-                        className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
-                      >
-                        🩺 8247 (Médico)
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSelectPinPreset('5519', 'Lic. Sofía Benavides Roca')}
-                        className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
-                      >
-                        📋 5519 (Triaje)
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
-                    Responsable de Guardia
-                  </label>
-                  <div className="relative bg-surface-container flex items-center border border-surface-container-high">
-                    <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">supervised_user_circle</span>
+                <div className="flex justify-center gap-3">
+                  {[0, 1, 2, 3].map((i) => (
                     <input
-                      className="w-full bg-transparent py-2.5 pl-10 pr-3 text-xs text-on-surface focus:outline-none rounded-none"
-                      type="text"
-                      value={responsable}
-                      onChange={(e) => setResponsable(e.target.value)}
-                      placeholder="Nombre del médico de turno"
-                      required
+                      key={i}
+                      id={`pin-box-${i}`}
+                      type="password"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      value={pin[i]}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => handlePinChange(i, e.target.value)}
+                      onKeyDown={(e) => handlePinKeyDown(i, e)}
+                      onPaste={handlePinPaste}
+                      className="w-12 h-14 bg-surface-container border border-surface-container-high text-center text-2xl font-mono font-bold text-on-surface focus:bg-surface focus:border-primary focus:outline-none rounded-none shadow-xs"
                     />
-                  </div>
+                  ))}
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-error hover:bg-on-error-container text-on-error font-semibold py-3 px-4 text-xs uppercase tracking-wider flex items-center justify-between transition-colors shadow-xs rounded-none cursor-pointer"
-                >
-                  <span>{loading ? 'Ingresando...' : 'Acceso Urgente Sin Conexión'}</span>
-                  <span className="material-symbols-outlined text-base">bolt</span>
-                </button>
-              </form>
-            )}
-          </div>
+                {/* Quick Preset PIN Chips */}
+                <div className="pt-2">
+                  <div className="text-[11px] text-on-surface-variant mb-1.5 font-medium">
+                    PINs rápidos configurados:
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => handleSelectPinPreset('1234', 'Dr. Administrador de Guardia')}
+                      className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
+                    >
+                      ⚡ 1234 (Admin)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectPinPreset('8247', 'Dr. Marco Huamán Quispe')}
+                      className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
+                    >
+                      🩺 8247 (Médico)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSelectPinPreset('5519', 'Lic. Sofía Benavides Roca')}
+                      className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
+                    >
+                      📋 5519 (Triaje)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                  Responsable de Guardia
+                </label>
+                <div className="relative bg-surface-container flex items-center border border-surface-container-high">
+                  <span className="material-symbols-outlined absolute left-3 text-secondary text-lg">supervised_user_circle</span>
+                  <input
+                    className="w-full bg-transparent py-2.5 pl-10 pr-3 text-xs text-on-surface focus:outline-none rounded-none"
+                    type="text"
+                    value={responsable}
+                    onChange={(e) => setResponsable(e.target.value)}
+                    placeholder="Nombre del médico de turno"
+                    required
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-error hover:bg-on-error-container text-on-error font-semibold py-3 px-4 text-xs uppercase tracking-wider flex items-center justify-between transition-colors shadow-xs rounded-none cursor-pointer"
+              >
+                <span>{loading ? 'Ingresando...' : 'Acceso Urgente Sin Conexión'}</span>
+                <span className="material-symbols-outlined text-base">bolt</span>
+              </button>
+            </form>
+          )}
 
           {/* Botón de Diagnóstico y Validación de Conexión API */}
           <div className="pt-2">
@@ -662,7 +509,7 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="pt-4 mt-2 border-t border-surface-container-high flex items-center justify-between text-[11px] text-secondary">
+          <div className="pt-4 border-t border-surface-container-high flex items-center justify-between text-[11px] text-secondary">
             <span>{branding.footerLeftText}</span>
             <span className="font-mono">{branding.footerRightText}</span>
           </div>

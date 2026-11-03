@@ -11,6 +11,10 @@ export default function PersonalizacionPage() {
     triajeOptions,
     setTriajeEnabled,
     setTriajeOption,
+    registroFields,
+    setRegistroField,
+    setSeccionAntecedentes,
+    setSeccionResidencia,
     consultaEnabled,
     farmaciaEnabled,
     setModuleEnabled,
@@ -996,6 +1000,222 @@ export default function PersonalizacionPage() {
                       className="sr-only peer"
                     />
                     <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN NUEVA: PERSONALIZACIÓN DE CAMPOS DEL REGISTRO DE BENEFICIARIOS */}
+            <div className="bg-surface p-6 border-2 border-primary/40 shadow-xs space-y-6">
+              <div className="flex items-start gap-3 border-b border-surface-container-high pb-4">
+                <span className="material-symbols-outlined text-primary text-2xl mt-0.5">app_registration</span>
+                <div>
+                  <h3 className="text-base font-bold text-on-surface uppercase tracking-wide">
+                    Personalización de Campos del Registro (Admisión / Acreditación)
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                    Configure qué datos y secciones se solicitarán al paciente durante su registro de campaña.
+                    Por ejemplo, para campañas de atención rápida o pediátricas masivas, puede desactivar la <strong>Sección 3 de Antecedentes y Factores de Riesgo</strong> o campos específicos según la necesidad operativa.
+                  </p>
+                </div>
+              </div>
+
+              {/* Bloque 1: SECCIÓN 3 - ANTECEDENTES Y FACTORES DE RIESGO */}
+              <div className={`p-5 border-2 transition-all ${
+                registroFields.seccionAntecedentes
+                  ? 'bg-surface border-primary shadow-xs'
+                  : 'bg-surface-container-low border-surface-container-high opacity-85'
+              }`}>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-surface-container-high">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 bg-primary text-on-primary text-xs font-bold flex items-center justify-center">
+                        3
+                      </span>
+                      <h4 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+                        Sección 3: Antecedentes &amp; Factores de Riesgo Crónico
+                      </h4>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold font-mono uppercase ${
+                        registroFields.seccionAntecedentes
+                          ? 'bg-primary-container text-on-primary-container'
+                          : 'bg-error-container text-on-error-container'
+                      }`}>
+                        {registroFields.seccionAntecedentes ? 'Habilitada' : 'Oculta en Campaña'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-on-surface-variant max-w-2xl leading-relaxed">
+                      Si desactiva este switch, la <strong>Sección 3 completa de Antecedentes</strong> no se mostrará en la pantalla de registro, permitiendo registrar pacientes en menor tiempo.
+                    </p>
+                  </div>
+
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                    <input
+                      type="checkbox"
+                      checked={registroFields.seccionAntecedentes}
+                      onChange={(e) => setSeccionAntecedentes(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+                    <span className="ml-3 text-xs font-bold font-mono uppercase text-on-surface">
+                      {registroFields.seccionAntecedentes ? 'MOSTRAR' : 'OCULTAR'}
+                    </span>
+                  </label>
+                </div>
+
+                {/* Sub-campos de la Sección 3 */}
+                <div className="mt-4 space-y-2">
+                  <div className="text-[11px] font-bold text-on-surface uppercase tracking-wider">
+                    Campos Específicos de Tamizaje en Sección 3 (Visibles cuando la sección esté activa):
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                    {[
+                      { key: 'hipertension', label: 'Hipertensión Arterial', desc: 'Presión en triaje' },
+                      { key: 'diabetes', label: 'Diabetes Mellitus', desc: 'Glucosa recomendada' },
+                      { key: 'asma', label: 'Asma / EPOC / Silicosis', desc: 'Exposición a humo/minas' },
+                      { key: 'anemia', label: 'Desnutrición / Anemia', desc: 'Dosaje de Hb' },
+                      { key: 'gestante', label: 'Embarazo / Gestante', desc: 'Prioridad obstétrica' },
+                      { key: 'alergias', label: 'Alergias Medicamentosas', desc: 'Fármacos reactivos' },
+                    ].map((item) => (
+                      <label
+                        key={item.key}
+                        className={`p-3 border flex items-start gap-2.5 cursor-pointer text-xs transition-colors ${
+                          registroFields[item.key as keyof typeof registroFields]
+                            ? 'bg-surface border-primary/30'
+                            : 'bg-surface-container border-surface-container-high opacity-60'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(registroFields[item.key as keyof typeof registroFields])}
+                          onChange={(e) => setRegistroField(item.key as any, e.target.checked)}
+                          disabled={!registroFields.seccionAntecedentes}
+                          className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
+                        />
+                        <div>
+                          <div className="font-semibold text-on-surface">{item.label}</div>
+                          <div className="text-[10px] text-on-surface-variant">{item.desc}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloque 2: SECCIÓN 2 - DATOS DE RESIDENCIA Y CONTACTO */}
+              <div className={`p-5 border-2 transition-all ${
+                registroFields.seccionResidencia
+                  ? 'bg-surface border-secondary shadow-xs'
+                  : 'bg-surface-container-low border-surface-container-high opacity-85'
+              }`}>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-surface-container-high">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 bg-primary text-on-primary text-xs font-bold flex items-center justify-center">
+                        2
+                      </span>
+                      <h4 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+                        Sección 2: Datos de Residencia y Contacto Comunitario
+                      </h4>
+                      <span className={`px-2 py-0.5 text-[10px] font-bold font-mono uppercase ${
+                        registroFields.seccionResidencia
+                          ? 'bg-secondary-container text-on-secondary-container'
+                          : 'bg-error-container text-on-error-container'
+                      }`}>
+                        {registroFields.seccionResidencia ? 'Habilitada' : 'Oculta en Campaña'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-on-surface-variant max-w-2xl leading-relaxed">
+                      Controla la captura de comunidad rural, número de WhatsApp/celular, altitud en msnm, tiempo de traslado y afiliación SIS/EsSalud.
+                    </p>
+                  </div>
+
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                    <input
+                      type="checkbox"
+                      checked={registroFields.seccionResidencia}
+                      onChange={(e) => setSeccionResidencia(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
+                    <span className="ml-3 text-xs font-bold font-mono uppercase text-on-surface">
+                      {registroFields.seccionResidencia ? 'MOSTRAR' : 'OCULTAR'}
+                    </span>
+                  </label>
+                </div>
+
+                {/* Sub-campos de la Sección 2 */}
+                <div className="mt-4 space-y-2">
+                  <div className="text-[11px] font-bold text-on-surface uppercase tracking-wider">
+                    Campos Individuales de la Sección 2:
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                    {[
+                      { key: 'comunidad', label: 'Comunidad / Sector Rural' },
+                      { key: 'telefono', label: 'Móvil / WhatsApp de Contacto' },
+                      { key: 'altitud', label: 'Altitud Habitual (msnm)' },
+                      { key: 'tiempoViaje', label: 'Tiempo de Traslado a pie' },
+                      { key: 'seguro', label: 'Afiliación a Seguro Médico' },
+                    ].map((item) => (
+                      <label
+                        key={item.key}
+                        className={`p-3 border flex items-center gap-2.5 cursor-pointer text-xs transition-colors ${
+                          registroFields[item.key as keyof typeof registroFields]
+                            ? 'bg-surface border-primary/30'
+                            : 'bg-surface-container border-surface-container-high opacity-60'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={Boolean(registroFields[item.key as keyof typeof registroFields])}
+                          onChange={(e) => setRegistroField(item.key as any, e.target.checked)}
+                          disabled={!registroFields.seccionResidencia}
+                          className="accent-primary h-4 w-4 cursor-pointer"
+                        />
+                        <span className="font-semibold text-on-surface">{item.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bloque 3: SECCIÓN 1 - DATOS COMPLEMENTARIOS */}
+              <div className="p-5 border border-surface-container-high bg-surface space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 bg-primary text-on-primary text-xs font-bold flex items-center justify-center">
+                    1
+                  </span>
+                  <h4 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+                    Sección 1: Campos Complementarios de Identificación
+                  </h4>
+                </div>
+                <p className="text-xs text-on-surface-variant">
+                  Los campos esenciales (DNI, Nombres, Apellidos, Fecha de Nacimiento y Sexo) son siempre requeridos para la emisión del ticket clínico. Puede activar o desactivar los siguientes datos adicionales:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <label className="p-3 border border-surface-container-high bg-surface-container-low flex items-center gap-2.5 cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={registroFields.estadoCivil}
+                      onChange={(e) => setRegistroField('estadoCivil', e.target.checked)}
+                      className="accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <span className="font-semibold text-on-surface">Estado Civil</span>
+                      <div className="text-[10px] text-on-surface-variant">Conviviente, Casado, Soltero, Viudo</div>
+                    </div>
+                  </label>
+
+                  <label className="p-3 border border-surface-container-high bg-surface-container-low flex items-center gap-2.5 cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={registroFields.lenguaMaterna}
+                      onChange={(e) => setRegistroField('lenguaMaterna', e.target.checked)}
+                      className="accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <span className="font-semibold text-on-surface">Lengua Materna</span>
+                      <div className="text-[10px] text-on-surface-variant">Quechua Collao, Castellano, Aimara, Bilingüe</div>
+                    </div>
                   </label>
                 </div>
               </div>

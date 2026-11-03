@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { TicketModal, type TicketInfo } from '../../components/common/TicketModal'
+import { useFeatureStore } from '../../store/featureStore'
 import {
   useStoreBeneficiario,
   useReniecLookup,
@@ -11,6 +12,7 @@ import {
 import { PATIENT_DATABASE } from '../../services/patientRegistry'
 
 export default function BeneficiarioPage() {
+  const { registroFields } = useFeatureStore()
   const [dni, setDni] = useState('')
   const [nombres, setNombres] = useState('')
   const [apellidos, setApellidos] = useState('')
@@ -197,21 +199,21 @@ export default function BeneficiarioPage() {
         apellidos: apellidos.trim().toUpperCase(),
         fecha_nacimiento: fechaNac,
         sexo,
-        estado_civil: estadoCivil || undefined,
-        idioma_principal: idioma || undefined,
-        comunidad: comunidad || undefined,
-        celular: telefono || undefined,
-        telefono: telefono || undefined,
-        altitud_residencia: altitud || undefined,
-        tipo_seguro: seguro || 'ninguno',
-        alergias: alergias || undefined,
-        antecedentes: [
-          hipertension ? 'Hipertensión' : '',
-          diabetes ? 'Diabetes' : '',
-          asma ? 'Asma/EPOC' : '',
-          anemia ? 'Anemia' : '',
-          gestante ? 'Gestante' : '',
-        ].filter(Boolean).join(', ') || undefined,
+        estado_civil: registroFields.estadoCivil ? (estadoCivil || undefined) : undefined,
+        idioma_principal: registroFields.lenguaMaterna ? (idioma || undefined) : undefined,
+        comunidad: (registroFields.seccionResidencia && registroFields.comunidad) ? (comunidad || undefined) : undefined,
+        celular: (registroFields.seccionResidencia && registroFields.telefono) ? (telefono || undefined) : undefined,
+        telefono: (registroFields.seccionResidencia && registroFields.telefono) ? (telefono || undefined) : undefined,
+        altitud_residencia: (registroFields.seccionResidencia && registroFields.altitud) ? (altitud || undefined) : undefined,
+        tipo_seguro: (registroFields.seccionResidencia && registroFields.seguro) ? (seguro || 'ninguno') : 'ninguno',
+        alergias: (registroFields.seccionAntecedentes && registroFields.alergias) ? (alergias || undefined) : undefined,
+        antecedentes: registroFields.seccionAntecedentes ? [
+          (registroFields.hipertension && hipertension) ? 'Hipertensión' : '',
+          (registroFields.diabetes && diabetes) ? 'Diabetes' : '',
+          (registroFields.asma && asma) ? 'Asma/EPOC' : '',
+          (registroFields.anemia && anemia) ? 'Anemia' : '',
+          (registroFields.gestante && gestante) ? 'Gestante' : '',
+        ].filter(Boolean).join(', ') || undefined : undefined,
       })
 
       // 2. Extraer identificador único garantizado del beneficiario
@@ -529,258 +531,290 @@ export default function BeneficiarioPage() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Estado Civil
-                  </label>
-                  <select
-                    className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                    value={estadoCivil}
-                    onChange={(e) => setEstadoCivil(e.target.value)}
-                  >
-                    <option value="conviviente">Conviviente</option>
-                    <option value="casado">Casado(a)</option>
-                    <option value="soltero">Soltero(a)</option>
-                    <option value="viudo">Viudo(a)</option>
-                  </select>
-                </div>
+                {registroFields.estadoCivil && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Estado Civil
+                    </label>
+                    <select
+                      className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                      value={estadoCivil}
+                      onChange={(e) => setEstadoCivil(e.target.value)}
+                    >
+                      <option value="conviviente">Conviviente</option>
+                      <option value="casado">Casado(a)</option>
+                      <option value="soltero">Soltero(a)</option>
+                      <option value="viudo">Viudo(a)</option>
+                    </select>
+                  </div>
+                )}
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Lengua Materna *
-                  </label>
-                  <select
-                    className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                    value={idioma}
-                    onChange={(e) => setIdioma(e.target.value)}
-                  >
-                    <option value="quechua">Quechua Collao</option>
-                    <option value="castellano">Castellano</option>
-                    <option value="aimara">Aimara</option>
-                    <option value="bilingue">Bilingüe</option>
-                  </select>
-                </div>
+                {registroFields.lenguaMaterna && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Lengua Materna *
+                    </label>
+                    <select
+                      className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                      value={idioma}
+                      onChange={(e) => setIdioma(e.target.value)}
+                    >
+                      <option value="quechua">Quechua Collao</option>
+                      <option value="castellano">Castellano</option>
+                      <option value="aimara">Aimara</option>
+                      <option value="bilingue">Bilingüe</option>
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
           </section>
 
           {/* SECTION 2: Residencia y Contacto */}
-          <section className="bg-surface p-6 shadow-xs border border-surface-container-high">
-            <div className="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">
-                  2
-                </span>
-                <h2 className="text-sm font-semibold tracking-tight text-on-surface uppercase">
-                  Datos de Residencia y Contacto Comunitario
-                </h2>
-              </div>
-              <span className="text-xs text-on-surface-variant">Acceso geográfico y cobertura</span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-              <div className="md:col-span-6">
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                  Comunidad / Sector Rural *
-                </label>
-                <select
-                  className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                  value={comunidad}
-                  onChange={(e) => setComunidad(e.target.value)}
-                >
-                  <option value="rumichaca">Rumichaca (Sector Alto)</option>
-                  <option value="ollantaytambo">Ollantaytambo (Comunidad Willoq)</option>
-                  <option value="marcas">Marcas - Huayllabamba</option>
-                  <option value="urubamba">Urubamba Centro</option>
-                  <option value="yanahuara">Yanahuara</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-6">
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                  Móvil / WhatsApp de Contacto
-                </label>
-                <div className="flex border border-surface-container-high bg-surface-container-low focus-within:border-primary">
-                  <span className="h-10 px-3 bg-surface-container text-xs text-on-surface-variant flex items-center font-mono">
-                    +51
+          {registroFields.seccionResidencia && (
+            <section className="bg-surface p-6 shadow-xs border border-surface-container-high">
+              <div className="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">
+                    2
                   </span>
-                  <input
-                    className="w-full h-10 px-3 bg-transparent text-on-surface text-sm placeholder:text-on-surface-variant/40 placeholder:italic focus:outline-none"
-                    type="tel"
-                    placeholder="Ej. 984 312 809"
-                    value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                  />
+                  <h2 className="text-sm font-semibold tracking-tight text-on-surface uppercase">
+                    Datos de Residencia y Contacto Comunitario
+                  </h2>
                 </div>
+                <span className="text-xs text-on-surface-variant">Acceso geográfico y cobertura</span>
               </div>
 
-              <div className="md:col-span-4">
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                  Altitud Habitual (msnm)
-                </label>
-                <div className="relative border border-surface-container-high bg-surface-container-low">
-                  <input
-                    className="w-full h-10 px-3 bg-transparent text-on-surface text-sm focus:outline-none"
-                    type="number"
-                    value={altitud}
-                    onChange={(e) => setAltitud(Number(e.target.value))}
-                  />
-                  <span className="absolute right-3 top-2.5 text-xs text-on-surface-variant">msnm</span>
-                </div>
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {registroFields.comunidad && (
+                  <div className="md:col-span-6">
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Comunidad / Sector Rural *
+                    </label>
+                    <select
+                      className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                      value={comunidad}
+                      onChange={(e) => setComunidad(e.target.value)}
+                    >
+                      <option value="rumichaca">Rumichaca (Sector Alto)</option>
+                      <option value="ollantaytambo">Ollantaytambo (Comunidad Willoq)</option>
+                      <option value="marcas">Marcas - Huayllabamba</option>
+                      <option value="urubamba">Urubamba Centro</option>
+                      <option value="yanahuara">Yanahuara</option>
+                    </select>
+                  </div>
+                )}
 
-              <div className="md:col-span-4">
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                  Tiempo de Traslado a pie
-                </label>
-                <select
-                  className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                  value={tiempoViaje}
-                  onChange={(e) => setTiempoViaje(e.target.value)}
-                >
-                  <option value="30">Menos de 30 min</option>
-                  <option value="60">30 min a 1 hora</option>
-                  <option value="120">1 a 2 horas a pie</option>
-                  <option value="180">Más de 2 horas a pie</option>
-                </select>
-              </div>
+                {registroFields.telefono && (
+                  <div className={registroFields.comunidad ? 'md:col-span-6' : 'md:col-span-12'}>
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Móvil / WhatsApp de Contacto
+                    </label>
+                    <div className="flex border border-surface-container-high bg-surface-container-low focus-within:border-primary">
+                      <span className="h-10 px-3 bg-surface-container text-xs text-on-surface-variant flex items-center font-mono">
+                        +51
+                      </span>
+                      <input
+                        className="w-full h-10 px-3 bg-transparent text-on-surface text-sm placeholder:text-on-surface-variant/40 placeholder:italic focus:outline-none"
+                        type="tel"
+                        placeholder="Ej. 984 312 809"
+                        value={telefono}
+                        onChange={(e) => setTelefono(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
 
-              <div className="md:col-span-4">
-                <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                  Afiliación a Seguro Médico *
-                </label>
-                <select
-                  className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                  value={seguro}
-                  onChange={(e) => setSeguro(e.target.value as 'sis' | 'essalud' | 'ninguno' | 'privado')}
-                >
-                  <option value="sis">SIS Gratuito Subsidiado</option>
-                  <option value="essalud">EsSalud (Seguro Social)</option>
-                  <option value="ninguno">Sin Seguro / No Afiliado</option>
-                  <option value="privado">Seguro Privado / FFAA</option>
-                </select>
+                {registroFields.altitud && (
+                  <div className="md:col-span-4">
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Altitud Habitual (msnm)
+                    </label>
+                    <div className="relative border border-surface-container-high bg-surface-container-low">
+                      <input
+                        className="w-full h-10 px-3 bg-transparent text-on-surface text-sm focus:outline-none"
+                        type="number"
+                        value={altitud}
+                        onChange={(e) => setAltitud(Number(e.target.value))}
+                      />
+                      <span className="absolute right-3 top-2.5 text-xs text-on-surface-variant">msnm</span>
+                    </div>
+                  </div>
+                )}
+
+                {registroFields.tiempoViaje && (
+                  <div className="md:col-span-4">
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Tiempo de Traslado a pie
+                    </label>
+                    <select
+                      className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                      value={tiempoViaje}
+                      onChange={(e) => setTiempoViaje(e.target.value)}
+                    >
+                      <option value="30">Menos de 30 min</option>
+                      <option value="60">30 min a 1 hora</option>
+                      <option value="120">1 a 2 horas a pie</option>
+                      <option value="180">Más de 2 horas a pie</option>
+                    </select>
+                  </div>
+                )}
+
+                {registroFields.seguro && (
+                  <div className="md:col-span-4">
+                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Afiliación a Seguro Médico *
+                    </label>
+                    <select
+                      className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                      value={seguro}
+                      onChange={(e) => setSeguro(e.target.value as 'sis' | 'essalud' | 'ninguno' | 'privado')}
+                    >
+                      <option value="sis">SIS Gratuito Subsidiado</option>
+                      <option value="essalud">EsSalud (Seguro Social)</option>
+                      <option value="ninguno">Sin Seguro / No Afiliado</option>
+                      <option value="privado">Seguro Privado / FFAA</option>
+                    </select>
+                  </div>
+                )}
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* SECTION 3: Antecedentes & Factores de Riesgo */}
-          <section className="bg-surface p-6 shadow-xs border border-surface-container-high">
-            <div className="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">
-                  3
-                </span>
-                <h2 className="text-sm font-semibold tracking-tight text-on-surface uppercase">
-                  Antecedentes &amp; Factores de Riesgo Crónico
-                </h2>
+          {registroFields.seccionAntecedentes && (
+            <section className="bg-surface p-6 shadow-xs border border-surface-container-high">
+              <div className="flex items-center justify-between pb-3 mb-5 border-b border-surface-container-high">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">
+                    {registroFields.seccionResidencia ? '3' : '2'}
+                  </span>
+                  <h2 className="text-sm font-semibold tracking-tight text-on-surface uppercase">
+                    Antecedentes &amp; Factores de Riesgo Crónico
+                  </h2>
+                </div>
+                <span className="text-xs text-on-surface-variant font-medium">Marcaje rápido de tamizaje</span>
               </div>
-              <span className="text-xs text-on-surface-variant font-medium">Marcaje rápido de tamizaje</span>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
-                <input
-                  type="checkbox"
-                  checked={hipertension}
-                  onChange={(e) => setHipertension(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-primary rounded-none"
-                />
-                <div>
-                  <div className="text-xs font-semibold text-on-surface">Hipertensión Arterial</div>
-                  <div className="text-[11px] text-on-surface-variant mt-0.5">Control de presión en Triaje</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                {registroFields.hipertension && (
+                  <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={hipertension}
+                      onChange={(e) => setHipertension(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-primary rounded-none"
+                    />
+                    <div>
+                      <div className="text-xs font-semibold text-on-surface">Hipertensión Arterial</div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5">Control de presión en Triaje</div>
+                    </div>
+                  </label>
+                )}
+
+                {registroFields.diabetes && (
+                  <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={diabetes}
+                      onChange={(e) => setDiabetes(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-primary rounded-none"
+                    />
+                    <div>
+                      <div className="text-xs font-semibold text-on-surface">Diabetes Mellitus</div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5">Glucemia capilar recomendada</div>
+                    </div>
+                  </label>
+                )}
+
+                {registroFields.asma && (
+                  <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={asma}
+                      onChange={(e) => setAsma(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-primary rounded-none"
+                    />
+                    <div>
+                      <div className="text-xs font-semibold text-on-surface">Asma / EPOC / Silicosis</div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5">Exposición a humo / minas</div>
+                    </div>
+                  </label>
+                )}
+
+                {registroFields.anemia && (
+                  <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={anemia}
+                      onChange={(e) => setAnemia(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-primary rounded-none"
+                    />
+                    <div>
+                      <div className="text-xs font-semibold text-on-surface">Desnutrición / Anemia</div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5">Dosaje de Hemoglobina rápida</div>
+                    </div>
+                  </label>
+                )}
+
+                {registroFields.gestante && (
+                  <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={gestante}
+                      onChange={(e) => setGestante(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-primary rounded-none"
+                    />
+                    <div>
+                      <div className="text-xs font-semibold text-on-surface">Embarazo / Gestante</div>
+                      <div className="text-[11px] text-on-surface-variant mt-0.5">Prioridad Obstétrica</div>
+                    </div>
+                  </label>
+                )}
+
+                {registroFields.alergias && (
+                  <label className="flex items-start gap-3 bg-error-container p-3 border border-error/30 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      defaultChecked
+                      className="mt-0.5 h-4 w-4 accent-error rounded-none"
+                    />
+                    <div>
+                      <div className="text-xs font-bold text-error flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[15px]">warning</span>
+                        Alergias Medicamentosas
+                      </div>
+                      <div className="text-[11px] text-on-error-container font-medium mt-0.5">
+                        Penicilina / Betalactámicos
+                      </div>
+                    </div>
+                  </label>
+                )}
+              </div>
+
+              {registroFields.alergias && (
+                <div className="mt-4 pt-3 border-t border-surface-container-high">
+                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                    Detalle de Alergias o Reacciones Adversas conocidas:
+                  </label>
+                  <input
+                    className="w-full h-9 px-3 bg-surface-container-low text-xs text-error font-medium border border-error/50 focus:outline-none placeholder:text-error/40 placeholder:italic"
+                    type="text"
+                    placeholder="Ej. Alérgico a Penicilina, Sulfas, AINEs..."
+                    value={alergias}
+                    onChange={(e) => setAlergias(e.target.value)}
+                  />
                 </div>
-              </label>
-
-              <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
-                <input
-                  type="checkbox"
-                  checked={diabetes}
-                  onChange={(e) => setDiabetes(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-primary rounded-none"
-                />
-                <div>
-                  <div className="text-xs font-semibold text-on-surface">Diabetes Mellitus</div>
-                  <div className="text-[11px] text-on-surface-variant mt-0.5">Glucemia capilar recomendada</div>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
-                <input
-                  type="checkbox"
-                  checked={asma}
-                  onChange={(e) => setAsma(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-primary rounded-none"
-                />
-                <div>
-                  <div className="text-xs font-semibold text-on-surface">Asma / EPOC / Silicosis</div>
-                  <div className="text-[11px] text-on-surface-variant mt-0.5">Exposición a humo / minas</div>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
-                <input
-                  type="checkbox"
-                  checked={anemia}
-                  onChange={(e) => setAnemia(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-primary rounded-none"
-                />
-                <div>
-                  <div className="text-xs font-semibold text-on-surface">Desnutrición / Anemia</div>
-                  <div className="text-[11px] text-on-surface-variant mt-0.5">Dosaje de Hemoglobina rápida</div>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 p-3 bg-surface-container-low border border-surface-container-high cursor-pointer hover:bg-surface-container transition-colors">
-                <input
-                  type="checkbox"
-                  checked={gestante}
-                  onChange={(e) => setGestante(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-primary rounded-none"
-                />
-                <div>
-                  <div className="text-xs font-semibold text-on-surface">Embarazo / Gestante</div>
-                  <div className="text-[11px] text-on-surface-variant mt-0.5">Prioridad Obstétrica</div>
-                </div>
-              </label>
-
-              <label className="flex items-start gap-3 bg-error-container p-3 border border-error/30 cursor-pointer">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="mt-0.5 h-4 w-4 accent-error rounded-none"
-                />
-                <div>
-                  <div className="text-xs font-bold text-error flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[15px]">warning</span>
-                    Alergias Medicamentosas
-                  </div>
-                  <div className="text-[11px] text-on-error-container font-medium mt-0.5">
-                    Penicilina / Betalactámicos
-                  </div>
-                </div>
-              </label>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-surface-container-high">
-              <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                Detalle de Alergias o Reacciones Adversas conocidas:
-              </label>
-              <input
-                className="w-full h-9 px-3 bg-surface-container-low text-xs text-error font-medium border border-error/50 focus:outline-none placeholder:text-error/40 placeholder:italic"
-                type="text"
-                placeholder="Ej. Alérgico a Penicilina, Sulfas, AINEs..."
-                value={alergias}
-                onChange={(e) => setAlergias(e.target.value)}
-              />
-            </div>
-          </section>
+              )}
+            </section>
+          )}
 
           {/* SECTION 4: Selección de Especialidad Médica */}
           <section className="bg-surface p-6 shadow-xs border border-surface-container-high space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-surface-container-high">
               <div className="flex items-center gap-2">
                 <span className="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">
-                  4
+                  {1 + (registroFields.seccionResidencia ? 1 : 0) + (registroFields.seccionAntecedentes ? 1 : 0) + 1}
                 </span>
                 <h2 className="text-sm font-semibold tracking-tight text-on-surface uppercase">
                   ¿A qué Especialidad Médica desea asistir? *

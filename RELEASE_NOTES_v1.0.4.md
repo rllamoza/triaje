@@ -9,11 +9,18 @@
 
 La versión **v1.0.4** introduce cuatro mejoras arquitectónicas y operativas de alto impacto orientadas a optimizar el rendimiento en campo de las brigadas médicas rurales, flexibilizar el flujo de admisión y permitir control administrativo dinámico de módulos:
 
-1. **Reubicación Ergonómica del Formulario de Ingreso (Login a la Derecha):**  
-   Se rediseñó la pantalla de acceso para que el formulario de credenciales y PIN rápido se ubique en la columna derecha (`lg:col-span-5`), mientras que el contexto operativo y selección de carpa/box se ubica a la izquierda (`lg:col-span-7`).
-2. **Grabar e Imprimir Directo en Registro de Beneficiarios:**  
+1. **Login Simplificado y Centrado (Sin columna izquierda):**  
+   Se eliminó por completo la columna izquierda de contexto operativo innecesario en la pantalla de acceso. Ahora todos los usuarios ven un formulario limpio, enfocado y centrado con soporte para Credencial Médica, PIN de Guardia, accesos rápidos de 1-clic y validación de API.
+2. **Personalización Modular de Campos en el Registro de Pacientes (Admisión):**  
+   En el panel de Personalización (Pestaña 4: Módulos & Campos), el administrador ahora puede activar o desactivar secciones y campos según las características de cada campaña:
+   - **Sección 3: Antecedentes & Factores de Riesgo Crónico:** Switch maestro para ocultar la sección completa para campañas rápidas, más switches individuales para Hipertensión, Diabetes, Asma/EPOC, Anemia/Desnutrición, Embarazo/Gestante y Alergias.
+   - **Sección 2: Datos de Residencia y Contacto Comunitario:** Switch maestro y controles para Comunidad, WhatsApp/Móvil, Altitud, Tiempo de Traslado y Afiliación a Seguro.
+   - **Sección 1: Campos Complementarios:** Controles para Estado Civil y Lengua Materna.
+3. **Numeración Dinámica e Inserción Limpia:**  
+   En la pantalla de Registro de Beneficiarios (`/admision`), las secciones se numeran automáticamente en secuencia ordenada según las secciones activas, y la omisión de antecedentes no bloquea ni altera el guardado.
+4. **Grabar e Imprimir Directo en Registro de Beneficiarios:**  
    Al completar la filiación de un paciente, el sistema graba sus datos en base de datos local/remota y dispara de inmediato el motor universal de impresión térmica (`TicketModal`), generando el comprobante con código de turno y QR clínico en papel térmico de 80mm/58mm.
-3. **Gestor Modular de Activación / Desactivación de Triaje:**  
+5. **Gestor Modular de Activación / Desactivación de Triaje:**  
    Nuevo panel administrativo en **Personalización (Pestaña 4: Activar / Desactivar Módulos)**.  
    - El módulo de triaje permanece **desactivado por defecto**, agilizando el flujo directo de Admisión a Consulta Médica sin retención en triaje.
    - El administrador puede activarlo con un check en cualquier momento, además de configurar selectivamente sus opciones internas:
@@ -22,7 +29,7 @@ La versión **v1.0.4** introduce cuatro mejoras arquitectónicas y operativas de
      - *Oximetría y Respiración (SpO2 altitudinal y Frecuencia Respiratoria).*
      - *Pruebas Auxiliares Rápidas (Glucosa capilar y Escala Glasgow).*
      - *Emisión de Ticket Térmico en Box de Triaje.*
-4. **Reimpresión Universal de Tickets en Gestión de Usuarios:**  
+6. **Reimpresión Universal de Tickets en Gestión de Usuarios:**  
    En el panel de **Gestión de Personal & Usuarios (`/admin/usuarios`)**, se habilitó:
    - Botón general de **"Reimprimir Ticket"** en la barra superior con buscador en tiempo real de todos los pacientes y turnos de la campaña por DNI o código de ticket.
    - Botón directo de **Reimpresión de Credencial / Turno** por cada profesional médico o voluntario en la tabla del personal activo.

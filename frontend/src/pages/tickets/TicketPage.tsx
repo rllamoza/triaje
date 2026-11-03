@@ -33,7 +33,13 @@ export default function TicketPage() {
   const [chkVitals, setChkVitals] = useState(true)
   const [chkDestino, setChkDestino] = useState(true)
   const [chkRx, setChkRx] = useState(true)
-  const [chkQr, setChkQr] = useState(true)
+  const [chkQr, setChkQr] = useState(branding.ticketShowQr ?? false)
+
+  useEffect(() => {
+    if (branding.ticketShowQr !== undefined) {
+      setChkQr(branding.ticketShowQr)
+    }
+  }, [branding.ticketShowQr])
 
   const [printStatus, setPrintStatus] = useState<{ type: 'info' | 'success' | 'error'; message: string } | null>(null)
 
@@ -770,7 +776,7 @@ export default function TicketPage() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <div className="flex justify-between font-black text-[13px] text-black">
-                  <span>PACIENTE:</span>
+                  <span className="font-black text-black">PACIENTE:</span>
                   <span className="text-right truncate max-w-[210px]">{currentPatient.paciente}</span>
                 </div>
                 <div className="flex justify-between text-black">

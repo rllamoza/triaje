@@ -38,6 +38,8 @@ export default function PersonalizacionPage() {
     ticketLogoUrl: branding.ticketLogoUrl,
     pdfLogoUrl: branding.pdfLogoUrl,
     selectedExportLogo: branding.selectedExportLogo,
+    ticketShowQr: branding.ticketShowQr ?? false,
+    ticketPatientFontSize: branding.ticketPatientFontSize ?? 'grande',
   })
 
   const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion' | 'modulos'>('cabecera')
@@ -679,6 +681,114 @@ export default function PersonalizacionPage() {
                     placeholder="Cláusula de referencia hospitalaria..."
                   />
                 </div>
+
+                {/* Sección: Características y Legibilidad del Ticket Térmico */}
+                <div className="pt-4 border-t border-surface-container-high space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary text-xl">tune</span>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface">
+                      Características de Impresión y Legibilidad del Ticket
+                    </h3>
+                  </div>
+
+                  {/* Switch para Código QR */}
+                  <div className="p-3.5 bg-surface-container-low border border-surface-container-high flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-0.5 max-w-sm">
+                      <div className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-base text-primary">qr_code_2</span>
+                        <span>Código QR en Ticket Térmico</span>
+                      </div>
+                      <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                        Desactive esta opción para <strong>ocultar el QR</strong>, ahorrando papel en rollo y priorizando la visibilidad de los datos del paciente.
+                      </p>
+                    </div>
+
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none">
+                      <input
+                        type="checkbox"
+                        checked={formData.ticketShowQr}
+                        onChange={(e) => setFormData({ ...formData, ticketShowQr: e.target.checked })}
+                        className="sr-only peer"
+                      />
+                      <div className="w-12 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                      <span className="ml-2.5 text-xs font-bold font-mono uppercase text-on-surface">
+                        {formData.ticketShowQr ? 'MOSTRAR QR' : 'OCULTAR QR'}
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Selector de Tamaño de Letra de los Datos del Paciente */}
+                  <div className="p-3.5 bg-surface-container-low border border-surface-container-high space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-base text-secondary">format_size</span>
+                        <span>Tamaño y Claridad de Datos del Paciente</span>
+                      </label>
+                      <span className="text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 bg-primary-container text-on-primary-container">
+                        {formData.ticketPatientFontSize === 'extra-grande'
+                          ? 'Extra Grande (18px)'
+                          : formData.ticketPatientFontSize === 'grande'
+                          ? 'Grande & Clara (15px) • Recomendado'
+                          : 'Estándar (11px)'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                      Controla el tamaño tipográfico y contraste con el que se imprimen los datos del paciente (Nombre, DNI, Comunidad, Hora y Médico) para facilitar su lectura en campo por brigadistas y adultos mayores.
+                    </p>
+
+                    <div className="grid grid-cols-3 gap-2 pt-1">
+                      {[
+                        {
+                          val: 'grande',
+                          title: 'Grande & Clara',
+                          sub: '15px (Recomendado)',
+                          icon: 'text_increase',
+                        },
+                        {
+                          val: 'extra-grande',
+                          title: 'Extra Grande',
+                          sub: '18px (Máxima Visibilidad)',
+                          icon: 'title',
+                        },
+                        {
+                          val: 'normal',
+                          title: 'Estándar',
+                          sub: '11px (Compacto)',
+                          icon: 'format_size',
+                        },
+                      ].map((opt) => (
+                        <button
+                          key={opt.val}
+                          type="button"
+                          onClick={() =>
+                            setFormData({
+                              ...formData,
+                              ticketPatientFontSize: opt.val as 'normal' | 'grande' | 'extra-grande',
+                            })
+                          }
+                          className={`p-2.5 border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                            formData.ticketPatientFontSize === opt.val
+                              ? 'bg-primary/10 border-primary ring-1 ring-primary shadow-xs'
+                              : 'bg-surface border-surface-container-highest hover:border-primary/50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="material-symbols-outlined text-base text-primary">
+                              {opt.icon}
+                            </span>
+                            {formData.ticketPatientFontSize === opt.val && (
+                              <span className="material-symbols-outlined text-xs text-primary font-bold">
+                                check
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-1.5 font-bold text-xs text-on-surface">{opt.title}</div>
+                          <div className="text-[10px] text-on-surface-variant mt-0.5">{opt.sub}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -743,32 +853,99 @@ export default function PersonalizacionPage() {
                     </div>
                   </div>
 
-                  <div className="border-b-2 border-dashed border-black my-2.5" />
+                  {/* Patient Info with Dynamic Font Size and Clarity */}
+                  <div
+                    className={`my-2.5 border-y-2 border-black py-2 text-black ${
+                      formData.ticketPatientFontSize === 'extra-grande'
+                        ? 'space-y-2'
+                        : formData.ticketPatientFontSize === 'normal'
+                        ? 'space-y-1'
+                        : 'space-y-1.5'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-black">
+                        PACIENTE:
+                      </span>
+                      <span
+                        className={`font-black text-black leading-tight uppercase ${
+                          formData.ticketPatientFontSize === 'extra-grande'
+                            ? 'text-lg'
+                            : formData.ticketPatientFontSize === 'normal'
+                            ? 'text-xs'
+                            : 'text-base'
+                        }`}
+                      >
+                        MAMANI QUISPE, ROSA
+                      </span>
+                    </div>
 
-                  {/* Patient Info */}
-                  <div className="space-y-1.5 text-xs text-black">
-                    <div className="flex justify-between">
-                      <span className="font-bold text-black">PACIENTE:</span>
-                      <span className="font-black text-right text-black uppercase">MAMANI QUISPE, ROSA</span>
+                    <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                      <span className="font-black text-black text-[11px] uppercase">DNI:</span>
+                      <strong
+                        className={`font-mono font-black text-black ${
+                          formData.ticketPatientFontSize === 'extra-grande'
+                            ? 'text-base'
+                            : formData.ticketPatientFontSize === 'normal'
+                            ? 'text-xs'
+                            : 'text-sm'
+                        }`}
+                      >
+                        02817462
+                      </strong>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold text-black">DNI:</span>
-                      <span className="font-black text-black">02817462</span>
-                      <span className="font-bold text-black">EDAD:</span>
-                      <span className="font-black text-black">67 AÑOS</span>
+
+                    <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                      <span className="font-black text-black text-[11px] uppercase">EDAD / SEXO:</span>
+                      <span
+                        className={`font-bold text-black uppercase ${
+                          formData.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
+                        }`}
+                      >
+                        67 AÑOS • FEMENINO
+                      </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="font-bold text-black">DESTINO:</span>
-                      <span className="font-black text-black">CONSULTORIO 01</span>
-                      <span className="font-bold text-black">HORA:</span>
-                      <span className="font-black text-black">09:15</span>
+
+                    <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                      <span className="font-black text-black text-[11px] uppercase">DESTINO:</span>
+                      <span
+                        className={`font-bold text-black uppercase ${
+                          formData.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
+                        }`}
+                      >
+                        CONSULTORIO 01 • 09:15
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                      <span className="font-black text-black text-[11px] uppercase">MÉDICO:</span>
+                      <span
+                        className={`font-bold text-black uppercase ${
+                          formData.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
+                        }`}
+                      >
+                        DR. MARCO HUAMAN QUISPE
+                      </span>
                     </div>
                   </div>
 
-                  <div className="border-b-2 border-dashed border-black my-2.5" />
+                  {/* QR Code Simulado (Condicionado a ticketShowQr) */}
+                  {formData.ticketShowQr && (
+                    <div className="text-center my-2.5 pt-1 border-t border-dashed border-black">
+                      <div className="w-24 h-24 mx-auto border-2 border-black flex flex-col items-center justify-center p-1 bg-white">
+                        <span className="material-symbols-outlined text-4xl text-black">qr_code_2</span>
+                        <span className="text-[8px] font-mono font-black text-black uppercase">
+                          QR CLÍNICO
+                        </span>
+                      </div>
+                      <div className="text-[9px] font-bold mt-1 text-black uppercase">
+                        Valide este QR en su atención clínica
+                      </div>
+                    </div>
+                  )}
 
                   {/* Footer */}
-                  <div className="text-[10px] text-center text-black font-bold uppercase leading-tight">
+                  <div className="text-[10px] text-center text-black font-bold uppercase leading-tight pt-2 border-t border-black">
                     {formData.exportFooterLegal || 'Conserve este ticket para ser llamado por altavoz a triaje y luego a consulta médica.'}
                   </div>
                   <div className="text-[9px] text-center text-black/70 font-mono mt-1">

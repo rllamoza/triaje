@@ -26,6 +26,10 @@ export interface BrandingState {
   pdfLogoUrl: string
   selectedExportLogo: 'principal' | 'isotipo' | 'ticket_personalizado' | 'ninguno'
 
+  // Características y Legibilidad del Ticket Térmico
+  ticketShowQr: boolean
+  ticketPatientFontSize: 'normal' | 'grande' | 'extra-grande'
+
   // Acciones
   updateBranding: (data: Partial<Omit<BrandingState, 'updateBranding' | 'resetDefaults'>>) => void
   resetDefaults: () => void
@@ -54,6 +58,8 @@ export const DEFAULT_BRANDING = {
   ticketLogoUrl: '',
   pdfLogoUrl: '',
   selectedExportLogo: 'principal' as const,
+  ticketShowQr: false,
+  ticketPatientFontSize: 'grande' as const,
 }
 
 export const useBrandingStore = create<BrandingState>()(

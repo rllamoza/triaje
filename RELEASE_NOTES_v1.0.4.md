@@ -33,6 +33,11 @@ La versión **v1.0.4** introduce cuatro mejoras arquitectónicas y operativas de
    En el panel de **Gestión de Personal & Usuarios (`/admin/usuarios`)**, se habilitó:
    - Botón general de **"Reimprimir Ticket"** en la barra superior con buscador en tiempo real de todos los pacientes y turnos de la campaña por DNI o código de ticket.
    - Botón directo de **Reimpresión de Credencial / Turno** por cada profesional médico o voluntario en la tabla del personal activo.
+7. **Legibilidad Optimizada del Ticket Térmico y Control de QR:**  
+   - Los datos del paciente (Nombre completo, DNI, Comunidad, Hora y Médico asignado) se imprimen con tipografía destacada, grande y de alto contraste con separadores claros para fácil lectura.
+   - En **Personalización (Pestaña 3: Documentos a Exportar)**, se añadieron opciones para:
+     - **Ocultar el Código QR:** Oculto por defecto para ahorrar papel en rollo y priorizar la lectura humana.
+     - **Selector de Tamaño y Claridad de Letra:** Grande & Clara (15px), Extra Grande (18px) o Estándar (11px), con reflejo en vivo en el simulador térmico.
 
 ---
 

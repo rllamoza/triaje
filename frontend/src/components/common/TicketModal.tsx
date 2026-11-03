@@ -76,15 +76,16 @@ export function TicketModal({
     }
   }
 
-  // Si autoPrint está activo, disparar impresión cuando el QR esté listo
+  // Si autoPrint está activo, disparar impresión
   useEffect(() => {
-    if (isOpen && autoPrint && qrUrl && !printed) {
+    const isReady = branding.ticketShowQr ? Boolean(qrUrl) : true
+    if (isOpen && autoPrint && isReady && !printed) {
       const timer = setTimeout(() => {
         handlePrint()
       }, 350)
       return () => clearTimeout(timer)
     }
-  }, [isOpen, autoPrint, qrUrl, printed])
+  }, [isOpen, autoPrint, qrUrl, printed, branding.ticketShowQr])
 
   if (!isOpen || !info) return null
 
@@ -119,23 +120,25 @@ export function TicketModal({
           </div>
         </div>
 
-        {/* Resumen de datos */}
-        <div className="bg-surface-container p-3 border border-surface-container-high text-xs text-left mb-3 space-y-1.5">
-          <div className="flex justify-between">
-            <span className="text-on-surface-variant font-medium">Paciente:</span>
-            <strong className="text-on-surface uppercase">{info.paciente}</strong>
+        {/* Resumen de datos con tipografía clara y legible */}
+        <div className="bg-surface-container p-3.5 border border-surface-container-high text-left mb-3 space-y-2">
+          <div className="flex flex-col border-b border-surface-container-high pb-1.5">
+            <span className="text-[10px] uppercase font-bold tracking-wider text-secondary">Paciente:</span>
+            <strong className="text-sm font-black text-on-surface uppercase tracking-tight">{info.paciente}</strong>
           </div>
-          <div className="flex justify-between font-mono">
-            <span className="text-on-surface-variant">DNI:</span>
-            <strong className="text-on-surface">{info.dni}</strong>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase font-bold text-on-surface-variant font-mono">DNI:</span>
+              <strong className="text-xs font-mono font-bold text-on-surface">{info.dni}</strong>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[10px] uppercase font-bold text-on-surface-variant">Comunidad:</span>
+              <span className="text-xs text-on-surface capitalize font-medium">{info.comunidad}</span>
+            </div>
           </div>
-          <div className="flex justify-between">
-            <span className="text-on-surface-variant">Comunidad:</span>
-            <span className="text-on-surface capitalize">{info.comunidad}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-on-surface-variant">Hora de Ingreso:</span>
-            <span className="text-on-surface font-mono">{info.hora}</span>
+          <div className="flex justify-between items-center pt-1 border-t border-surface-container-high text-xs">
+            <span className="text-[11px] text-on-surface-variant font-medium">Hora de Ingreso:</span>
+            <span className="text-xs font-mono font-bold text-on-surface">{info.hora}</span>
           </div>
         </div>
 
@@ -151,7 +154,7 @@ export function TicketModal({
                 />
               )}
               <div className="font-bold text-sm uppercase">{branding.appName}</div>
-              <div className="text-[10px]">{branding.loginTitle}</div>
+              <div className="text-[10px] font-bold">{branding.loginTitle}</div>
               <div className="text-[9px] text-gray-700">Comprobante de Turno de Atención</div>
             </div>
 
@@ -162,18 +165,89 @@ export function TicketModal({
               <div className="text-[10px]">{info.consultorio || 'Consultorio 01'}</div>
             </div>
 
-            <div className="text-[11px] space-y-1 my-2 border-b border-black pb-2">
-              <div><strong>PACIENTE:</strong> {info.paciente}</div>
-              <div><strong>DNI:</strong> {info.dni}</div>
-              <div><strong>COMUNIDAD:</strong> {info.comunidad}</div>
-              <div><strong>HORA:</strong> {info.hora}</div>
-              <div><strong>MÉDICO:</strong> {info.medico || 'Asignado'}</div>
+            {/* Datos del Paciente en Letra Clara y Grande para Fácil Lectura */}
+            <div
+              className={`my-2.5 border-y-2 border-black py-2 text-black text-left ${
+                branding.ticketPatientFontSize === 'extra-grande'
+                  ? 'space-y-2'
+                  : branding.ticketPatientFontSize === 'normal'
+                  ? 'space-y-1'
+                  : 'space-y-1.5'
+              }`}
+            >
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black uppercase tracking-wider text-black">
+                  PACIENTE:
+                </span>
+                <span
+                  className={`font-black text-black leading-tight uppercase ${
+                    branding.ticketPatientFontSize === 'extra-grande'
+                      ? 'text-lg'
+                      : branding.ticketPatientFontSize === 'normal'
+                      ? 'text-xs'
+                      : 'text-base'
+                  }`}
+                >
+                  {info.paciente}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                <span className="font-black text-black text-[11px] uppercase">DNI:</span>
+                <strong
+                  className={`font-mono font-black text-black ${
+                    branding.ticketPatientFontSize === 'extra-grande'
+                      ? 'text-base'
+                      : branding.ticketPatientFontSize === 'normal'
+                      ? 'text-xs'
+                      : 'text-sm'
+                  }`}
+                >
+                  {info.dni}
+                </strong>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                <span className="font-black text-black text-[11px] uppercase">COMUNIDAD:</span>
+                <span
+                  className={`font-bold text-black uppercase ${
+                    branding.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
+                  }`}
+                >
+                  {info.comunidad}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                <span className="font-black text-black text-[11px] uppercase">HORA:</span>
+                <span
+                  className={`font-mono font-bold text-black ${
+                    branding.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
+                  }`}
+                >
+                  {info.hora}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                <span className="font-black text-black text-[11px] uppercase">MÉDICO:</span>
+                <span
+                  className={`font-bold text-black uppercase ${
+                    branding.ticketPatientFontSize === 'extra-grande' ? 'text-sm' : 'text-xs'
+                  }`}
+                >
+                  {info.medico || 'Médico Asignado'}
+                </span>
+              </div>
             </div>
 
-            {qrUrl && (
-              <div className="text-center my-2">
+            {/* Código QR (Ocultable por configuración de Personalización) */}
+            {branding.ticketShowQr && qrUrl && (
+              <div className="text-center my-2.5 pt-1">
                 <img src={qrUrl} alt="QR Turno" className="w-28 h-28 mx-auto" />
-                <div className="text-[9px] mt-1">Valide este QR en su atención clínica</div>
+                <div className="text-[9px] font-bold mt-1 text-black uppercase">
+                  Valide este QR en su atención clínica
+                </div>
               </div>
             )}
 

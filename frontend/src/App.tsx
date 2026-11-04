@@ -18,6 +18,7 @@ import TicketPage from './pages/tickets/TicketPage'
 import { useAuthStore } from './store/authStore'
 import { useEffect } from 'react'
 import { loadSystemSettings } from './services/settingsService'
+import { VersionFooterBadge } from './components/common/VersionFooterBadge'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -111,6 +112,9 @@ export default function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+
+        {/* Indicador de Versiones y Licencia MIT en todas las pantallas */}
+        <VersionFooterBadge />
       </BrowserRouter>
     </QueryClientProvider>
   )

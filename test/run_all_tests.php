@@ -99,3 +99,4 @@ if ($allPassed) {
     echo "\n>>> RESULTADO FINAL: SE ENCONTRARON FALLOS EN LA SUITE DE PRUEBAS <<<\n\n";
     exit(1);
 }
+

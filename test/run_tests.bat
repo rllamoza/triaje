@@ -5,3 +5,4 @@ REM ============================================================
 echo Iniciando suite de pruebas en PHP...
 php "%~dp0run_all_tests.php"
 pause
+

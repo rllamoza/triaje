@@ -220,3 +220,4 @@ function settings_update(?array $user = null): void {
         json_error("Error al persistir configuraciones: " . $e->getMessage(), 500);
     }
 }
+

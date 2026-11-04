@@ -120,3 +120,4 @@ test_assert($recoveredBranding['ticketPatientFontSize'] === 'grande', "Parámetr
 test_assert($recoveredBranding['ticketPaperWidth'] === '80mm', "Parámetro 'ticketPaperWidth' recuperado intacto ('80mm')");
 
 echo "\n>>> TEST 01 COMPLETADO CON ÉXITO: 100% DE CONSTANTES PERSISTENTES TRAS REINICIO <<<\n\n";
+

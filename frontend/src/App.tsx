@@ -16,6 +16,8 @@ import PacientesPage from './pages/admin/PacientesPage'
 import MedicamentosPage from './pages/admin/MedicamentosPage'
 import TicketPage from './pages/tickets/TicketPage'
 import { useAuthStore } from './store/authStore'
+import { useEffect } from 'react'
+import { loadSystemSettings } from './services/settingsService'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +60,10 @@ function RoleRoute({ allowedRoles }: { allowedRoles: string[] }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    // Sincronizar configuraciones y constantes maestras desde la base de datos MySQL
+    loadSystemSettings()
+  }, [])
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

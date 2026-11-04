@@ -71,7 +71,7 @@ const defaultRegistroFields: RegistroFieldsConfig = {
   altitud: true,
   tiempoViaje: true,
   seguro: true,
-  seccionAntecedentes: true, // Habilitado por defecto pero configurable por el admin
+  seccionAntecedentes: false, // Desactivado por defecto según requerimiento de campaña
   hipertension: true,
   diabetes: true,
   asma: true,

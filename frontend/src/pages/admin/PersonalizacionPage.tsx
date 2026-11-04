@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { useBrandingStore, DEFAULT_BRANDING } from '../../store/brandingStore'
 import { useFeatureStore } from '../../store/featureStore'
+import { saveSystemSettings } from '../../services/settingsService'
 
 export default function PersonalizacionPage() {
   const branding = useBrandingStore()
@@ -10,9 +11,7 @@ export default function PersonalizacionPage() {
     triajeEnabled,
     triajeOptions,
     setTriajeEnabled,
-    setTriajeOption,
     registroFields,
-    setRegistroField,
     setSeccionAntecedentes,
     setSeccionResidencia,
     consultaEnabled,
@@ -63,11 +62,48 @@ export default function PersonalizacionPage() {
     reader.readAsDataURL(file)
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     updateBranding(formData)
+    await saveSystemSettings({
+      branding: formData,
+      registroFields: useFeatureStore.getState().registroFields,
+      triajeEnabled: useFeatureStore.getState().triajeEnabled,
+      triajeOptions: useFeatureStore.getState().triajeOptions,
+      consultaEnabled: useFeatureStore.getState().consultaEnabled,
+      farmaciaEnabled: useFeatureStore.getState().farmaciaEnabled,
+    })
     setSavedSuccess(true)
     setTimeout(() => setSavedSuccess(false), 3500)
+  }
+
+  const handleToggleAntecedentes = async (val: boolean) => {
+    setSeccionAntecedentes(val)
+    const updated = { ...useFeatureStore.getState().registroFields, seccionAntecedentes: val }
+    await saveSystemSettings({ registroFields: updated })
+  }
+
+  const handleToggleResidencia = async (val: boolean) => {
+    setSeccionResidencia(val)
+    const updated = { ...useFeatureStore.getState().registroFields, seccionResidencia: val }
+    await saveSystemSettings({ registroFields: updated })
+  }
+
+  const handleToggleField = async (field: any, val: boolean) => {
+    featureStore.setRegistroField(field, val)
+    const updated = { ...useFeatureStore.getState().registroFields, [field]: val }
+    await saveSystemSettings({ registroFields: updated })
+  }
+
+  const handleToggleTriaje = async (val: boolean) => {
+    setTriajeEnabled(val)
+    await saveSystemSettings({ triajeEnabled: val })
+  }
+
+  const handleToggleTriajeOption = async (option: any, val: boolean) => {
+    featureStore.setTriajeOption(option, val)
+    const updated = { ...useFeatureStore.getState().triajeOptions, [option]: val }
+    await saveSystemSettings({ triajeOptions: updated })
   }
 
   const handleReset = () => {
@@ -1056,7 +1092,7 @@ export default function PersonalizacionPage() {
                   <input
                     type="checkbox"
                     checked={triajeEnabled}
-                    onChange={(e) => setTriajeEnabled(e.target.checked)}
+                    onChange={(e) => handleToggleTriaje(e.target.checked)}
                     className="sr-only peer"
                   />
                   <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-tertiary"></div>
@@ -1086,7 +1122,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={triajeOptions.somatometria}
-                      onChange={(e) => setTriajeOption('somatometria', e.target.checked)}
+                      onChange={(e) => handleToggleTriajeOption('somatometria', e.target.checked)}
                       className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>
@@ -1106,7 +1142,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={triajeOptions.signosVitales}
-                      onChange={(e) => setTriajeOption('signosVitales', e.target.checked)}
+                      onChange={(e) => handleToggleTriajeOption('signosVitales', e.target.checked)}
                       className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>
@@ -1126,7 +1162,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={triajeOptions.oximetriaRespiracion}
-                      onChange={(e) => setTriajeOption('oximetriaRespiracion', e.target.checked)}
+                      onChange={(e) => handleToggleTriajeOption('oximetriaRespiracion', e.target.checked)}
                       className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>
@@ -1146,7 +1182,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={triajeOptions.examenesAuxiliares}
-                      onChange={(e) => setTriajeOption('examenesAuxiliares', e.target.checked)}
+                      onChange={(e) => handleToggleTriajeOption('examenesAuxiliares', e.target.checked)}
                       className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>
@@ -1166,7 +1202,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={triajeOptions.imprimirTicketTriaje}
-                      onChange={(e) => setTriajeOption('imprimirTicketTriaje', e.target.checked)}
+                      onChange={(e) => handleToggleTriajeOption('imprimirTicketTriaje', e.target.checked)}
                       className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>
@@ -1272,7 +1308,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={registroFields.seccionAntecedentes}
-                      onChange={(e) => setSeccionAntecedentes(e.target.checked)}
+                      onChange={(e) => handleToggleAntecedentes(e.target.checked)}
                       className="sr-only peer"
                     />
                     <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
@@ -1307,7 +1343,7 @@ export default function PersonalizacionPage() {
                         <input
                           type="checkbox"
                           checked={Boolean(registroFields[item.key as keyof typeof registroFields])}
-                          onChange={(e) => setRegistroField(item.key as any, e.target.checked)}
+                          onChange={(e) => handleToggleField(item.key as any, e.target.checked)}
                           disabled={!registroFields.seccionAntecedentes}
                           className="mt-0.5 accent-primary h-4 w-4 cursor-pointer"
                         />
@@ -1353,7 +1389,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={registroFields.seccionResidencia}
-                      onChange={(e) => setSeccionResidencia(e.target.checked)}
+                      onChange={(e) => handleToggleResidencia(e.target.checked)}
                       className="sr-only peer"
                     />
                     <div className="w-14 h-7 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary"></div>
@@ -1387,7 +1423,7 @@ export default function PersonalizacionPage() {
                         <input
                           type="checkbox"
                           checked={Boolean(registroFields[item.key as keyof typeof registroFields])}
-                          onChange={(e) => setRegistroField(item.key as any, e.target.checked)}
+                          onChange={(e) => handleToggleField(item.key as any, e.target.checked)}
                           disabled={!registroFields.seccionResidencia}
                           className="accent-primary h-4 w-4 cursor-pointer"
                         />
@@ -1416,7 +1452,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={registroFields.estadoCivil}
-                      onChange={(e) => setRegistroField('estadoCivil', e.target.checked)}
+                      onChange={(e) => handleToggleField('estadoCivil', e.target.checked)}
                       className="accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>
@@ -1429,7 +1465,7 @@ export default function PersonalizacionPage() {
                     <input
                       type="checkbox"
                       checked={registroFields.lenguaMaterna}
-                      onChange={(e) => setRegistroField('lenguaMaterna', e.target.checked)}
+                      onChange={(e) => handleToggleField('lenguaMaterna', e.target.checked)}
                       className="accent-primary h-4 w-4 cursor-pointer"
                     />
                     <div>

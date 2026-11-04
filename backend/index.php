@@ -32,6 +32,7 @@ require_once __DIR__ . '/controllers/UserController.php';
 require_once __DIR__ . '/controllers/TicketController.php';
 require_once __DIR__ . '/controllers/AuditController.php';
 require_once __DIR__ . '/controllers/MedicamentoController.php';
+require_once __DIR__ . '/controllers/SettingsController.php';
 
 // 3. Normalizar la ruta solicitada
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -63,6 +64,12 @@ try {
     }
     if ($method === 'GET' && ($path === '' || $path === 'ping')) {
         json_ok(['status' => 'ok', 'app' => 'Semilla Triaje API (PHP Nativo)', 'timestamp' => now_str()]);
+    }
+    if ($method === 'GET' && $path === 'settings') {
+        settings_index();
+    }
+    if (($method === 'POST' || $method === 'PUT') && $path === 'settings/public') {
+        settings_update(null);
     }
 
     // ── RUTAS PROTEGIDAS (Requieren Token Bearer) ───────────────
@@ -232,6 +239,11 @@ try {
     }
     if ($method === 'POST' && preg_match('#^users/(\d+)/reset-pin$#', $path, $m)) {
         users_reset_pin((int)$m[1]);
+    }
+
+    // Configuraciones del Sistema
+    if (($method === 'POST' || $method === 'PUT') && $path === 'settings') {
+        settings_update($user);
     }
 
     // Auditoría Forense y Telemetría

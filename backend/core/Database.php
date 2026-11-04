@@ -87,6 +87,43 @@ function ensure_schema_compatibility(PDO $pdo): void {
                 (1, 'OFT', 'Oftalmología', NULL, 'Módulo Visual', 20, 1)
             ");
         }
+
+        // 5. Asegurar tabla system_settings y constantes maestras del sistema
+        $pdo->exec("CREATE TABLE IF NOT EXISTS system_settings (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            `key` VARCHAR(100) NOT NULL,
+            `value` LONGTEXT DEFAULT NULL,
+            `group` VARCHAR(50) NOT NULL DEFAULT 'general',
+            `description` VARCHAR(255) DEFAULT NULL,
+            created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY system_settings_key_unique (`key`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+        // Inicializar registro_fields con seccionAntecedentes = false si no existe
+        $check = $pdo->prepare("SELECT COUNT(*) FROM system_settings WHERE `key` = :k");
+        $check->execute([':k' => 'registro_fields']);
+        if ($check->fetchColumn() == 0) {
+            $defaultFields = json_encode([
+                'estadoCivil' => true,
+                'lenguaMaterna' => true,
+                'seccionResidencia' => true,
+                'comunidad' => true,
+                'telefono' => true,
+                'altitud' => true,
+                'tiempoViaje' => true,
+                'seguro' => true,
+                'seccionAntecedentes' => false,
+                'hipertension' => true,
+                'diabetes' => true,
+                'asma' => true,
+                'anemia' => true,
+                'gestante' => true,
+                'alergias' => true,
+            ], JSON_UNESCAPED_UNICODE);
+            $ins = $pdo->prepare("INSERT INTO system_settings (`key`, `value`, `group`, `description`, created_at, updated_at) VALUES ('registro_fields', :v, 'features', 'Configuracion de campos de registro de beneficiarios', NOW(), NOW())");
+            $ins->execute([':v' => $defaultFields]);
+        }
     } catch (\Throwable $e) {
         // En caso de que el usuario de BD no tenga permisos ALTER, continuar sin interrumpir el flujo
     }

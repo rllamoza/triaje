@@ -78,105 +78,171 @@ function atenciones_store(array $user): void {
         }
     }
 
-    // Specialty selection
-    $spCode = strtoupper(trim($b['specialty_code'] ?? ''));
-    if (empty($spCode)) {
+    // Determinar initialStatus según triaje_enabled en system_settings
+    $initialStatus = 'en_espera_triaje';
+    try {
+        $stt = db()->prepare("SELECT `value` FROM system_settings WHERE `key` = 'triaje_enabled'");
+        $stt->execute();
+        $val = $stt->fetchColumn();
+        if ($val === 'false' || $val === '0') {
+            $initialStatus = 'en_espera_medico';
+        }
+    } catch (\Throwable) {}
+
+    // Specialty selection: admite array de especialidades o especialidad individual
+    $requestedCodes = [];
+    if (!empty($b['specialty_codes']) && is_array($b['specialty_codes'])) {
+        $requestedCodes = array_values(array_filter(array_map('trim', $b['specialty_codes'])));
+    } elseif (!empty($b['specialties']) && is_array($b['specialties'])) {
+        foreach ($b['specialties'] as $sp) {
+            if (is_string($sp) && trim($sp) !== '') {
+                $requestedCodes[] = trim($sp);
+            } elseif (is_array($sp) && !empty($sp['specialty_code'])) {
+                $requestedCodes[] = trim($sp['specialty_code']);
+            }
+        }
+    } elseif (!empty($b['specialty_code'])) {
+        $requestedCodes = [trim($b['specialty_code'])];
+    }
+
+    if (empty($requestedCodes)) {
         try {
             $firstSp = db()->prepare("SELECT * FROM campaign_specialties WHERE campaign_id = :cid AND active = 1 ORDER BY id ASC LIMIT 1");
             $firstSp->execute([':cid' => $cid]);
             $spRow = $firstSp->fetch();
-            $spCode = $spRow ? $spRow['specialty_code'] : 'MED';
+            $requestedCodes = [$spRow ? $spRow['specialty_code'] : 'MED'];
         } catch (\Throwable) {
-            $spCode = 'MED';
+            $requestedCodes = ['MED'];
         }
     }
 
-    // Lookup specialty config for campaign
-    $spConfig = null;
-    try {
+    // Normalizar códigos en mayúsculas y sin duplicados
+    $requestedCodes = array_values(array_unique(array_map('strtoupper', $requestedCodes)));
+
+    // Validar cupos de todas las especialidades solicitadas antes de insertar
+    foreach ($requestedCodes as $code) {
         $spStmt = db()->prepare("SELECT * FROM campaign_specialties WHERE campaign_id = :cid AND specialty_code = :code AND active = 1");
-        $spStmt->execute([':cid' => $cid, ':code' => $spCode]);
+        $spStmt->execute([':cid' => $cid, ':code' => $code]);
         $spConfig = $spStmt->fetch();
-    } catch (\Throwable) {}
-
-    $spName = $spConfig['specialty_name'] ?? ($b['specialty_name'] ?? ($spCode === 'MED' ? 'Medicina General' : $spCode));
-    $medicoId = !empty($b['medico_id']) ? (int)$b['medico_id'] : ($spConfig['medico_id'] ?? null);
-    $consultorio = !empty($b['consultorio']) ? trim($b['consultorio']) : ($spConfig['consultorio'] ?? 'Consultorio 01');
-    $cupoMax = (int)($spConfig['cupo_maximo'] ?? 30);
-
-    // Validate quota if config exists
-    try {
-        $countStmt = db()->prepare("SELECT COUNT(*) as cnt FROM atenciones WHERE campaign_id = :cid AND specialty_code = :code");
-        $countStmt->execute([':cid' => $cid, ':code' => $spCode]);
-        $currentCount = (int)$countStmt->fetch()['cnt'];
-    } catch (\Throwable) {
-        $currentCount = 0;
+        if ($spConfig) {
+            $cupoMax = (int)($spConfig['cupo_maximo'] ?? 30);
+            try {
+                $countStmt = db()->prepare("SELECT COUNT(*) as cnt FROM atenciones WHERE campaign_id = :cid AND specialty_code = :code");
+                $countStmt->execute([':cid' => $cid, ':code' => $code]);
+                $currentCount = (int)$countStmt->fetch()['cnt'];
+            } catch (\Throwable) {
+                $currentCount = 0;
+            }
+            if ($currentCount >= $cupoMax) {
+                json_error("No hay cupos disponibles para la especialidad '{$spConfig['specialty_name']}' ({$code}). Cupo máximo alcanzado ({$cupoMax}/{$cupoMax}).", 422);
+            }
+        }
     }
-
-    if ($spConfig && $currentCount >= $cupoMax) {
-        json_error("No hay cupos disponibles para la especialidad '{$spName}'. Cupo máximo alcanzado ({$cupoMax}/{$cupoMax}).", 422);
-    }
-
-    // Next correlative for this specialty in this campaign
-    $nextSpecialtyNum = $currentCount + 1;
-    $ticketCodigo = sprintf('%s-%04d', $spCode, $nextSpecialtyNum);
-
-    // Overall ticket_number for backwards compatibility
-    $stmt = db()->prepare("SELECT COALESCE(MAX(ticket_number), 100) + 1 as next FROM atenciones WHERE campaign_id = :cid");
-    $stmt->execute([':cid' => $cid]);
-    $ticketNumber = (int)$stmt->fetch()['next'];
 
     // Mapeo dinámico y seguro de columnas existentes
     $colsStmt = db()->query("SHOW COLUMNS FROM atenciones");
     $existingCols = $colsStmt ? $colsStmt->fetchAll(PDO::FETCH_COLUMN) : [];
 
-    $fields = [
-        'beneficiario_id' => $bid,
-        'campaign_id'     => $cid,
-        'station_id'      => !empty($b['station_id']) ? (int)$b['station_id'] : null,
-        'ticket_number'   => $ticketNumber,
-        'ticket_codigo'   => $ticketCodigo,
-        'specialty_code'  => $spCode,
-        'specialty_name'  => $spName,
-        'medico_id'       => $medicoId,
-        'consultorio'     => $consultorio,
-        'arrival_time'    => now_str(),
-        'status'          => 'en_espera_triaje',
-        'admitted_by'     => $admittedBy,
-        'seguro_usado'    => $b['seguro_usado'] ?? null,
-        'notes'           => $b['notes'] ?? null,
-        'created_at'      => now_str(),
-        'updated_at'      => now_str(),
-    ];
+    $createdAttentions = [];
+    $pdo = db();
+    $inTx = false;
 
-    if (!empty($existingCols)) {
-        $fields = array_intersect_key($fields, array_flip($existingCols));
+    try {
+        $pdo->beginTransaction();
+        $inTx = true;
+
+        foreach ($requestedCodes as $spCode) {
+            $spStmt = $pdo->prepare("SELECT * FROM campaign_specialties WHERE campaign_id = :cid AND specialty_code = :code AND active = 1");
+            $spStmt->execute([':cid' => $cid, ':code' => $spCode]);
+            $spConfig = $spStmt->fetch();
+
+            $spName = $spConfig['specialty_name'] ?? ($spCode === 'MED' ? 'Medicina General' : $spCode);
+            $medicoId = (!empty($b['medico_id']) && count($requestedCodes) === 1)
+                ? (int)$b['medico_id']
+                : ($spConfig['medico_id'] ?? null);
+            $consultorio = (!empty($b['consultorio']) && count($requestedCodes) === 1)
+                ? trim($b['consultorio'])
+                : ($spConfig['consultorio'] ?? 'Consultorio 01');
+
+            // Correlativo por especialidad
+            try {
+                $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM atenciones WHERE campaign_id = :cid AND specialty_code = :code FOR UPDATE");
+                $countStmt->execute([':cid' => $cid, ':code' => $spCode]);
+                $currentCount = (int)$countStmt->fetch()['cnt'];
+            } catch (\Throwable) {
+                $currentCount = 0;
+            }
+            $nextSpecialtyNum = $currentCount + 1;
+            $ticketCodigo = sprintf('%s-%04d', $spCode, $nextSpecialtyNum);
+
+            // Overall ticket_number para compatibilidad
+            $stmtTnum = $pdo->prepare("SELECT COALESCE(MAX(ticket_number), 100) + 1 as next FROM atenciones WHERE campaign_id = :cid FOR UPDATE");
+            $stmtTnum->execute([':cid' => $cid]);
+            $ticketNumber = (int)$stmtTnum->fetch()['next'];
+
+            $fields = [
+                'beneficiario_id' => $bid,
+                'campaign_id'     => $cid,
+                'station_id'      => !empty($b['station_id']) ? (int)$b['station_id'] : null,
+                'ticket_number'   => $ticketNumber,
+                'ticket_codigo'   => $ticketCodigo,
+                'specialty_code'  => $spCode,
+                'specialty_name'  => $spName,
+                'medico_id'       => $medicoId,
+                'consultorio'     => $consultorio,
+                'arrival_time'    => now_str(),
+                'status'          => $initialStatus,
+                'admitted_by'     => $admittedBy,
+                'seguro_usado'    => $b['seguro_usado'] ?? null,
+                'notes'           => $b['notes'] ?? null,
+                'created_at'      => now_str(),
+                'updated_at'      => now_str(),
+            ];
+
+            if (!empty($existingCols)) {
+                $fields = array_intersect_key($fields, array_flip($existingCols));
+            }
+
+            $cols = implode(', ', array_keys($fields));
+            $vals = implode(', ', array_map(fn($k) => ":$k", array_keys($fields)));
+            $params = array_combine(array_map(fn($k) => ":$k", array_keys($fields)), array_values($fields));
+
+            $insStmt = $pdo->prepare("INSERT INTO atenciones ($cols) VALUES ($vals)");
+            $insStmt->execute($params);
+            $atencionId = (int)$pdo->lastInsertId();
+
+            $stmtFull = $pdo->prepare("
+                SELECT a.*,
+                       b.nombres, b.apellidos, b.dni, b.comunidad,
+                       c.name as campaign_name,
+                       s.label as station_label,
+                       CONCAT(um.name, ' ', um.apellidos) as medico_asignado_nombre
+                FROM atenciones a
+                LEFT JOIN beneficiarios b ON b.id = a.beneficiario_id
+                LEFT JOIN campaigns c ON c.id = a.campaign_id
+                LEFT JOIN stations s ON s.id = a.station_id
+                LEFT JOIN users um ON um.id = a.medico_id
+                WHERE a.id = :id
+            ");
+            $stmtFull->execute([':id' => $atencionId]);
+            $row = $stmtFull->fetch();
+            if ($row) {
+                $createdAttentions[] = $row;
+            }
+        }
+
+        $pdo->commit();
+        $inTx = false;
+    } catch (\Throwable $e) {
+        if ($inTx && $pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+        json_error('Error al registrar atenciones: ' . $e->getMessage(), 500);
     }
 
-    $cols = implode(', ', array_keys($fields));
-    $vals = implode(', ', array_map(fn($k) => ":$k", array_keys($fields)));
-    $params = array_combine(array_map(fn($k) => ":$k", array_keys($fields)), array_values($fields));
-
-    $insStmt = db()->prepare("INSERT INTO atenciones ($cols) VALUES ($vals)");
-    $insStmt->execute($params);
-    $atencionId = (int)db()->lastInsertId();
-
-    $stmt = db()->prepare("
-        SELECT a.*,
-               b.nombres, b.apellidos, b.dni,
-               c.name as campaign_name,
-               s.label as station_label,
-               CONCAT(um.name, ' ', um.apellidos) as medico_asignado_nombre
-        FROM atenciones a
-        LEFT JOIN beneficiarios b ON b.id = a.beneficiario_id
-        LEFT JOIN campaigns c ON c.id = a.campaign_id
-        LEFT JOIN stations s ON s.id = a.station_id
-        LEFT JOIN users um ON um.id = a.medico_id
-        WHERE a.id = :id
-    ");
-    $stmt->execute([':id' => $atencionId]);
-    $row = $stmt->fetch();
-    json_ok($row, 201);
+    $primary = $createdAttentions[0] ?? [];
+    $primary['atenciones'] = $createdAttentions;
+    json_ok($primary, 201);
 }
 
 

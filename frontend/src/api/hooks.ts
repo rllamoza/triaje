@@ -400,6 +400,7 @@ export const useStoreAtencion = () => {
       seguro_usado?: string
       notes?: string
       specialty_code?: string
+      specialty_codes?: string[]
       specialty_name?: string
       medico_id?: number | null
       consultorio?: string
@@ -408,6 +409,7 @@ export const useStoreAtencion = () => {
       qc.invalidateQueries({ queryKey: ['atenciones'] })
       qc.invalidateQueries({ queryKey: ['queue'] })
       qc.invalidateQueries({ queryKey: ['campaigns'] })
+      qc.invalidateQueries({ queryKey: ['campaignSpecialties'] })
     },
   })
 }

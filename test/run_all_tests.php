@@ -11,6 +11,7 @@ $tests = [
     '04_branding_ticket_test.php'    => 'Motor Térmico ESC/POS: Legibilidad, Centrado y Ocultamiento de QR',
     '05_farmacia_dispensacion_test.php' => 'Farmacia: Descuento de Stock, Firma/Foto y Cargo de Entrega',
     '06_medicamentos_custom_columns_test.php' => 'Catálogo Medicamentos: Clasificación, Uso y Columnas Dinámicas',
+    '07_multi_specialty_tickets_test.php' => 'Admisión Multi-Especialidad: Tickets Múltiples y Correlativos',
 ];
 
 echo "\n================================================================================\n";

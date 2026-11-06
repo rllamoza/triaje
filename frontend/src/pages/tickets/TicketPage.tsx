@@ -3,13 +3,57 @@ import QRCode from 'qrcode'
 import { useBrandingStore, getEffectiveTicketLogo } from '../../store/brandingStore'
 import { useScannerStore } from '../../store/scannerStore'
 import { PATIENT_DATABASE, generatePatientQrPayload, type DetailedPatient } from '../../services/patientRegistry'
-import { usePrinterStatus, usePrintDirectTicket } from '../../api/hooks'
+import { usePrinterStatus, usePrintDirectTicket, useAtenciones } from '../../api/hooks'
 import { detectDevice, printThermalElement } from '../../utils/printEngine'
+
+function mapAtencionToPatient(atn: any): DetailedPatient {
+  const ape = atn.apellidos || atn.beneficiario?.apellidos || 'PACIENTE'
+  const nom = atn.nombres || atn.beneficiario?.nombres || ''
+  const tkt = atn.ticket_codigo || `T-${atn.ticket_number || '0001'}`
+  const doc = atn.dni || atn.beneficiario?.dni || '--------'
+  const edad = atn.edad_calculada ? `${atn.edad_calculada} años` : '---'
+
+  return {
+    id: atn.id,
+    ticket: tkt,
+    dni: doc,
+    paciente: `${ape}, ${nom}`.trim(),
+    edad,
+    sexo: atn.sexo === 'F' ? 'F' : 'M',
+    comunidad: atn.comunidad || 'Comunidad General',
+    telefono: atn.celular || atn.telefono || '',
+    prioridad: atn.prioridad || 'verde',
+    prioridadLabel: atn.prioridad_label || (atn.prioridad === 'rojo' ? 'PRIORIDAD I' : atn.prioridad === 'amarillo' ? 'PRIORIDAD II' : 'PRIORIDAD III - ESTABLE'),
+    hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '12:00',
+    espera: 'En cola',
+    seguro: atn.seguro_usado || 'SIS',
+    alergias: atn.triaje_alergias || atn.alergias || 'Ninguna conocida',
+    motivo: atn.triaje_motivo || atn.notes || 'Control General',
+    detalles: atn.observaciones_triaje || '',
+    destino: `${atn.specialty_name || 'Medicina General'} (${atn.consultorio || 'Consultorio 01'})`,
+    medico: atn.medico_asignado_nombre || 'Médico Asignado',
+    vitals: {
+      pa: atn.presion_sistolica ? `${atn.presion_sistolica}/${atn.presion_diastolica || 80}` : '120/80',
+      fc: atn.frecuencia_cardiaca ? `${atn.frecuencia_cardiaca} lpm` : '72 lpm',
+      temp: atn.temperatura_c ? `${atn.temperatura_c}°C` : '36.5°C',
+      spo2: atn.saturacion_o2_pct ? `${atn.saturacion_o2_pct}%` : '96%',
+      fr: atn.frecuencia_respiratoria ? `${atn.frecuencia_respiratoria} rpm` : '18 rpm',
+      gluc: atn.glucosa_mg_dl ? `${atn.glucosa_mg_dl} mg/dL` : '95 mg/dL',
+    },
+    fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE') : new Date().toLocaleDateString('es-PE'),
+  }
+}
 
 export default function TicketPage() {
   const branding = useBrandingStore()
   const effectiveLogo = getEffectiveTicketLogo(branding)
   const { openScanner, showPatientDetail } = useScannerStore()
+
+  // Consulta de atenciones reales en BD para historial de tickets individuales
+  const { data: atencionesData } = useAtenciones({ per_page: 200 })
+  const atencionesList: any[] = Array.isArray(atencionesData)
+    ? atencionesData
+    : (Array.isArray(atencionesData?.data) ? atencionesData.data : [])
 
   // Consulta de impresoras reales conectadas
   const { data: printerInfo, isLoading: loadingPrinters, refetch: refetchPrinters } = usePrinterStatus()
@@ -73,6 +117,18 @@ export default function TicketPage() {
   const handleSearch = () => {
     const term = searchInput.trim().toLowerCase()
     if (!term) return
+
+    const matchDb = atencionesList.find((a) => {
+      const tkt = (a.ticket_codigo || `T-${a.ticket_number || ''}`).toLowerCase()
+      const dni = (a.dni || a.beneficiario?.dni || '').toLowerCase()
+      const nom = `${a.nombres || a.beneficiario?.nombres || ''} ${a.apellidos || a.beneficiario?.apellidos || ''}`.toLowerCase()
+      return tkt.includes(term) || dni.includes(term) || nom.includes(term)
+    })
+
+    if (matchDb) {
+      setCurrentPatient(mapAtencionToPatient(matchDb))
+      return
+    }
 
     const match = PATIENT_DATABASE.find(
       (p) =>
@@ -479,6 +535,42 @@ export default function TicketPage() {
                 <span className="hidden sm:inline">Escanear</span>
               </button>
             </div>
+
+            {/* Live Database Atenciones Switcher */}
+            {atencionesList.length > 0 && (
+              <div className="flex flex-col gap-1.5 pt-1">
+                <span className="text-[11px] font-mono font-bold text-primary flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px]">history</span>
+                  Historial de Tickets en Base de Datos ({atencionesList.length}):
+                </span>
+                <div className="flex flex-wrap items-center gap-1.5 max-h-28 overflow-y-auto pr-1">
+                  {atencionesList.slice(0, 20).map((a) => {
+                    const tkt = a.ticket_codigo || `T-${a.ticket_number || '0001'}`
+                    const isSelected = currentPatient.ticket === tkt
+                    const ape = a.apellidos || a.beneficiario?.apellidos || 'PACIENTE'
+                    return (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => {
+                          setCurrentPatient(mapAtencionToPatient(a))
+                          setSearchInput(tkt)
+                        }}
+                        className={`px-2 py-0.5 text-[11px] font-mono border transition-colors cursor-pointer flex items-center gap-1 ${
+                          isSelected
+                            ? 'bg-primary text-on-primary border-primary font-bold shadow-xs'
+                            : 'bg-surface-container-low text-on-surface hover:bg-surface-container border-surface-container-high'
+                        }`}
+                        title={`${ape} • ${a.specialty_name || 'Medicina'}`}
+                      >
+                        <span className="font-bold">#{tkt}</span>
+                        <span className="opacity-75 text-[10px]">({a.specialty_code || 'MED'})</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Quick Patient Switcher Pills */}
             <div className="flex flex-wrap items-center gap-1.5 pt-1">

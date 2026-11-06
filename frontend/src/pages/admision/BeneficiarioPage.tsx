@@ -43,9 +43,10 @@ export default function BeneficiarioPage() {
   const [lastAssignedTicket, setLastAssignedTicket] = useState<string | null>(null)
   const [ticketModalOpen, setTicketModalOpen] = useState(false)
   const [assignedTicketInfo, setAssignedTicketInfo] = useState<TicketInfo | null>(null)
+  const [assignedTickets, setAssignedTickets] = useState<TicketInfo[]>([])
 
-  // Inicia en blanco (sin especialidad preseleccionada) para que el voluntario indique la necesaria
-  const [selectedSpecialtyCode, setSelectedSpecialtyCode] = useState<string>('')
+  // Selección múltiple de especialidades médicas
+  const [selectedSpecialtyCodes, setSelectedSpecialtyCodes] = useState<string[]>([])
 
   const reniecLookup = useReniecLookup()
   const createBeneficiario = useStoreBeneficiario()
@@ -61,17 +62,33 @@ export default function BeneficiarioPage() {
   const currentCampaignId = activeCampaign ? activeCampaign.id : 1
   const { data: specialtiesList = [] } = useCampaignSpecialties(currentCampaignId)
 
-  // Especialidad seleccionada y cálculo de turno proyectado (solo si hay especialidad elegida)
-  const currentSpecialty = selectedSpecialtyCode
-    ? specialtiesList.find((s) => s.specialty_code === selectedSpecialtyCode) || null
-    : null
+  // Especialidades seleccionadas y cálculo de turnos proyectados
+  const selectedSpecialties = specialtiesList.filter((s) =>
+    selectedSpecialtyCodes.includes(s.specialty_code)
+  )
 
-  const nextSpecialtyNumber = currentSpecialty
-    ? (currentSpecialty.cupo_ocupado ?? 0) + 1
-    : null
-  const projectedTicketCode = currentSpecialty
-    ? `${currentSpecialty.specialty_code}-${String(nextSpecialtyNumber).padStart(4, '0')}`
-    : null
+  const projectedTickets = selectedSpecialties.map((s) => {
+    const nextNum = (s.cupo_ocupado ?? 0) + 1
+    return {
+      specialty_code: s.specialty_code,
+      specialty_name: s.specialty_name,
+      medico_nombre: s.medico_nombre,
+      consultorio: s.consultorio || 'Consultorio 01',
+      cupo_disponible: s.cupo_disponible ?? (s.cupo_maximo - (s.cupo_ocupado ?? 0)),
+      cupo_maximo: s.cupo_maximo,
+      ticketCode: `${s.specialty_code}-${String(nextNum).padStart(4, '0')}`,
+    }
+  })
+
+  const toggleSpecialty = (code: string) => {
+    setSelectedSpecialtyCodes((prev) => {
+      if (prev.includes(code)) {
+        return prev.filter((c) => c !== code)
+      } else {
+        return [...prev, code]
+      }
+    })
+  }
 
   const handleReniec = async (customDni?: string) => {
     const targetDni = (customDni || dni).trim()
@@ -174,20 +191,23 @@ export default function BeneficiarioPage() {
       return
     }
 
-    if (!selectedSpecialtyCode || !currentSpecialty) {
+    if (selectedSpecialtyCodes.length === 0) {
       setMessage({
-        text: '⚠️ Por favor seleccione la Especialidad Médica que necesita el paciente para poder crear su código de turno.',
+        text: '⚠️ Por favor seleccione al menos una Especialidad Médica para poder crear los turnos de atención.',
         type: 'error',
       })
       return
     }
 
-    if ((currentSpecialty.cupo_disponible ?? 1) <= 0) {
-      setMessage({
-        text: `No hay cupos disponibles para la especialidad ${currentSpecialty.specialty_name}. Por favor seleccione otra especialidad médica disponible.`,
-        type: 'error',
-      })
-      return
+    for (const sp of selectedSpecialties) {
+      const disp = sp.cupo_disponible ?? (sp.cupo_maximo - (sp.cupo_ocupado ?? 0))
+      if (disp <= 0) {
+        setMessage({
+          text: `No hay cupos disponibles para la especialidad ${sp.specialty_name}. Por favor desmárquela o elija otra disponible.`,
+          type: 'error',
+        })
+        return
+      }
     }
 
     setSubmitting(true)
@@ -222,34 +242,38 @@ export default function BeneficiarioPage() {
         throw new Error('No se pudo obtener el identificador del paciente guardado.')
       }
 
-      // 3. Asignar nuevo número de atención por especialidad seleccionada
-      const atencion = await createAtencion.mutateAsync({
+      // 3. Asignar nuevo(s) número(s) de atención por cada especialidad seleccionada
+      const atencionRes = await createAtencion.mutateAsync({
         beneficiario_id: benefId,
         campaign_id: currentCampaignId,
         seguro_usado: seguro || 'ninguno',
         notes: `Motivo: ${motivo || 'Control general'} | Traslado: ${tiempoViaje || '0'} min | Alergias: ${alergias || 'Ninguna'}`,
-        specialty_code: currentSpecialty?.specialty_code || 'MED',
-        specialty_name: currentSpecialty?.specialty_name || 'Medicina General',
-        medico_id: currentSpecialty?.medico_id || undefined,
-        consultorio: currentSpecialty?.consultorio || 'Consultorio 01',
+        specialty_codes: selectedSpecialtyCodes,
+        specialty_code: selectedSpecialtyCodes[0],
       })
 
-      const ticketAsignado = atencion.ticket_codigo || projectedTicketCode || `${currentSpecialty.specialty_code}-0001`
-      setLastAssignedTicket(ticketAsignado)
-      setAssignedTicketInfo({
-        ticket: ticketAsignado,
+      const rawList = atencionRes?.atenciones || (Array.isArray(atencionRes) ? atencionRes : [atencionRes])
+      const nowHora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+      const generatedTickets: TicketInfo[] = rawList.map((atn: any) => ({
+        ticket: atn.ticket_codigo || `T-${atn.ticket_number}`,
         paciente: `${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}`,
         dni: cleanDni,
         comunidad: comunidad || 'Comunidad General',
-        hora: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        especialidad: atencion.specialty_name || currentSpecialty.specialty_name,
-        medico: atencion.medico_asignado_nombre || currentSpecialty.medico_nombre || 'Médico Asignado',
-        consultorio: atencion.consultorio || currentSpecialty.consultorio || 'Consultorio 01',
-      })
+        hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : nowHora,
+        especialidad: atn.specialty_name || 'Medicina General',
+        medico: atn.medico_asignado_nombre || 'Médico Asignado',
+        consultorio: atn.consultorio || 'Consultorio 01',
+      }))
+
+      setAssignedTickets(generatedTickets)
+      setAssignedTicketInfo(generatedTickets[0] || null)
+      const ticketsStr = generatedTickets.map((t) => '#' + t.ticket).join(', ')
+      setLastAssignedTicket(ticketsStr)
       setTicketModalOpen(true)
 
       setMessage({
-        text: `✓ ¡Paciente registrado con éxito! Turno Asignado: #${ticketAsignado} (${currentSpecialty.specialty_name}) para ${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}. La mesa de acreditación ha pasado a un nuevo registro en blanco.`,
+        text: `✓ ¡Paciente registrado con éxito! Turno(s) Asignado(s): ${generatedTickets.map((t) => `#${t.ticket} (${t.especialidad})`).join(' y ')} para ${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}. Se imprimirán juntos para el paciente.`,
         type: 'success',
       })
 
@@ -273,7 +297,7 @@ export default function BeneficiarioPage() {
       setAsma(false)
       setAnemia(false)
       setGestante(false)
-      setSelectedSpecialtyCode('')
+      setSelectedSpecialtyCodes([])
       setPatientExists(false)
     } catch (err: any) {
       const apiMsg = err?.response?.data?.message || err?.message
@@ -809,41 +833,90 @@ export default function BeneficiarioPage() {
             </section>
           )}
 
-          {/* SECTION 4: Selección de Especialidad Médica */}
+          {/* SECTION 4: Selección de Especialidades Médicas (Permite múltiple) */}
           <section className="bg-surface p-6 shadow-xs border border-surface-container-high space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-surface-container-high">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-surface-container-high gap-2">
               <div className="flex items-center gap-2">
                 <span className="w-6 h-6 bg-primary text-on-primary text-xs font-semibold flex items-center justify-center">
                   {1 + (registroFields.seccionResidencia ? 1 : 0) + (registroFields.seccionAntecedentes ? 1 : 0) + 1}
                 </span>
                 <h2 className="text-sm font-semibold tracking-tight text-on-surface uppercase">
-                  ¿A qué Especialidad Médica desea asistir? *
+                  ¿A qué Especialidades Médicas desea asistir? *
                 </h2>
               </div>
-              <span className="text-xs text-on-surface-variant font-medium">Cupos médicos limitados por jornada</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-on-surface-variant font-medium">
+                  {selectedSpecialtyCodes.length > 0 ? (
+                    <span className="font-bold text-primary font-mono">
+                      {selectedSpecialtyCodes.length} especialidad(es) elegida(s)
+                    </span>
+                  ) : (
+                    'Puede seleccionar más de una'
+                  )}
+                </span>
+                {selectedSpecialtyCodes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSpecialtyCodes([])}
+                    className="text-[11px] text-error hover:underline font-semibold cursor-pointer"
+                  >
+                    Limpiar
+                  </button>
+                )}
+              </div>
             </div>
 
-            {!selectedSpecialtyCode && (
+            {selectedSpecialtyCodes.length === 0 ? (
               <div className="p-3 bg-primary-container/40 text-on-primary-container text-xs flex items-center gap-2 border border-primary/30">
                 <span className="material-symbols-outlined text-[18px] text-primary">priority_high</span>
                 <span className="font-semibold">
-                  Seleccione la especialidad médica que necesita el paciente para asignarle su turno de atención.
+                  Seleccione una o más especialidades médicas. Se generará un ticket y número de turno por cada una.
                 </span>
+              </div>
+            ) : (
+              <div className="p-2.5 bg-secondary-container/40 text-on-secondary-container text-xs flex flex-wrap items-center gap-2 border border-secondary/30">
+                <span className="font-bold">Especialidades seleccionadas:</span>
+                {selectedSpecialties.map((sp, idx) => {
+                  const proj = projectedTickets.find((pt) => pt.specialty_code === sp.specialty_code)
+                  return (
+                    <span
+                      key={sp.specialty_code}
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-surface text-primary font-mono text-[11px] font-bold border border-primary/40"
+                    >
+                      <span>#{idx + 1} {sp.specialty_name}</span>
+                      <strong className="text-secondary">({proj?.ticketCode})</strong>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleSpecialty(sp.specialty_code)
+                        }}
+                        className="hover:text-error cursor-pointer ml-0.5"
+                        title="Quitar"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  )
+                })}
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {specialtiesList.length > 0 ? (
                 specialtiesList.map((sp) => {
-                  const isSelected = selectedSpecialtyCode === sp.specialty_code
+                  const isSelected = selectedSpecialtyCodes.includes(sp.specialty_code)
+                  const selectedIndex = selectedSpecialtyCodes.indexOf(sp.specialty_code)
                   const disponible = sp.cupo_disponible ?? (sp.cupo_maximo - (sp.cupo_ocupado ?? 0))
                   const sinCupo = disponible <= 0
+                  const nextNum = (sp.cupo_ocupado ?? 0) + 1
+                  const projectedCode = `${sp.specialty_code}-${String(nextNum).padStart(4, '0')}`
 
                   return (
                     <div
                       key={sp.specialty_code}
-                      onClick={() => !sinCupo && setSelectedSpecialtyCode(sp.specialty_code)}
-                      className={`p-3.5 border transition-all cursor-pointer relative flex flex-col justify-between ${
+                      onClick={() => !sinCupo && toggleSpecialty(sp.specialty_code)}
+                      className={`p-3.5 border transition-all cursor-pointer relative flex flex-col justify-between select-none ${
                         isSelected
                           ? 'bg-primary/10 border-primary shadow-sm ring-2 ring-primary'
                           : sinCupo
@@ -853,9 +926,17 @@ export default function BeneficiarioPage() {
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-mono text-xs font-black uppercase px-2 py-0.5 bg-surface border border-surface-container-high text-primary">
-                            {sp.specialty_code}
-                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-mono text-xs font-black uppercase px-2 py-0.5 bg-surface border border-surface-container-high text-primary">
+                              {sp.specialty_code}
+                            </span>
+                            {isSelected && (
+                              <span className="px-1.5 py-0.5 bg-primary text-on-primary text-[10px] font-mono font-bold flex items-center gap-0.5">
+                                <span className="material-symbols-outlined text-[12px]">check</span>
+                                #{selectedIndex + 1}
+                              </span>
+                            )}
+                          </div>
                           <span
                             className={`text-[10px] font-bold px-1.5 py-0.5 uppercase ${
                               sinCupo
@@ -869,12 +950,19 @@ export default function BeneficiarioPage() {
                           </span>
                         </div>
 
-                        <div className="font-bold text-sm text-on-surface leading-tight">
-                          {sp.specialty_name}
+                        <div className="font-bold text-sm text-on-surface leading-tight mt-1 flex items-start justify-between gap-1">
+                          <span>{sp.specialty_name}</span>
+                          <span className={`material-symbols-outlined text-[18px] shrink-0 ${isSelected ? 'text-primary' : 'text-on-surface-variant/40'}`}>
+                            {isSelected ? 'check_box' : 'check_box_outline_blank'}
+                          </span>
                         </div>
 
                         <div className="text-[11px] text-on-surface-variant mt-1">
                           {sp.medico_nombre ? `Dr. ${sp.medico_nombre}` : 'Médico General de Guardia'}
+                        </div>
+
+                        <div className="mt-2 text-[11px] font-mono font-bold text-secondary">
+                          Turno proyectado: <strong className="text-primary">#{projectedCode}</strong>
                         </div>
                       </div>
 
@@ -915,46 +1003,73 @@ export default function BeneficiarioPage() {
           {/* Card: Generación de Ticket */}
           <div className="bg-surface p-6 shadow-xs border border-surface-container-high">
             <div className="text-xs uppercase tracking-widest text-primary font-bold font-mono mb-1">
-              Asignación Inmediata de Turno
+              Asignación Inmediata de Turnos
             </div>
             <h3 className="text-base font-semibold text-on-surface mb-4">
-              Ticket de Especialidad Médica
+              {projectedTickets.length > 1
+                ? `Tickets de Atención (${projectedTickets.length} Especialidades)`
+                : 'Ticket de Especialidad Médica'}
             </h3>
 
             <div className="bg-surface-container p-4 border border-surface-container-high text-center mb-5">
               <div className="text-[11px] uppercase tracking-wider font-semibold text-secondary">
-                {lastAssignedTicket ? 'Último Turno Asignado' : 'Código de Turno'}
+                {lastAssignedTicket ? 'Último(s) Turno(s) Asignado(s)' : 'Código(s) de Turno'}
               </div>
-              <div className="text-4xl font-mono font-black my-1 tracking-wider">
-                {lastAssignedTicket ? (
-                  <span className="text-primary">#{lastAssignedTicket}</span>
-                ) : projectedTicketCode ? (
-                  <span className="text-primary">#{projectedTicketCode}</span>
-                ) : (
-                  <span className="text-on-surface-variant/40 tracking-widest">----</span>
-                )}
-              </div>
-              <div className="text-xs text-on-surface font-bold uppercase mt-1">
-                {lastAssignedTicket && assignedTicketInfo
-                  ? assignedTicketInfo.especialidad
-                  : currentSpecialty
-                  ? currentSpecialty.specialty_name
-                  : 'Sin Especialidad Seleccionada'}
-              </div>
-              <div className="text-[11px] text-on-surface-variant">
-                {lastAssignedTicket && assignedTicketInfo
-                  ? `${assignedTicketInfo.paciente} • DNI: ${assignedTicketInfo.dni}`
-                  : currentSpecialty
-                  ? `${currentSpecialty.consultorio || 'Consultorio 01'} • ${currentSpecialty.medico_nombre ? `Dr. ${currentSpecialty.medico_nombre}` : 'Médico de Turno'}`
-                  : 'El código se creará automáticamente al registrar al paciente'}
-              </div>
-              {currentSpecialty ? (
-                <div className="mt-2 text-[11px] font-mono px-2 py-0.5 inline-block bg-surface border border-surface-container-high text-secondary">
-                  Cupos Libres: <strong className="text-primary">{currentSpecialty.cupo_disponible ?? 30}</strong> de {currentSpecialty.cupo_maximo ?? 30}
+
+              {lastAssignedTicket ? (
+                <div className="my-2">
+                  <div className="text-2xl font-mono font-black text-primary tracking-wider break-words">
+                    {lastAssignedTicket}
+                  </div>
+                  <div className="text-xs text-on-surface font-bold uppercase mt-1">
+                    {assignedTickets.map((t) => t.especialidad).filter(Boolean).join(' • ') || 'Atenciones Registradas'}
+                  </div>
+                </div>
+              ) : projectedTickets.length === 0 ? (
+                <div className="my-3">
+                  <div className="text-4xl font-mono font-black text-on-surface-variant/40 tracking-widest">
+                    ----
+                  </div>
+                  <div className="text-xs text-on-surface-variant font-bold uppercase mt-1">
+                    Sin Especialidad Seleccionada
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant mt-1">
+                    Seleccione una o más especialidades para generar los turnos
+                  </div>
+                </div>
+              ) : projectedTickets.length === 1 ? (
+                <div className="my-2">
+                  <div className="text-4xl font-mono font-black text-primary tracking-wider my-1">
+                    #{projectedTickets[0].ticketCode}
+                  </div>
+                  <div className="text-xs text-on-surface font-bold uppercase mt-1">
+                    {projectedTickets[0].specialty_name}
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant">
+                    {projectedTickets[0].consultorio} • {projectedTickets[0].medico_nombre ? `Dr. ${projectedTickets[0].medico_nombre}` : 'Médico Asignado'}
+                  </div>
+                  <div className="mt-2 text-[11px] font-mono px-2 py-0.5 inline-block bg-surface border border-surface-container-high text-secondary">
+                    Cupos Libres: <strong className="text-primary">{projectedTickets[0].cupo_disponible}</strong> de {projectedTickets[0].cupo_maximo}
+                  </div>
                 </div>
               ) : (
-                <div className="mt-2 text-[10.5px] font-mono px-2 py-0.5 inline-block bg-surface border border-dashed border-surface-container-high text-on-surface-variant">
-                  Mesa en blanco • Ingrese DNI y especialidad
+                <div className="my-2 space-y-2">
+                  <div className="flex flex-wrap gap-1.5 justify-center">
+                    {projectedTickets.map((pt) => (
+                      <span
+                        key={pt.specialty_code}
+                        className="px-2.5 py-1 text-base font-mono font-black text-primary bg-surface border-2 border-primary tracking-wider"
+                      >
+                        #{pt.ticketCode}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="text-xs text-on-surface font-bold uppercase">
+                    {projectedTickets.map((pt) => pt.specialty_name).join(' • ')}
+                  </div>
+                  <div className="text-[11px] text-primary font-bold">
+                    Se generarán {projectedTickets.length} tickets individuales y se imprimirán en una sola pasada.
+                  </div>
                 </div>
               )}
             </div>
@@ -962,14 +1077,26 @@ export default function BeneficiarioPage() {
             <div className="space-y-3">
               <button
                 type="button"
-                disabled={submitting || (currentSpecialty ? (currentSpecialty.cupo_disponible ?? 1) <= 0 : false)}
+                disabled={
+                  submitting ||
+                  selectedSpecialtyCodes.length === 0 ||
+                  selectedSpecialties.some((s) => (s.cupo_disponible ?? (s.cupo_maximo - (s.cupo_ocupado ?? 0))) <= 0)
+                }
                 onClick={handleSubmit}
                 className="w-full bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-bold py-3.5 px-4 text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors shadow-xs rounded-none cursor-pointer disabled:opacity-50"
               >
                 <span className="material-symbols-outlined text-lg">
                   {submitting ? 'sync' : 'print'}
                 </span>
-                <span>{submitting ? 'Guardando en BD...' : 'Grabar e Imprimir Ticket de Atención'}</span>
+                <span>
+                  {submitting
+                    ? 'Guardando en BD...'
+                    : selectedSpecialtyCodes.length === 0
+                    ? 'Seleccione Especialidad(es)'
+                    : selectedSpecialtyCodes.length === 1
+                    ? 'Grabar e Imprimir Ticket de Atención'
+                    : `Grabar e Imprimir los ${selectedSpecialtyCodes.length} Tickets Juntos`}
+                </span>
               </button>
 
               <div className="p-3 bg-surface-container-low text-[11px] text-on-surface-variant text-center border border-surface-container-high leading-relaxed">
@@ -977,12 +1104,17 @@ export default function BeneficiarioPage() {
                   <span className="material-symbols-outlined text-[15px]">print</span>
                   <span>Impresión Térmica en Admisión Habilitada</span>
                 </div>
-                {projectedTicketCode ? (
-                  <>Turno proyectado: <strong className="text-primary font-mono">{projectedTicketCode}</strong>. </>
+                {projectedTickets.length > 0 ? (
+                  <>
+                    Turno(s) proyectado(s):{' '}
+                    <strong className="text-primary font-mono">
+                      {projectedTickets.map((p) => '#' + p.ticketCode).join(', ')}
+                    </strong>
+                    . Al registrar, se grabarán y saldrán todos los tickets juntos en el rollo de papel para entregárselos al paciente.
+                  </>
                 ) : (
-                  <>Complete los datos del paciente y elija la especialidad requerida. </>
+                  <>Complete los datos del paciente y elija las especialidades requeridas.</>
                 )}
-                Al registrar, se grabarán los datos y se imprimirá automáticamente el comprobante de turno clínico.
               </div>
             </div>
           </div>
@@ -993,12 +1125,12 @@ export default function BeneficiarioPage() {
               <h3 className="text-sm font-semibold text-on-surface uppercase tracking-wider">
                 Registrados Recientes ({atencionesList.length})
               </h3>
-              <span className="text-[11px] font-mono text-tertiary font-bold">En cola Triaje</span>
+              <span className="text-[11px] font-mono text-tertiary font-bold">Historial de Turnos</span>
             </div>
 
             <div className="space-y-2 divide-y divide-surface-container-high max-h-[350px] overflow-y-auto">
               {atencionesList.length > 0 ? (
-                atencionesList.slice(0, 10).map((atn) => {
+                atencionesList.slice(0, 15).map((atn) => {
                   const ape = atn.apellidos || atn.beneficiario?.apellidos || 'PACIENTE'
                   const nom = atn.nombres || atn.beneficiario?.nombres || ''
                   const doc = atn.dni || atn.beneficiario?.dni || '--------'
@@ -1021,7 +1153,7 @@ export default function BeneficiarioPage() {
                         <button
                           type="button"
                           onClick={() => {
-                            setAssignedTicketInfo({
+                            const singleTicket: TicketInfo = {
                               ticket: tkt,
                               paciente: `${ape}, ${nom}`,
                               dni: doc,
@@ -1030,11 +1162,13 @@ export default function BeneficiarioPage() {
                               especialidad: esp,
                               consultorio: atn.consultorio || 'Consultorio 01',
                               medico: atn.medico_asignado_nombre || 'Médico Asignado',
-                            })
+                            }
+                            setAssignedTickets([singleTicket])
+                            setAssignedTicketInfo(singleTicket)
                             setTicketModalOpen(true)
                           }}
                           className="p-1 hover:bg-surface-container border border-surface-container-high text-primary cursor-pointer"
-                          title="Reimprimir ticket de este paciente"
+                          title="Reimprimir ticket individual de este paciente"
                         >
                           <span className="material-symbols-outlined text-[16px]">print</span>
                         </button>
@@ -1044,7 +1178,7 @@ export default function BeneficiarioPage() {
                 })
               ) : (
                 <div className="text-xs text-on-surface-variant text-center py-4">
-                  No hay pacientes en cola de triaje aún.
+                  No hay pacientes registrados aún.
                 </div>
               )}
             </div>
@@ -1052,17 +1186,20 @@ export default function BeneficiarioPage() {
         </div>
       </div>
 
-      {/* Modal de Impresión Térmica Inmediata del Ticket Asignado */}
+      {/* Modal de Impresión Térmica Inmediata del / de los Ticket(s) Asignado(s) */}
       <TicketModal
         isOpen={ticketModalOpen}
         onClose={() => {
           setTicketModalOpen(false)
+          setAssignedTickets([])
           setAssignedTicketInfo(null)
         }}
+        tickets={assignedTickets}
         info={assignedTicketInfo}
         autoPrint={true}
         onNext={() => {
           setTicketModalOpen(false)
+          setAssignedTickets([])
           setAssignedTicketInfo(null)
         }}
         nextLabel="Aceptar y Registrar Siguiente Paciente"

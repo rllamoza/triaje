@@ -124,9 +124,12 @@ try {
         atenciones_cola_live((int)$m[1]);
     }
 
-    // RENIEC & Duplicados
+    // RENIEC & Duplicados & Historial Comunal
     if ($method === 'GET' && preg_match('#^reniec/(\w+)$#', $path, $m)) {
         beneficiarios_reniec($m[1]);
+    }
+    if ($method === 'GET' && preg_match('#^beneficiarios/historial/(\w+)$#', $path, $m)) {
+        beneficiarios_historial_comunal($m[1]);
     }
     if ($method === 'GET' && preg_match('#^beneficiarios/check-duplicate/(\w+)$#', $path, $m)) {
         beneficiarios_check_duplicate($m[1]);

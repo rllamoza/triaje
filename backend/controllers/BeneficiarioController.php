@@ -14,6 +14,42 @@ function beneficiarios_reniec(string $dni): void {
     $local = $stmt->fetch();
 
     if ($local) {
+        $stHist = db()->prepare("
+            SELECT a.id, a.campaign_id,
+                   COALESCE(c.name, 'Campaña General') AS campaign_name,
+                   COALESCE(c.code, 'CAMP') AS campaign_code,
+                   COALESCE(a.specialty_name, 'Medicina General') AS specialty_name,
+                   a.specialty_code,
+                   a.ticket_codigo,
+                   DATE(a.created_at) AS fecha,
+                   a.created_at,
+                   a.status
+            FROM atenciones a
+            LEFT JOIN campaigns c ON c.id = a.campaign_id
+            WHERE a.beneficiario_id = :bid
+            ORDER BY a.created_at DESC
+        ");
+        $stHist->execute([':bid' => $local['id']]);
+        $atenciones = $stHist->fetchAll();
+
+        $campanas = [];
+        foreach ($atenciones as $at) {
+            $cName = $at['campaign_name'];
+            if (!isset($campanas[$cName])) {
+                $campanas[$cName] = [
+                    'campaign_id'    => $at['campaign_id'],
+                    'campaign_name'  => $cName,
+                    'campaign_code'  => $at['campaign_code'],
+                    'fecha_ultima'   => $at['fecha'],
+                    'especialidades' => []
+                ];
+            }
+            $spec = $at['specialty_name'];
+            if ($spec && !in_array($spec, $campanas[$cName]['especialidades'])) {
+                $campanas[$cName]['especialidades'][] = $spec;
+            }
+        }
+
         json_ok([
             'found'            => true,
             'from_cache'       => true,
@@ -29,6 +65,9 @@ function beneficiarios_reniec(string $dni): void {
             'comunidad'        => $local['comunidad'],
             'telefono'         => $local['celular'],
             'direccion'        => null,
+            'has_history'      => !empty($atenciones),
+            'historial_campanas'   => array_values($campanas),
+            'historial_atenciones' => $atenciones,
         ]);
     }
 
@@ -64,6 +103,101 @@ function beneficiarios_reniec(string $dni): void {
     }
 
     json_error('DNI no encontrado en RENIEC ni en Padrón Local', 404, ['from_cache' => false]);
+}
+
+// ── Control de Historial Comunal: busca en qué campañas y especialidades se atendió el paciente
+function beneficiarios_historial_comunal(string $dni): void {
+    $dni = trim($dni);
+    if (!preg_match('/^\d{8}$/', $dni)) {
+        json_ok([
+            'found'       => false,
+            'has_history' => false,
+            'mensaje'     => 'DNI no válido',
+            'resumen'     => 'Sin atenciones previas',
+            'campanas'    => [],
+            'atenciones'  => []
+        ]);
+    }
+
+    $stBen = db()->prepare("SELECT id, dni, nombres, apellidos, comunidad FROM beneficiarios WHERE dni = :dni LIMIT 1");
+    $stBen->execute([':dni' => $dni]);
+    $ben = $stBen->fetch();
+
+    if (!$ben) {
+        json_ok([
+            'found'       => false,
+            'has_history' => false,
+            'mensaje'     => 'Paciente no registrado en padrón comunal',
+            'resumen'     => 'Sin atenciones previas',
+            'campanas'    => [],
+            'atenciones'  => []
+        ]);
+    }
+
+    $stAt = db()->prepare("
+        SELECT a.id, a.campaign_id,
+               COALESCE(c.name, 'Campaña General') AS campaign_name,
+               COALESCE(c.code, 'CAMP') AS campaign_code,
+               COALESCE(a.specialty_name, 'Medicina General') AS specialty_name,
+               a.specialty_code,
+               a.ticket_codigo,
+               DATE(a.created_at) AS fecha,
+               a.created_at,
+               a.status
+        FROM atenciones a
+        LEFT JOIN campaigns c ON c.id = a.campaign_id
+        WHERE a.beneficiario_id = :bid
+        ORDER BY a.created_at DESC
+    ");
+    $stAt->execute([':bid' => $ben['id']]);
+    $atenciones = $stAt->fetchAll();
+
+    if (empty($atenciones)) {
+        json_ok([
+            'found'        => true,
+            'beneficiario' => $ben,
+            'has_history'  => false,
+            'mensaje'      => 'Beneficiario registrado pero sin atenciones previas en campañas',
+            'resumen'      => 'Sin atenciones previas',
+            'campanas'     => [],
+            'atenciones'   => []
+        ]);
+    }
+
+    $campanas = [];
+    foreach ($atenciones as $at) {
+        $cName = $at['campaign_name'];
+        if (!isset($campanas[$cName])) {
+            $campanas[$cName] = [
+                'campaign_id'    => $at['campaign_id'],
+                'campaign_name'  => $cName,
+                'campaign_code'  => $at['campaign_code'],
+                'fecha_ultima'   => $at['fecha'],
+                'especialidades' => []
+            ];
+        }
+        $spec = $at['specialty_name'];
+        if ($spec && !in_array($spec, $campanas[$cName]['especialidades'])) {
+            $campanas[$cName]['especialidades'][] = $spec;
+        }
+    }
+
+    $resumenPartes = [];
+    foreach ($campanas as $c) {
+        $specs = implode(', ', $c['especialidades']);
+        $resumenPartes[] = $c['campaign_name'] . ' (' . $specs . ')';
+    }
+    $resumen = implode(' | ', $resumenPartes);
+
+    json_ok([
+        'found'            => true,
+        'beneficiario'     => $ben,
+        'has_history'      => true,
+        'total_atenciones' => count($atenciones),
+        'resumen'          => $resumen,
+        'campanas'         => array_values($campanas),
+        'atenciones'       => $atenciones
+    ]);
 }
 
 function beneficiarios_check_duplicate(string $dni): void {

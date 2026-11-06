@@ -20,7 +20,7 @@ export default function FarmaciaPage() {
 
   // Queries
   const { data: medicamentos = [], isLoading: loadingMeds, refetch: refetchMeds } = useFarmaciaMedicamentos(campaignId)
-  const { data: atencionesCola = [], isLoading: loadingCola, refetch: refetchCola } = useFarmaciaAtenciones(campaignId)
+  const { data: atencionesCola = [], refetch: refetchCola } = useFarmaciaAtenciones(campaignId)
   const { data: medicosList = [] } = useMedicos()
   const dispensarMutation = useDispensarMedicamento()
 
@@ -34,8 +34,6 @@ export default function FarmaciaPage() {
   const [pacienteNombre, setPacienteNombre] = useState('')
   const [pacienteDni, setPacienteDni] = useState('')
   const [pacienteComunidad, setPacienteComunidad] = useState('')
-  const [pacienteEdad, setPacienteEdad] = useState<string | number>('')
-  const [pacienteSexo, setPacienteSexo] = useState('')
   const [selectedMedicoId, setSelectedMedicoId] = useState<string>('')
   const [customMedicoNombre, setCustomMedicoNombre] = useState('')
 
@@ -116,8 +114,6 @@ export default function FarmaciaPage() {
     setPacienteNombre(`${at.apellidos}, ${at.nombres}`)
     setPacienteDni(at.dni || '')
     setPacienteComunidad(at.comunidad || '')
-    setPacienteEdad(at.edad_calculada || '')
-    setPacienteSexo(at.sexo || '')
 
     // Médico
     if (at.medico_id) {
@@ -255,7 +251,6 @@ export default function FarmaciaPage() {
         especialidad: 'FARMACIA & DISPENSACIÓN',
         consultorio: 'Farmacia de Campaña',
         medico: effectiveMedicoName,
-        motivo: canastaItems.map((c) => `${c.nombre} ${c.concentracion || ''} (x${c.cantidad})`).join(', '),
       }
 
       setSuccessToast(`Dispensación #${res.dispensacion_id} completada exitosamente. Stock descontado en la BD.`)
@@ -271,8 +266,6 @@ export default function FarmaciaPage() {
       setPacienteNombre('')
       setPacienteDni('')
       setPacienteComunidad('')
-      setPacienteEdad('')
-      setPacienteSexo('')
       setFirmaBase64(null)
       setFotoBase64(null)
       setObservaciones('')
@@ -382,8 +375,6 @@ export default function FarmaciaPage() {
                   setPacienteNombre('')
                   setPacienteDni('')
                   setPacienteComunidad('')
-                  setPacienteEdad('')
-                  setPacienteSexo('')
                   setCanastaItems([])
                 }}
                 className="text-[11px] text-error hover:underline cursor-pointer"
@@ -394,7 +385,7 @@ export default function FarmaciaPage() {
           </div>
 
           {/* Cola Rápida de Farmacia (si hay pacientes con recetas pendientes) */}
-          {(atencionesCola.length > 0 || loadingCola) && (
+          {atencionesCola.length > 0 && (
             <div className="mb-3">
               <label className="block text-[11px] font-semibold text-on-surface-variant uppercase mb-1">
                 Pacientes en Espera / Recetas Emitidas ({atencionesCola.length})
@@ -405,11 +396,10 @@ export default function FarmaciaPage() {
                     key={at.atencion_id}
                     type="button"
                     onClick={() => handleSelectAtencionCola(at)}
-                    className={`px-3 py-1.5 border text-left shrink-0 cursor-pointer transition-colors ${
-                      selectedAtencionId === at.atencion_id
-                        ? 'bg-primary text-on-primary border-primary'
-                        : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-surface-container-high'
-                    }`}
+                    className={`px-3 py-1.5 border text-left shrink-0 cursor-pointer transition-colors ${selectedAtencionId === at.atencion_id
+                      ? 'bg-primary text-on-primary border-primary'
+                      : 'bg-surface-container-low hover:bg-surface-container text-on-surface border-surface-container-high'
+                      }`}
                   >
                     <div className="text-xs font-bold truncate max-w-[140px]">
                       {at.apellidos}, {at.nombres}
@@ -440,7 +430,7 @@ export default function FarmaciaPage() {
             </div>
             <div className="sm:col-span-4">
               <label className="block text-[11px] font-bold uppercase text-on-surface-variant mb-1">
-                DNI / Documento {pacienteEdad ? `• ${pacienteEdad} años` : ''} {pacienteSexo ? `(${pacienteSexo})` : ''}
+                DNI / Documento
               </label>
               <input
                 type="text"
@@ -551,11 +541,10 @@ export default function FarmaciaPage() {
             <button
               type="button"
               onClick={() => setSelectedVia('todas')}
-              className={`px-2 py-0.5 text-[11px] font-mono border cursor-pointer ${
-                selectedVia === 'todas'
-                  ? 'bg-primary text-on-primary border-primary'
-                  : 'bg-surface-container hover:bg-surface-container-high text-on-surface border-surface-container-highest'
-              }`}
+              className={`px-2 py-0.5 text-[11px] font-mono border cursor-pointer ${selectedVia === 'todas'
+                ? 'bg-primary text-on-primary border-primary'
+                : 'bg-surface-container hover:bg-surface-container-high text-on-surface border-surface-container-highest'
+                }`}
             >
               Todas
             </button>
@@ -564,11 +553,10 @@ export default function FarmaciaPage() {
                 key={v}
                 type="button"
                 onClick={() => setSelectedVia(v)}
-                className={`px-2 py-0.5 text-[11px] font-mono border cursor-pointer uppercase ${
-                  selectedVia === v
-                    ? 'bg-primary text-on-primary border-primary'
-                    : 'bg-surface-container hover:bg-surface-container-high text-on-surface border-surface-container-highest'
-                }`}
+                className={`px-2 py-0.5 text-[11px] font-mono border cursor-pointer uppercase ${selectedVia === v
+                  ? 'bg-primary text-on-primary border-primary'
+                  : 'bg-surface-container hover:bg-surface-container-high text-on-surface border-surface-container-highest'
+                  }`}
               >
                 {v}
               </button>
@@ -623,13 +611,12 @@ export default function FarmaciaPage() {
                       <tr
                         key={m.id}
                         onClick={() => handleRowClick(m)}
-                        className={`transition-colors cursor-pointer group ${
-                          inCanasta
-                            ? 'bg-primary-container/20 hover:bg-primary-container/30'
-                            : isOutOfStock
+                        className={`transition-colors cursor-pointer group ${inCanasta
+                          ? 'bg-primary-container/20 hover:bg-primary-container/30'
+                          : isOutOfStock
                             ? 'bg-surface-container-low opacity-60 hover:bg-surface-container'
                             : 'hover:bg-primary/5'
-                        }`}
+                          }`}
                       >
                         <td className="py-2.5 px-3 font-mono text-[11px] text-on-surface-variant whitespace-nowrap">
                           {m.codigo || '—'}
@@ -655,8 +642,8 @@ export default function FarmaciaPage() {
                               isOutOfStock
                                 ? 'text-error font-extrabold'
                                 : isLowStock
-                                ? 'text-amber-500 font-extrabold'
-                                : 'text-on-surface'
+                                  ? 'text-amber-500 font-extrabold'
+                                  : 'text-on-surface'
                             }
                           >
                             {m.stock_actual ?? 0}
@@ -882,4 +869,3 @@ export default function FarmaciaPage() {
     </div>
   )
 }
-

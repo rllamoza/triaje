@@ -115,3 +115,4 @@ PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
 SET @col_exists = (SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = @dbname AND TABLE_NAME = 'atenciones' AND COLUMN_NAME = 'consultorio');
 SET @s = IF(@col_exists = 0, 'ALTER TABLE `atenciones` ADD COLUMN `consultorio` VARCHAR(100) DEFAULT NULL', 'SELECT 1');
 PREPARE stmt FROM @s; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+

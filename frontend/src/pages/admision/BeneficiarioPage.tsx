@@ -8,7 +8,9 @@ import {
   useAtenciones,
   useCampaigns,
   useCampaignSpecialties,
+  useHistorialComunalByDni,
 } from '../../api/hooks'
+import { useAuthStore } from '../../store/authStore'
 import { PATIENT_DATABASE } from '../../services/patientRegistry'
 
 export default function BeneficiarioPage() {
@@ -56,11 +58,23 @@ export default function BeneficiarioPage() {
     ? atencionesData
     : (Array.isArray(atencionesData?.data) ? atencionesData.data : [])
 
-  // Campaña activa y catálogo de especialidades con cupos en tiempo real
-  const { data: campaignsList = [] } = useCampaigns('active')
-  const activeCampaign = campaignsList[0]
-  const currentCampaignId = activeCampaign ? activeCampaign.id : 1
+  // Campañas disponibles y control de selección por rol
+  const currentUser = useAuthStore((s) => s.user)
+  const isAdmin = currentUser?.role === 'admin'
+  const { data: allCampaigns = [] } = useCampaigns()
+  const activeCampaign = allCampaigns.find((c) => c.status === 'active') || allCampaigns[0]
+  const [adminCampaignId, setAdminCampaignId] = useState<number | null>(null)
+
+  // Para usuarios regulares SIEMPRE es la campaña activa; solo admin puede seleccionar otra
+  const currentCampaignId = isAdmin
+    ? (adminCampaignId ?? activeCampaign?.id ?? 1)
+    : (activeCampaign?.id ?? 1)
+  const currentCampaign = allCampaigns.find((c) => c.id === currentCampaignId) || activeCampaign
+
   const { data: specialtiesList = [] } = useCampaignSpecialties(currentCampaignId)
+
+  // Consulta reactiva de Historial Comunal en BD (campañas y especialidades previas)
+  const { data: historialData, isLoading: loadingHistorial } = useHistorialComunalByDni(dni)
 
   // Especialidades seleccionadas y cálculo de turnos proyectados
   const selectedSpecialties = specialtiesList.filter((s) =>
@@ -131,8 +145,11 @@ export default function BeneficiarioPage() {
       setPatientExists(isLocal)
 
       if (isLocal) {
+        const histResumen = res.historial_campanas && res.historial_campanas.length > 0
+          ? ` Historial previo en base de datos: ${res.historial_campanas.map((c: any) => `${c.campaign_name} (${c.especialidades.join(', ')})`).join(' | ')}.`
+          : ' Sin atenciones previas en campañas.'
         setMessage({
-          text: `✓ Paciente preexistente en padrón: ${nom} ${ape}. Todos sus datos fueron autollenados. Por favor complete los datos faltantes como la ESPECIALIDAD requerida.`,
+          text: `✓ Paciente preexistente en padrón: ${nom} ${ape}.${histResumen} Por favor seleccione la ESPECIALIDAD requerida para esta jornada.`,
           type: 'success',
         })
       } else {
@@ -313,14 +330,48 @@ export default function BeneficiarioPage() {
       {/* Header Contextual Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 mb-6 border-b border-surface-container-high">
         <div>
-          <div className="flex items-center gap-2 mb-1.5">
+          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <span className="px-2 py-0.5 text-[11px] font-semibold tracking-wider uppercase bg-primary-container text-on-primary-fixed">
               ADM-01
             </span>
-            <span className="px-2 py-0.5 text-[11px] font-medium bg-surface-container text-on-surface-variant flex items-center gap-1.5 border border-surface-container-high">
-              <span className="w-1.5 h-1.5 rounded-full bg-tertiary" />
-              Campaña Activa: Cusco - Valle Sagrado 2025
-            </span>
+
+            {/* Nombre de la Campaña Actual sobre el título */}
+            {isAdmin ? (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-surface-container border border-primary/40 rounded-xs">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-[11px] font-bold text-on-surface uppercase">Campaña:</span>
+                <select
+                  value={currentCampaignId}
+                  onChange={(e) => setAdminCampaignId(Number(e.target.value))}
+                  className="bg-surface text-xs font-bold text-primary border border-surface-container-highest px-2 py-0.5 focus:outline-none focus:border-primary cursor-pointer"
+                  title="Cambiar campaña de destino (Solo administradores)"
+                >
+                  {allCampaigns.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name} {c.status === 'active' ? '(Activa)' : ''}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-[9px] font-mono font-bold bg-primary text-on-primary px-1 rounded-xs uppercase">
+                  Admin
+                </span>
+              </div>
+            ) : (
+              <span className="px-2.5 py-1 text-xs font-bold bg-surface-container text-on-surface flex items-center gap-2 border border-surface-container-high select-none">
+                <span className="w-2 h-2 rounded-full bg-tertiary" />
+                <span>
+                  Campaña Activa:{' '}
+                  <strong className="text-primary font-black uppercase">
+                    {activeCampaign?.name || currentCampaign?.name || 'Campaña Activa'}
+                  </strong>
+                </span>
+                {(activeCampaign?.location_name || currentCampaign?.location_name) && (
+                  <span className="text-[11px] text-on-surface-variant font-normal">
+                    • {activeCampaign?.location_name || currentCampaign?.location_name}
+                  </span>
+                )}
+              </span>
+            )}
           </div>
           <h1 className="text-2xl lg:text-3xl font-light tracking-tight text-on-surface">
             Registro de Beneficiario{' '}
@@ -380,18 +431,111 @@ export default function BeneficiarioPage() {
           </div>
         </div>
 
-        <div className="flex items-start bg-[#fff8e1] p-3 border border-[#ffe082] shadow-xs">
-          <div className="mr-3 text-[#b78103]">
-            <span className="material-symbols-outlined text-[20px]">notification_important</span>
+        {/* Card 2: Control de Historial Comunal */}
+        <div
+          className={`flex items-start p-3 border shadow-xs transition-all ${
+            dni.trim().length === 8 && historialData?.has_history
+              ? 'bg-[#fff8e1] border-[#ffe082]'
+              : dni.trim().length === 8 && historialData && !historialData.has_history
+              ? 'bg-surface-container-low border-surface-container-high'
+              : 'bg-[#fff8e1] border-[#ffe082]'
+          }`}
+        >
+          <div
+            className={`mr-3 ${
+              dni.trim().length === 8 && historialData?.has_history
+                ? 'text-[#b78103]'
+                : dni.trim().length === 8 && historialData && !historialData.has_history
+                ? 'text-on-surface-variant'
+                : 'text-[#b78103]'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              {dni.trim().length === 8 && historialData?.has_history
+                ? 'notification_important'
+                : dni.trim().length === 8 && historialData && !historialData.has_history
+                ? 'history_toggle_off'
+                : 'notification_important'}
+            </span>
           </div>
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between">
-              <div className="text-xs font-semibold text-[#5c4100]">Control de Historial Comunal</div>
-              <span className="text-[10px] font-mono text-[#5c4100] font-bold">EXP-2024-CUS</span>
+              <div
+                className={`text-xs font-semibold ${
+                  dni.trim().length === 8 && historialData?.has_history
+                    ? 'text-[#5c4100]'
+                    : dni.trim().length === 8 && historialData && !historialData.has_history
+                    ? 'text-on-surface'
+                    : 'text-[#5c4100]'
+                }`}
+              >
+                Control de Historial Comunal
+              </div>
+
+              {loadingHistorial ? (
+                <span className="text-[10px] font-mono text-primary font-bold animate-pulse flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs animate-spin">progress_activity</span>
+                  Buscando en BD...
+                </span>
+              ) : dni.trim().length === 8 && historialData ? (
+                historialData.has_history ? (
+                  <span className="text-[10px] font-mono text-[#5c4100] font-bold bg-[#ffe082] px-1.5 py-0.5">
+                    {historialData.campanas[0]?.campaign_code || 'EXP-PREVIO'}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-on-surface-variant font-bold bg-surface-container-highest px-1.5 py-0.5">
+                    SIN ATENCIONES PREVIAS
+                  </span>
+                )
+              ) : (
+                <span className="text-[10px] font-mono text-[#5c4100] font-bold">
+                  EXP-HISTORIAL
+                </span>
+              )}
             </div>
-            <div className="text-xs text-[#5c4100] mt-0.5">
-              Al ingresar el DNI el sistema verifica si el paciente ya fue atendido en jornadas anteriores.
-            </div>
+
+            {loadingHistorial ? (
+              <div className="text-xs text-on-surface-variant mt-0.5 flex items-center gap-1">
+                <span>Buscando campañas y especialidades en la base de datos...</span>
+              </div>
+            ) : dni.trim().length === 8 && historialData ? (
+              historialData.has_history && historialData.campanas.length > 0 ? (
+                <div className="mt-1 space-y-1">
+                  <div className="text-[11px] font-bold text-[#856404] uppercase">
+                    Atenciones registradas en esta base de datos:
+                  </div>
+                  {historialData.campanas.map((c) => (
+                    <div
+                      key={c.campaign_name}
+                      className="text-xs text-[#5c4100] bg-[#fff3cd] border border-[#ffeeba] p-1.5 rounded-xs"
+                    >
+                      <div className="font-bold flex items-center gap-1 text-primary">
+                        <span className="material-symbols-outlined text-xs">campaign</span>
+                        <span>Campaña: {c.campaign_name}</span>
+                        {c.fecha_ultima && (
+                          <span className="text-[10px] text-on-surface-variant font-mono">
+                            ({c.fecha_ultima})
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-[#533f03] mt-0.5 pl-4">
+                        <span className="font-semibold text-secondary">Especialidades:</span>{' '}
+                        <strong className="text-on-surface">{c.especialidades.join(', ')}</strong>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-on-surface-variant mt-0.5 font-medium">
+                  <strong className="text-on-surface">Sin atenciones previas.</strong> El paciente no registra atenciones médicas en ninguna campaña en esta base de datos.
+                </div>
+              )
+            ) : (
+              <div className="text-xs text-[#5c4100] mt-0.5">
+                Al ingresar el DNI el sistema busca en la base de datos qué campañas y especialidades se atendió el paciente o si no tiene atenciones previas.
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -310,6 +310,34 @@ export const useQueue = (campaignId: number) => {
 }
 
 /* ── Beneficiarios ───────────────────────────────────────────── */
+export interface HistorialCampanaItem {
+  campaign_id: number
+  campaign_name: string
+  campaign_code: string
+  fecha_ultima?: string
+  especialidades: string[]
+}
+
+export interface BeneficiarioHistorialResponse {
+  found: boolean
+  has_history: boolean
+  mensaje: string
+  resumen: string
+  total_atenciones?: number
+  campanas: HistorialCampanaItem[]
+  atenciones: any[]
+}
+
+export const useHistorialComunalByDni = (dni?: string) => {
+  const clean = (dni || '').trim()
+  return useQuery<BeneficiarioHistorialResponse>({
+    queryKey: ['beneficiario-historial-comunal', clean],
+    queryFn: () => api.get(`/beneficiarios/historial/${clean}`).then((r) => r.data),
+    enabled: clean.length === 8 && /^\d{8}$/.test(clean),
+    staleTime: 5000,
+  })
+}
+
 export const useReniecLookup = () =>
   useMutation({
     mutationFn: (dni: string) => api.get(`/reniec/${dni}`).then((r) => r.data),

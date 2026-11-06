@@ -1,3 +1,50 @@
+export interface MedicamentoColumnConfig {
+  key: string
+  label: string
+  visible: boolean
+  order: number
+}
+
+export const DEFAULT_MEDICAMENTOS_COLUMNS: MedicamentoColumnConfig[] = [
+  { key: 'clasificacion', label: 'Clasificación', visible: true, order: 1 },
+  { key: 'codigo', label: 'Código', visible: true, order: 2 },
+  { key: 'medicamento', label: 'Medicamento', visible: true, order: 3 },
+  { key: 'concentracion', label: 'Concentración', visible: true, order: 4 },
+  { key: 'forma_farmaceutica', label: 'Forma', visible: true, order: 5 },
+  { key: 'via_administracion', label: 'Vía', visible: true, order: 6 },
+  { key: 'stock_actual', label: 'Stock', visible: true, order: 7 },
+  { key: 'stock_minimo', label: 'Mín.', visible: true, order: 8 },
+  { key: 'activo', label: 'Estado', visible: true, order: 9 },
+  { key: 'uso', label: 'Uso', visible: true, order: 10 },
+]
+
+export const DEFAULT_CLASIFICACIONES: string[] = [
+  'Antiflatulento',
+  'Antitusivo',
+  'Antibiótico',
+  'Analgésico',
+  'Antiinflamatorio',
+  'Antipirético',
+  'Antihistamínico',
+  'Antiespasmódico',
+  'Antiparasitario',
+  'Antidiarreico',
+  'Antiácido',
+  'Broncodilatador',
+  'Corticoide',
+  'Vitamínico / Suplemento',
+  'Otro',
+]
+
+export const DEFAULT_USOS: string[] = [
+  'Pediátrico',
+  'Adultos',
+  'Geriátrico / Adulto Mayor',
+  'Neonatal',
+  'Obstétrico / Gestante',
+  'Uso General',
+]
+
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -32,6 +79,11 @@ export interface RegistroFieldsConfig {
   alergias: boolean
 }
 
+export interface FarmaciaConfig {
+  imprimirCargo: boolean
+  tipoCargo: 'firma' | 'foto' | 'ambos' | 'ninguno'
+}
+
 export interface FeatureState {
   // Módulo de triaje (desactivado por defecto según requerimiento)
   triajeEnabled: boolean
@@ -43,6 +95,19 @@ export interface FeatureState {
   // Modulos adicionales configurables
   consultaEnabled: boolean
   farmaciaEnabled: boolean
+  farmaciaConfig: FarmaciaConfig
+  medicamentosColumns: MedicamentoColumnConfig[]
+  medicamentosClasificaciones: string[]
+  medicamentosUsos: string[]
+
+  // Acciones medicamentos
+  setMedicamentosColumns: (cols: MedicamentoColumnConfig[]) => void
+  toggleMedicamentoColumn: (key: string, visible: boolean) => void
+  moveMedicamentoColumn: (key: string, direction: 'up' | 'down') => void
+  addMedicamentoClasificacion: (clasif: string) => void
+  removeMedicamentoClasificacion: (clasif: string) => void
+  addMedicamentoUso: (uso: string) => void
+  removeMedicamentoUso: (uso: string) => void
 
   // Acciones
   setTriajeEnabled: (enabled: boolean) => void
@@ -51,6 +116,7 @@ export interface FeatureState {
   setSeccionAntecedentes: (enabled: boolean) => void
   setSeccionResidencia: (enabled: boolean) => void
   setModuleEnabled: (module: 'consulta' | 'farmacia', enabled: boolean) => void
+  setFarmaciaConfig: (config: Partial<FarmaciaConfig>) => void
   resetDefaults: () => void
 }
 
@@ -60,6 +126,11 @@ const defaultTriajeOptions: TriajeSubOptions = {
   oximetriaRespiracion: true,
   examenesAuxiliares: true,
   imprimirTicketTriaje: true,
+}
+
+const defaultFarmaciaConfig: FarmaciaConfig = {
+  imprimirCargo: true,
+  tipoCargo: 'firma',
 }
 
 const defaultRegistroFields: RegistroFieldsConfig = {
@@ -88,6 +159,64 @@ export const useFeatureStore = create<FeatureState>()(
       registroFields: { ...defaultRegistroFields },
       consultaEnabled: true,
       farmaciaEnabled: true,
+      farmaciaConfig: { ...defaultFarmaciaConfig },
+      medicamentosColumns: [...DEFAULT_MEDICAMENTOS_COLUMNS],
+      medicamentosClasificaciones: [...DEFAULT_CLASIFICACIONES],
+      medicamentosUsos: [...DEFAULT_USOS],
+
+      setMedicamentosColumns: (cols) => set({ medicamentosColumns: cols }),
+
+      toggleMedicamentoColumn: (key, visible) =>
+        set((state) => ({
+          medicamentosColumns: state.medicamentosColumns.map((c) =>
+            c.key === key ? { ...c, visible } : c
+          ),
+        })),
+
+      moveMedicamentoColumn: (key, direction) =>
+        set((state) => {
+          const sorted = [...state.medicamentosColumns].sort((a, b) => a.order - b.order)
+          const idx = sorted.findIndex((c) => c.key === key)
+          if (idx === -1) return state
+          const targetIdx = direction === 'up' ? idx - 1 : idx + 1
+          if (targetIdx < 0 || targetIdx >= sorted.length) return state
+
+          // Intercambiar orden
+          const temp = sorted[idx]
+          sorted[idx] = sorted[targetIdx]
+          sorted[targetIdx] = temp
+
+          const reordered = sorted.map((col, i) => ({ ...col, order: i + 1 }))
+          return { medicamentosColumns: reordered }
+        }),
+
+      addMedicamentoClasificacion: (clasif) =>
+        set((state) => {
+          const clean = clasif.trim()
+          if (!clean || state.medicamentosClasificaciones.includes(clean)) return state
+          return {
+            medicamentosClasificaciones: [...state.medicamentosClasificaciones, clean],
+          }
+        }),
+
+      removeMedicamentoClasificacion: (clasif) =>
+        set((state) => ({
+          medicamentosClasificaciones: state.medicamentosClasificaciones.filter((c) => c !== clasif),
+        })),
+
+      addMedicamentoUso: (uso) =>
+        set((state) => {
+          const clean = uso.trim()
+          if (!clean || state.medicamentosUsos.includes(clean)) return state
+          return {
+            medicamentosUsos: [...state.medicamentosUsos, clean],
+          }
+        }),
+
+      removeMedicamentoUso: (uso) =>
+        set((state) => ({
+          medicamentosUsos: state.medicamentosUsos.filter((u) => u !== uso),
+        })),
 
       setTriajeEnabled: (enabled: boolean) => set({ triajeEnabled: enabled }),
       setTriajeOption: (option, value) =>
@@ -123,6 +252,13 @@ export const useFeatureStore = create<FeatureState>()(
           ...state,
           [`${module}Enabled`]: enabled,
         })),
+      setFarmaciaConfig: (config) =>
+        set((state) => ({
+          farmaciaConfig: {
+            ...state.farmaciaConfig,
+            ...config,
+          },
+        })),
       resetDefaults: () =>
         set({
           triajeEnabled: false,
@@ -130,6 +266,10 @@ export const useFeatureStore = create<FeatureState>()(
           registroFields: { ...defaultRegistroFields },
           consultaEnabled: true,
           farmaciaEnabled: true,
+          farmaciaConfig: { ...defaultFarmaciaConfig },
+          medicamentosColumns: [...DEFAULT_MEDICAMENTOS_COLUMNS],
+          medicamentosClasificaciones: [...DEFAULT_CLASIFICACIONES],
+          medicamentosUsos: [...DEFAULT_USOS],
         }),
     }),
     {

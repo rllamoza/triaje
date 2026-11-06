@@ -249,6 +249,15 @@ export function TicketModal({
                   {info.medico || 'Médico Asignado'}
                 </span>
               </div>
+
+              {info.motivo && (
+                <div className="border-t border-dotted border-black/60 pt-1 text-left">
+                  <span className="font-black text-black text-[10px] uppercase block">ENTREGA DE FÁRMACOS:</span>
+                  <div className="text-[10px] font-bold text-black mt-0.5 leading-tight">
+                    {info.motivo}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Código QR (Ocultable por configuración de Personalización) */}

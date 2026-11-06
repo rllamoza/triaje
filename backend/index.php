@@ -33,6 +33,7 @@ require_once __DIR__ . '/controllers/TicketController.php';
 require_once __DIR__ . '/controllers/AuditController.php';
 require_once __DIR__ . '/controllers/MedicamentoController.php';
 require_once __DIR__ . '/controllers/SettingsController.php';
+require_once __DIR__ . '/controllers/FarmaciaController.php';
 
 // 3. Normalizar la ruta solicitada
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -191,8 +192,9 @@ try {
         consultas_medicamentos();
     }
 
-    // Catálogo de medicamentos de la campaña (Excel / sincronización externa) - admin
+    // Catálogo de medicamentos de la campaña (CRUD / Excel / sincronización externa) - admin
     if ($method === 'GET' && $path === 'admin/medicamentos') medicamentos_admin_index($user);
+    if ($method === 'POST' && $path === 'admin/medicamentos') medicamentos_create($user);
     if ($method === 'POST' && $path === 'admin/medicamentos/import') medicamentos_import($user);
     if ($method === 'POST' && $path === 'admin/medicamentos/copy') medicamentos_copy($user);
     if ($method === 'GET' && $path === 'admin/medicamentos/sync-config') medicamentos_sync_config_get($user);
@@ -201,6 +203,26 @@ try {
     if ($method === 'POST' && $path === 'admin/medicamentos/sync') medicamentos_sync_run($user);
     if (($method === 'PUT' || $method === 'PATCH') && preg_match('#^admin/medicamentos/(\d+)$#', $path, $m)) {
         medicamentos_update($user, (int)$m[1]);
+    }
+    if ($method === 'DELETE' && preg_match('#^admin/medicamentos/(\d+)$#', $path, $m)) {
+        medicamentos_delete($user, (int)$m[1]);
+    }
+    if ($method === 'POST' && preg_match('#^admin/medicamentos/(\d+)/stock$#', $path, $m)) {
+        medicamentos_adjust_stock($user, (int)$m[1]);
+    }
+
+    // Farmacia & Dispensación
+    if ($method === 'GET' && $path === 'farmacia/medicamentos') {
+        farmacia_medicamentos();
+    }
+    if ($method === 'GET' && $path === 'farmacia/atenciones') {
+        farmacia_atenciones();
+    }
+    if ($method === 'POST' && $path === 'farmacia/dispensar') {
+        farmacia_dispensar($user);
+    }
+    if ($method === 'GET' && $path === 'farmacia/dispensaciones') {
+        farmacia_dispensaciones();
     }
 
     // Tickets & Impresoras

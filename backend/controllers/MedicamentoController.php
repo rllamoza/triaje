@@ -20,6 +20,8 @@ function med_ensure_schema(): void {
     $pdo = db();
     $cols = $pdo->query("SHOW COLUMNS FROM medicamentos")->fetchAll(PDO::FETCH_COLUMN);
     if (!in_array('codigo', $cols))           $pdo->exec("ALTER TABLE medicamentos ADD COLUMN codigo VARCHAR(60) NULL AFTER id, ADD INDEX idx_med_codigo (codigo)");
+    if (!in_array('clasificacion', $cols))    $pdo->exec("ALTER TABLE medicamentos ADD COLUMN clasificacion VARCHAR(100) NULL AFTER codigo, ADD INDEX idx_med_clasif (clasificacion)");
+    if (!in_array('uso', $cols))              $pdo->exec("ALTER TABLE medicamentos ADD COLUMN uso VARCHAR(60) NULL AFTER activo, ADD INDEX idx_med_uso (uso)");
     if (!in_array('origen', $cols))           $pdo->exec("ALTER TABLE medicamentos ADD COLUMN origen VARCHAR(20) NOT NULL DEFAULT 'manual'");
     if (!in_array('stock_updated_at', $cols)) $pdo->exec("ALTER TABLE medicamentos ADD COLUMN stock_updated_at TIMESTAMP NULL DEFAULT NULL");
     if (!in_array('campaign_id', $cols)) {
@@ -89,14 +91,14 @@ function medicamentos_admin_index(array $user): void {
     med_require_admin($user);
     $cid = med_campaign_id();
     $q = trim((string)get_param('q', ''));
-    $sql = "SELECT id, codigo, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica,
+    $sql = "SELECT id, codigo, clasificacion, uso, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica,
                    via_administracion, stock_actual, stock_minimo, activo, origen, stock_updated_at, updated_at
             FROM medicamentos WHERE campaign_id = :cid";
     $params = [':cid' => $cid];
     if ($q !== '') {
-        $sql .= " AND (nombre_generico LIKE :a OR nombre_comercial LIKE :b OR codigo LIKE :c)";
+        $sql .= " AND (nombre_generico LIKE :a OR nombre_comercial LIKE :b OR codigo LIKE :c OR clasificacion LIKE :d OR uso LIKE :e)";
         $like = "%$q%";
-        $params += [':a' => $like, ':b' => $like, ':c' => $like];
+        $params += [':a' => $like, ':b' => $like, ':c' => $like, ':d' => $like, ':e' => $like];
     }
     $stmt = db()->prepare($sql . " ORDER BY nombre_generico, concentracion LIMIT 2000");
     $stmt->execute($params);
@@ -123,10 +125,10 @@ function medicamentos_import(array $user): void {
         $findNom = $pdo->prepare("SELECT id FROM medicamentos WHERE nombre_generico = :n AND campaign_id = $cid
                                   AND COALESCE(concentracion,'') = :c AND forma_farmaceutica = :f LIMIT 1");
         $ins = $pdo->prepare("INSERT INTO medicamentos
-            (campaign_id, codigo, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion,
+            (campaign_id, codigo, clasificacion, uso, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion,
              stock_actual, stock_minimo, activo, origen, stock_updated_at, created_at, updated_at)
-            VALUES ($cid,:codigo,:gen,:com,:conc,:forma,:via,:stock,:min,:activo,'excel',NOW(),NOW(),NOW())");
-        $upd = $pdo->prepare("UPDATE medicamentos SET codigo = COALESCE(:codigo, codigo), nombre_generico = :gen,
+            VALUES ($cid,:codigo,:clasif,:uso,:gen,:com,:conc,:forma,:via,:stock,:min,:activo,'excel',NOW(),NOW(),NOW())");
+        $upd = $pdo->prepare("UPDATE medicamentos SET codigo = COALESCE(:codigo, codigo), clasificacion = COALESCE(:clasif, clasificacion), uso = COALESCE(:uso, uso), nombre_generico = :gen,
             nombre_comercial = :com, concentracion = :conc, forma_farmaceutica = :forma, via_administracion = :via,
             stock_actual = :stock, stock_minimo = :min, activo = :activo, origen = 'excel',
             stock_updated_at = NOW(), updated_at = NOW() WHERE id = :id");
@@ -136,6 +138,8 @@ function medicamentos_import(array $user): void {
             $gen = trim((string)($it['nombre_generico'] ?? ''));
             if ($gen === '') { $errores[] = ['fila' => $fila, 'error' => 'Falta el nombre genérico.']; continue; }
             $codigo = trim((string)($it['codigo'] ?? ''));
+            $clasif = trim((string)($it['clasificacion'] ?? ''));
+            $uso    = trim((string)($it['uso'] ?? ''));
             $conc   = trim((string)($it['concentracion'] ?? ''));
             $com    = trim((string)($it['nombre_comercial'] ?? ''));
             $forma  = med_forma($it['forma_farmaceutica'] ?? '');
@@ -155,7 +159,7 @@ function medicamentos_import(array $user): void {
                 $id = $findNom->fetchColumn() ?: null;
             }
             $p = [':gen'=>$gen, ':com'=>$com ?: null, ':conc'=>$conc ?: null, ':forma'=>$forma, ':via'=>$via,
-                  ':stock'=>$stock, ':min'=>$min, ':activo'=>$activo, ':codigo'=>$codigo ?: null];
+                  ':stock'=>$stock, ':min'=>$min, ':activo'=>$activo, ':codigo'=>$codigo ?: null, ':clasif'=>$clasif ?: null, ':uso'=>$uso ?: null];
             if ($id) { $p[':id'] = $id; $upd->execute($p); $actualizados++; }
             else     { $ins->execute($p); $id = $pdo->lastInsertId(); $creados++; }
             $touched[] = (int)$id;
@@ -178,19 +182,203 @@ function medicamentos_import(array $user): void {
     ]);
 }
 
+// ── Crear nuevo medicamento manual ─────────────────────────
+function medicamentos_create(array $user): void {
+    med_require_admin($user);
+    $cid = med_campaign_id();
+    $b = body();
+
+    $gen = trim((string)($b['nombre_generico'] ?? ''));
+    if ($gen === '') json_error('El nombre genérico es obligatorio.', 422);
+
+    $codigo = trim((string)($b['codigo'] ?? ''));
+    $clasif = trim((string)($b['clasificacion'] ?? ''));
+    $uso    = trim((string)($b['uso'] ?? ''));
+    $conc   = trim((string)($b['concentracion'] ?? ''));
+    $com    = trim((string)($b['nombre_comercial'] ?? ''));
+    $forma  = med_forma($b['forma_farmaceutica'] ?? '');
+    $via    = med_via($b['via_administracion'] ?? '');
+    $stock  = med_int($b['stock_actual'] ?? 0);
+    $min    = med_int($b['stock_minimo'] ?? 10, 10);
+    $activo = !empty($b['activo']) || !isset($b['activo']) ? 1 : 0;
+
+    $pdo = db();
+    $ins = $pdo->prepare("INSERT INTO medicamentos
+        (campaign_id, codigo, clasificacion, uso, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion,
+         stock_actual, stock_minimo, activo, origen, stock_updated_at, created_at, updated_at)
+        VALUES (:cid, :codigo, :clasif, :uso, :gen, :com, :conc, :forma, :via, :stock, :min, :activo, 'manual', NOW(), NOW(), NOW())");
+    $ins->execute([
+        ':cid' => $cid,
+        ':codigo' => $codigo !== '' ? $codigo : null,
+        ':clasif' => $clasif !== '' ? $clasif : null,
+        ':uso' => $uso !== '' ? $uso : null,
+        ':gen' => $gen,
+        ':com' => $com !== '' ? $com : null,
+        ':conc' => $conc !== '' ? $conc : null,
+        ':forma' => $forma,
+        ':via' => $via,
+        ':stock' => $stock,
+        ':min' => $min,
+        ':activo' => $activo,
+    ]);
+
+    $id = (int)$pdo->lastInsertId();
+    $med = $pdo->query("SELECT * FROM medicamentos WHERE id = $id")->fetch();
+    json_ok($med, 201);
+}
+
+// ── Actualizar medicamento existente (todos los campos) ──────
 function medicamentos_update(array $user, int $id): void {
     med_require_admin($user);
     med_ensure_schema();
     $b = body();
     $set = []; $p = [':id' => $id];
-    foreach (['stock_actual','stock_minimo'] as $f) {
-        if (array_key_exists($f, $b)) { $set[] = "$f = :$f"; $p[":$f"] = med_int($b[$f]); }
+
+    if (array_key_exists('nombre_generico', $b)) {
+        $gen = trim((string)$b['nombre_generico']);
+        if ($gen === '') json_error('El nombre genérico no puede estar vacío.', 422);
+        $set[] = "nombre_generico = :nombre_generico";
+        $p[':nombre_generico'] = $gen;
     }
-    if (array_key_exists('activo', $b)) { $set[] = "activo = :activo"; $p[':activo'] = $b['activo'] ? 1 : 0; }
+    if (array_key_exists('nombre_comercial', $b)) {
+        $com = trim((string)$b['nombre_comercial']);
+        $set[] = "nombre_comercial = :nombre_comercial";
+        $p[':nombre_comercial'] = $com !== '' ? $com : null;
+    }
+    if (array_key_exists('clasificacion', $b)) {
+        $clasif = trim((string)$b['clasificacion']);
+        $set[] = "clasificacion = :clasificacion";
+        $p[':clasificacion'] = $clasif !== '' ? $clasif : null;
+    }
+    if (array_key_exists('uso', $b)) {
+        $u = trim((string)$b['uso']);
+        $set[] = "uso = :uso";
+        $p[':uso'] = $u !== '' ? $u : null;
+    }
+    if (array_key_exists('codigo', $b)) {
+        $cod = trim((string)$b['codigo']);
+        $set[] = "codigo = :codigo";
+        $p[':codigo'] = $cod !== '' ? $cod : null;
+    }
+    if (array_key_exists('concentracion', $b)) {
+        $conc = trim((string)$b['concentracion']);
+        $set[] = "concentracion = :concentracion";
+        $p[':concentracion'] = $conc !== '' ? $conc : null;
+    }
+    if (array_key_exists('forma_farmaceutica', $b)) {
+        $set[] = "forma_farmaceutica = :forma_farmaceutica";
+        $p[':forma_farmaceutica'] = med_forma($b['forma_farmaceutica']);
+    }
+    if (array_key_exists('via_administracion', $b)) {
+        $set[] = "via_administracion = :via_administracion";
+        $p[':via_administracion'] = med_via($b['via_administracion']);
+    }
+    if (array_key_exists('stock_actual', $b)) {
+        $set[] = "stock_actual = :stock_actual";
+        $set[] = "stock_updated_at = NOW()";
+        $p[':stock_actual'] = med_int($b['stock_actual']);
+    }
+    if (array_key_exists('stock_minimo', $b)) {
+        $set[] = "stock_minimo = :stock_minimo";
+        $p[':stock_minimo'] = med_int($b['stock_minimo'], 10);
+    }
+    if (array_key_exists('activo', $b)) {
+        $set[] = "activo = :activo";
+        $p[':activo'] = !empty($b['activo']) ? 1 : 0;
+    }
+
     if (!$set) json_error('Nada que actualizar.', 422);
-    if (array_key_exists('stock_actual', $b)) $set[] = "stock_updated_at = NOW()";
-    db()->prepare("UPDATE medicamentos SET " . implode(', ', $set) . ", updated_at = NOW() WHERE id = :id")->execute($p);
-    json_ok(['message' => 'Medicamento actualizado.']);
+
+    $sql = "UPDATE medicamentos SET " . implode(', ', $set) . ", updated_at = NOW() WHERE id = :id";
+    db()->prepare($sql)->execute($p);
+
+    $med = db()->query("SELECT * FROM medicamentos WHERE id = $id")->fetch();
+    json_ok(['message' => 'Medicamento actualizado.', 'medicamento' => $med]);
+}
+
+// ── Eliminar o desactivar medicamento ─────────────────────────
+function medicamentos_delete(array $user, int $id): void {
+    med_require_admin($user);
+    med_ensure_schema();
+    $pdo = db();
+
+    $stmt = $pdo->prepare("SELECT id, nombre_generico, codigo FROM medicamentos WHERE id = :id");
+    $stmt->execute([':id' => $id]);
+    $med = $stmt->fetch();
+    if (!$med) json_error('Medicamento no encontrado.', 404);
+
+    // Verificar si está referenciado en atenciones / dispensaciones
+    $referenced = false;
+    $tableCheck = $pdo->query("SHOW TABLES LIKE 'medicamento_dispensaciones'")->fetch();
+    if ($tableCheck) {
+        $checkDisp = $pdo->prepare("SELECT COUNT(*) FROM medicamento_dispensaciones WHERE items LIKE :term");
+        $checkDisp->execute([':term' => '%"medicamento_id":' . $id . '%']);
+        if ((int)$checkDisp->fetchColumn() > 0) {
+            $referenced = true;
+        }
+    }
+
+    if ($referenced) {
+        $pdo->prepare("UPDATE medicamentos SET activo = 0, updated_at = NOW() WHERE id = :id")->execute([':id' => $id]);
+        json_ok(['message' => 'Medicamento desactivado para conservar el historial de dispensaciones.', 'modo' => 'desactivado']);
+    } else {
+        $pdo->prepare("DELETE FROM medicamentos WHERE id = :id")->execute([':id' => $id]);
+        json_ok(['message' => 'Medicamento eliminado permanentemente del catálogo.', 'modo' => 'eliminado']);
+    }
+}
+
+// ── Ajuste / Movimiento manual de Stock ──────────────────────
+function medicamentos_adjust_stock(array $user, int $id): void {
+    med_require_admin($user);
+    med_ensure_schema();
+    $b = body();
+
+    $tipo = $b['tipo'] ?? 'ajuste'; // 'ingreso', 'egreso', 'ajuste'
+    $cantidad = med_int($b['cantidad'] ?? 0);
+    $motivo = trim((string)($b['motivo'] ?? ''));
+
+    $pdo = db();
+    $pdo->beginTransaction();
+    try {
+        $stmt = $pdo->prepare("SELECT id, nombre_generico, concentracion, stock_actual FROM medicamentos WHERE id = :id FOR UPDATE");
+        $stmt->execute([':id' => $id]);
+        $med = $stmt->fetch();
+        if (!$med) throw new Exception('Medicamento no encontrado.');
+
+        $stockActual = (int)$med['stock_actual'];
+        $nuevoStock = $stockActual;
+
+        if ($tipo === 'ingreso' || $tipo === 'sumar') {
+            $nuevoStock = $stockActual + $cantidad;
+        } elseif ($tipo === 'egreso' || $tipo === 'restar') {
+            if ($cantidad > $stockActual) {
+                throw new Exception("No puede retirar {$cantidad} unidades. El stock disponible es {$stockActual}.");
+            }
+            $nuevoStock = max(0, $stockActual - $cantidad);
+        } elseif ($tipo === 'ajuste' || $tipo === 'fijar') {
+            $nuevoStock = max(0, $cantidad);
+        } else {
+            throw new Exception("Tipo de movimiento no válido: {$tipo}");
+        }
+
+        $upd = $pdo->prepare("UPDATE medicamentos SET stock_actual = :s, stock_updated_at = NOW(), updated_at = NOW() WHERE id = :id");
+        $upd->execute([':s' => $nuevoStock, ':id' => $id]);
+
+        $pdo->commit();
+        json_ok([
+            'message' => 'Stock actualizado exitosamente.',
+            'medicamento_id' => $id,
+            'nombre' => $med['nombre_generico'],
+            'stock_anterior' => $stockActual,
+            'stock_actual' => $nuevoStock,
+            'tipo' => $tipo,
+            'cantidad' => $cantidad,
+            'motivo' => $motivo,
+        ]);
+    } catch (Throwable $e) {
+        $pdo->rollBack();
+        json_error($e->getMessage(), 422);
+    }
 }
 
 // ── Opción B: sincronización de stock con BD externa ─────────
@@ -237,9 +425,9 @@ function medicamentos_copy(array $user): void {
     $withStock = !empty(body()['con_stock']);
     $stockExpr = $withStock ? 's.stock_actual' : '0';
     $n = db()->exec("INSERT INTO medicamentos
-        (campaign_id, codigo, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion,
+        (campaign_id, codigo, clasificacion, uso, nombre_generico, nombre_comercial, concentracion, forma_farmaceutica, via_administracion,
          stock_actual, stock_minimo, activo, origen, created_at, updated_at)
-        SELECT $to, s.codigo, s.nombre_generico, s.nombre_comercial, s.concentracion, s.forma_farmaceutica, s.via_administracion,
+        SELECT $to, s.codigo, s.clasificacion, s.uso, s.nombre_generico, s.nombre_comercial, s.concentracion, s.forma_farmaceutica, s.via_administracion,
                $stockExpr, s.stock_minimo, s.activo, 'copia', NOW(), NOW()
         FROM medicamentos s WHERE s.campaign_id = " . $from . " AND s.activo = 1
           AND NOT EXISTS (SELECT 1 FROM medicamentos d WHERE d.campaign_id = $to AND d.nombre_generico = s.nombre_generico

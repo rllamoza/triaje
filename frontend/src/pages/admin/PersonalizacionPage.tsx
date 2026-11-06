@@ -16,6 +16,17 @@ export default function PersonalizacionPage() {
     setSeccionResidencia,
     consultaEnabled,
     farmaciaEnabled,
+    farmaciaConfig,
+    setFarmaciaConfig,
+    medicamentosColumns,
+    medicamentosClasificaciones,
+    medicamentosUsos,
+        toggleMedicamentoColumn,
+    moveMedicamentoColumn,
+    addMedicamentoClasificacion,
+    removeMedicamentoClasificacion,
+    addMedicamentoUso,
+    removeMedicamentoUso,
     setModuleEnabled,
   } = featureStore
 
@@ -72,6 +83,7 @@ export default function PersonalizacionPage() {
       triajeOptions: useFeatureStore.getState().triajeOptions,
       consultaEnabled: useFeatureStore.getState().consultaEnabled,
       farmaciaEnabled: useFeatureStore.getState().farmaciaEnabled,
+      farmaciaConfig: useFeatureStore.getState().farmaciaConfig,
     })
     setSavedSuccess(true)
     setTimeout(() => setSavedSuccess(false), 3500)
@@ -93,6 +105,70 @@ export default function PersonalizacionPage() {
     featureStore.setRegistroField(field, val)
     const updated = { ...useFeatureStore.getState().registroFields, [field]: val }
     await saveSystemSettings({ registroFields: updated })
+  }
+
+      // Estados locales para adición de clasificación y uso en personalización
+  const [newClasifSettingInput, setNewClasifSettingInput] = useState('')
+  const [newUsoSettingInput, setNewUsoSettingInput] = useState('')
+
+  const handleToggleColumnSetting = async (key: string, val: boolean) => {
+    toggleMedicamentoColumn(key, val)
+    await saveSystemSettings({
+      medicamentosColumns: useFeatureStore.getState().medicamentosColumns,
+    })
+  }
+
+  const handleMoveColumnSetting = async (key: string, dir: 'up' | 'down') => {
+    moveMedicamentoColumn(key, dir)
+    await saveSystemSettings({
+      medicamentosColumns: useFeatureStore.getState().medicamentosColumns,
+    })
+  }
+
+  const handleAddClasificacionSetting = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const clean = newClasifSettingInput.trim()
+    if (!clean) return
+    addMedicamentoClasificacion(clean)
+    setNewClasifSettingInput('')
+    await saveSystemSettings({
+      medicamentosClasificaciones: useFeatureStore.getState().medicamentosClasificaciones,
+    })
+  }
+
+  const handleRemoveClasificacionSetting = async (item: string) => {
+    removeMedicamentoClasificacion(item)
+    await saveSystemSettings({
+      medicamentosClasificaciones: useFeatureStore.getState().medicamentosClasificaciones.filter((c) => c !== item),
+    })
+  }
+
+  const handleAddUsoSetting = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const clean = newUsoSettingInput.trim()
+    if (!clean) return
+    addMedicamentoUso(clean)
+    setNewUsoSettingInput('')
+    await saveSystemSettings({
+      medicamentosUsos: useFeatureStore.getState().medicamentosUsos,
+    })
+  }
+
+  const handleRemoveUsoSetting = async (item: string) => {
+    removeMedicamentoUso(item)
+    await saveSystemSettings({
+      medicamentosUsos: useFeatureStore.getState().medicamentosUsos.filter((u) => u !== item),
+    })
+  }
+
+  const handleToggleFarmaciaImpresion = async (val: boolean) => {
+    setFarmaciaConfig({ imprimirCargo: val })
+    await saveSystemSettings({ farmaciaConfig: { ...useFeatureStore.getState().farmaciaConfig, imprimirCargo: val } })
+  }
+
+  const handleChangeFarmaciaTipoCargo = async (tipo: 'firma' | 'foto' | 'ambos' | 'ninguno') => {
+    setFarmaciaConfig({ tipoCargo: tipo })
+    await saveSystemSettings({ farmaciaConfig: { ...useFeatureStore.getState().farmaciaConfig, tipoCargo: tipo } })
   }
 
   const handleToggleTriaje = async (val: boolean) => {
@@ -1257,6 +1333,275 @@ export default function PersonalizacionPage() {
                     />
                     <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
+                </div>
+              </div>
+            </div>
+
+            
+            {/* CONFIGURACIÓN DE FARMACIA & CARGO DE ENTREGA */}
+            <div className="bg-surface p-6 border-2 border-emerald-600/40 shadow-xs space-y-5">
+              <div className="flex items-start gap-3 border-b border-surface-container-high pb-4">
+                <span className="material-symbols-outlined text-emerald-600 text-2xl mt-0.5">local_pharmacy</span>
+                <div>
+                  <h3 className="text-base font-bold text-on-surface uppercase tracking-wide">
+                    Configuración de Farmacia &amp; Cargo de Entrega
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                    Personalice si se debe imprimir comprobante de entrega para el paciente y qué tipo de evidencia (firma digital, fotografía o ninguna) se solicitará al momento de despachar los medicamentos con receta médica.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Switch de Impresión */}
+                <div className={`p-4 border transition-all ${
+                  farmaciaConfig.imprimirCargo
+                    ? 'bg-surface border-emerald-500 shadow-xs'
+                    : 'bg-surface-container-low border-surface-container-high opacity-80'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-on-surface uppercase tracking-wide flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-base text-emerald-600">print</span>
+                        Imprimir Cargo de Entrega
+                      </div>
+                      <div className="text-[11px] text-on-surface-variant mt-1">
+                        Genera e imprime comprobante térmico con el detalle de fármacos despachados, doctor prescriptor y datos del beneficiario.
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0 select-none ml-3">
+                      <input
+                        type="checkbox"
+                        checked={farmaciaConfig.imprimirCargo}
+                        onChange={(e) => handleToggleFarmaciaImpresion(e.target.checked)}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Selector de Tipo de Evidencia */}
+                <div className="p-4 border border-surface-container-high bg-surface space-y-2">
+                  <div className="text-xs font-bold text-on-surface uppercase tracking-wide flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base text-primary">verified</span>
+                    Modalidad de Evidencia / Cargo
+                  </div>
+                  <div className="text-[11px] text-on-surface-variant">
+                    Seleccione cómo debe registrarse la constancia de recepción de los fármacos:
+                  </div>
+                  <select
+                    value={farmaciaConfig.tipoCargo}
+                    onChange={(e) => handleChangeFarmaciaTipoCargo(e.target.value as any)}
+                    className="w-full mt-2 p-2.5 bg-surface-container-low border border-surface-container-highest text-xs font-semibold text-on-surface focus:border-primary focus:outline-none"
+                  >
+                    <option value="firma">Firma Digital en Pantalla táctil / Mouse</option>
+                    <option value="foto">Foto de Evidencia (Cámara web / Móvil)</option>
+                    <option value="ambos">Firma Digital + Foto de Evidencia</option>
+                    <option value="ninguno">Sin Evidencia (Dispensación Rápida Directa)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            
+            {/* SECCIÓN NUEVA: PERSONALIZACIÓN DEL CRUD DE MEDICAMENTOS, COLUMNAS, CLASIFICACIONES Y USOS */}
+            <div className="bg-surface p-6 border-2 border-primary/40 shadow-xs space-y-6">
+              <div className="flex items-start gap-3 border-b border-surface-container-high pb-4">
+                <span className="material-symbols-outlined text-primary text-2xl mt-0.5">medication</span>
+                <div>
+                  <h3 className="text-base font-bold text-on-surface uppercase tracking-wide">
+                    Personalización del Catálogo y CRUD de Medicamentos
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                    Personalice qué columnas se visualizan en la lista de medicamentos y modifique el orden en que aparecen.
+                    Asimismo, administre el catálogo maestro de <strong>Clasificaciones Terapéuticas</strong> (para qué sirve: Antiflatulento, Antitusivo, etc.) y de <strong>Usos / Población</strong> (Pediátrico, Adultos, etc.).
+                  </p>
+                </div>
+              </div>
+
+              {/* BLOQUE A: CONFIGURACIÓN DE COLUMNAS (VISIBILIDAD Y ORDEN) */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base text-primary">view_column</span>
+                    <span>Columnas del CRUD de Medicamentos (Visibilidad y Orden)</span>
+                  </div>
+                  <span className="text-[11px] text-on-surface-variant">
+                    Use las flechas ▲ ▼ para reordenar y el switch para activar u ocultar.
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {[...medicamentosColumns]
+                    .sort((a, b) => a.order - b.order)
+                    .map((col, idx, arr) => (
+                      <div
+                        key={col.key}
+                        className={`p-3 border flex items-center justify-between gap-3 transition-colors ${
+                          col.visible
+                            ? 'bg-surface border-primary/30 shadow-2xs'
+                            : 'bg-surface-container-low border-surface-container-high opacity-60'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className="w-6 h-6 bg-surface-container-highest text-on-surface text-[11px] font-mono font-bold flex items-center justify-center shrink-0">
+                            #{col.order}
+                          </span>
+                          <div className="truncate">
+                            <span className="text-xs font-bold text-on-surface truncate block">
+                              {col.label}
+                            </span>
+                            <span className="text-[10px] text-on-surface-variant font-mono">
+                              {col.key === 'clasificacion'
+                                ? 'Inicio de lista (Acción terapéutica)'
+                                : col.key === 'uso'
+                                ? 'Final de lista (Pediátrico / Adultos)'
+                                : `Campo: ${col.key}`}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* Botones de Reordenar */}
+                          <div className="flex items-center border border-surface-container-highest bg-surface">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveColumnSetting(col.key, 'up')}
+                              disabled={idx === 0}
+                              className="px-1.5 py-0.5 text-on-surface-variant hover:text-primary disabled:opacity-30 cursor-pointer"
+                              title="Subir / Mover antes"
+                            >
+                              ▲
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveColumnSetting(col.key, 'down')}
+                              disabled={idx === arr.length - 1}
+                              className="px-1.5 py-0.5 text-on-surface-variant hover:text-primary disabled:opacity-30 cursor-pointer"
+                              title="Bajar / Mover después"
+                            >
+                              ▼
+                            </button>
+                          </div>
+
+                          {/* Switch de Visibilidad */}
+                          <label className="relative inline-flex items-center cursor-pointer select-none">
+                            <input
+                              type="checkbox"
+                              checked={col.visible}
+                              onChange={(e) => handleToggleColumnSetting(col.key, e.target.checked)}
+                              className="sr-only peer"
+                            />
+                            <div className="w-9 h-5 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                          </label>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+
+              {/* BLOQUE B: GESTIÓN DE CLASIFICACIONES TERAPÉUTICAS */}
+              <div className="p-4 bg-surface-container-low border border-surface-container-high space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <div className="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-base text-primary">category</span>
+                      <span>Catálogo Maestro de Clasificaciones (Para qué es)</span>
+                    </div>
+                    <div className="text-[11px] text-on-surface-variant">
+                      Opciones disponibles en el selector al crear o editar medicamentos (Antiflatulento, Antitusivo, etc.)
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleAddClasificacionSetting} className="flex gap-1.5 shrink-0">
+                    <input
+                      type="text"
+                      placeholder="Nueva clasificación..."
+                      value={newClasifSettingInput}
+                      onChange={(e) => setNewClasifSettingInput(e.target.value)}
+                      className="h-8 px-2.5 text-xs bg-surface border border-surface-container-highest text-on-surface focus:border-primary focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 h-8 bg-primary text-on-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">add</span>
+                      <span>Agregar</span>
+                    </button>
+                  </form>
+                </div>
+
+                {/* Chips de Clasificaciones */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {medicamentosClasificaciones.map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-surface border border-surface-container-highest text-xs font-medium text-on-surface shadow-2xs"
+                    >
+                      <span>{item}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveClasificacionSetting(item)}
+                        className="text-on-surface-variant hover:text-error cursor-pointer ml-0.5"
+                        title="Eliminar de la lista"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* BLOQUE C: GESTIÓN DE USOS / POBLACIÓN DESTINO */}
+              <div className="p-4 bg-surface-container-low border border-surface-container-high space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <div className="text-xs font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-base text-secondary">groups</span>
+                      <span>Catálogo Maestro de Usos / Población Destino</span>
+                    </div>
+                    <div className="text-[11px] text-on-surface-variant">
+                      Poblaciones clínicas asignadas al fármaco (Pediátrico, Adultos, Geriátrico, etc.)
+                    </div>
+                  </div>
+
+                  <form onSubmit={handleAddUsoSetting} className="flex gap-1.5 shrink-0">
+                    <input
+                      type="text"
+                      placeholder="Nuevo uso..."
+                      value={newUsoSettingInput}
+                      onChange={(e) => setNewUsoSettingInput(e.target.value)}
+                      className="h-8 px-2.5 text-xs bg-surface border border-surface-container-highest text-on-surface focus:border-primary focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 h-8 bg-secondary text-on-secondary text-xs font-bold uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-sm">add</span>
+                      <span>Agregar</span>
+                    </button>
+                  </form>
+                </div>
+
+                {/* Chips de Usos */}
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {medicamentosUsos.map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 bg-surface border border-surface-container-highest text-xs font-medium text-on-surface shadow-2xs"
+                    >
+                      <span>{item}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveUsoSetting(item)}
+                        className="text-on-surface-variant hover:text-error cursor-pointer ml-0.5"
+                        title="Eliminar de la lista"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>

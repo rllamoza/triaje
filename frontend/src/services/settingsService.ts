@@ -1,5 +1,5 @@
 import api from '../api/client'
-import { useFeatureStore, type RegistroFieldsConfig, type TriajeSubOptions } from '../store/featureStore'
+import { useFeatureStore, type RegistroFieldsConfig, type TriajeSubOptions, type FarmaciaConfig, type MedicamentoColumnConfig } from '../store/featureStore'
 import { useBrandingStore, type BrandingState } from '../store/brandingStore'
 
 export interface SystemSettingsPayload {
@@ -8,7 +8,11 @@ export interface SystemSettingsPayload {
   registroFields?: RegistroFieldsConfig
   consultaEnabled?: boolean
   farmaciaEnabled?: boolean
+  farmaciaConfig?: Partial<FarmaciaConfig>
   branding?: Partial<BrandingState>
+  medicamentosColumns?: MedicamentoColumnConfig[]
+  medicamentosClasificaciones?: string[]
+  medicamentosUsos?: string[]
 }
 
 /**
@@ -47,6 +51,18 @@ export async function loadSystemSettings(): Promise<boolean> {
       }
       if (typeof d.farmaciaEnabled === 'boolean') {
         featureStore.setModuleEnabled('farmacia', d.farmaciaEnabled)
+      }
+      if (d.farmaciaConfig && typeof d.farmaciaConfig === 'object') {
+        featureStore.setFarmaciaConfig(d.farmaciaConfig)
+      }
+      if (Array.isArray(d.medicamentosColumns)) {
+        featureStore.setMedicamentosColumns(d.medicamentosColumns)
+      }
+      if (Array.isArray(d.medicamentosClasificaciones)) {
+        useFeatureStore.setState({ medicamentosClasificaciones: d.medicamentosClasificaciones })
+      }
+      if (Array.isArray(d.medicamentosUsos)) {
+        useFeatureStore.setState({ medicamentosUsos: d.medicamentosUsos })
       }
 
       // Hidratar branding institucional

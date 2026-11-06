@@ -139,6 +139,8 @@ export interface Medicamento {
   forma_farmaceutica: string
   via_administracion: string
   stock_actual?: number
+  clasificacion?: string | null
+  uso?: string | null
 }
 
 export interface MedicamentoAdmin extends Medicamento {
@@ -148,6 +150,8 @@ export interface MedicamentoAdmin extends Medicamento {
   activo: number | boolean
   origen: string
   stock_updated_at: string | null
+  clasificacion?: string | null
+  uso?: string | null
 }
 
 export interface MedSyncConfig {
@@ -525,6 +529,73 @@ export const useRunMedSync = () => {
       qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
       qc.invalidateQueries({ queryKey: ['medicamentos'] })
       qc.invalidateQueries({ queryKey: ['medicamentos-sync-config'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-medicamentos'] })
+    },
+  })
+}
+
+export const useCreateMedicamento = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Partial<MedicamentoAdmin> & { campaign_id?: number }) =>
+      api.post('/admin/medicamentos', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-medicamentos'] })
+    },
+  })
+}
+
+export const useUpdateMedicamento = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, ...data }: Partial<MedicamentoAdmin> & { id: number; campaign_id?: number }) =>
+      api.put(`/admin/medicamentos/${id}`, data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-medicamentos'] })
+    },
+  })
+}
+
+export const useDeleteMedicamento = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, campaign_id }: { id: number; campaign_id?: number }) =>
+      api.delete(`/admin/medicamentos/${id}`, { params: campaign_id ? { campaign_id } : {} }).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-medicamentos'] })
+    },
+  })
+}
+
+export const useAdjustStockMedicamento = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      id,
+      campaign_id,
+      tipo,
+      cantidad,
+      motivo,
+    }: {
+      id: number
+      campaign_id?: number
+      tipo: 'ingreso' | 'egreso' | 'ajuste'
+      cantidad: number
+      motivo?: string
+    }) =>
+      api
+        .post(`/admin/medicamentos/${id}/stock`, { tipo, cantidad, motivo, campaign_id })
+        .then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-medicamentos'] })
     },
   })
 }
@@ -632,3 +703,72 @@ export const useResetPin = () =>
     mutationFn: ({ id, pin }: { id: number; pin: string }) =>
       api.post(`/users/${id}/reset-pin`, { pin }).then((r) => r.data),
   })
+
+// ── Farmacia & Dispensación ─────────────────────────────────
+export interface FarmaciaItemDispensar {
+  medicamento_id: number
+  nombre: string
+  concentracion?: string
+  forma?: string
+  via?: string
+  cantidad: number
+  dosis?: string
+  indicaciones?: string
+}
+
+export interface DispensarPayload {
+  campaign_id?: number
+  atencion_id?: number | null
+  beneficiario_id?: number | null
+  paciente_nombre: string
+  paciente_dni?: string
+  medico_id?: number | null
+  medico_nombre: string
+  items: FarmaciaItemDispensar[]
+  modalidad_cargo?: 'firma' | 'foto' | 'ambos' | 'ninguno'
+  firma_base64?: string | null
+  foto_url?: string | null
+  imprimir_cargo?: boolean
+  observaciones?: string
+}
+
+export const useFarmaciaMedicamentos = (campaignId?: number | null, q?: string) => {
+  return useQuery<MedicamentoAdmin[]>({
+    queryKey: ['farmacia-medicamentos', campaignId, q],
+    queryFn: () =>
+      api.get('/farmacia/medicamentos', { params: { campaign_id: campaignId, ...(q ? { q } : {}) } }).then((r) => r.data),
+  })
+}
+
+export const useFarmaciaAtenciones = (campaignId?: number | null) => {
+  return useQuery<any[]>({
+    queryKey: ['farmacia-atenciones', campaignId],
+    queryFn: () =>
+      api.get('/farmacia/atenciones', { params: { campaign_id: campaignId } }).then((r) => r.data),
+    refetchInterval: 10000,
+  })
+}
+
+export const useDispensarMedicamento = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: DispensarPayload) =>
+      api.post('/farmacia/dispensar', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['farmacia-medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos-admin'] })
+      qc.invalidateQueries({ queryKey: ['medicamentos'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-atenciones'] })
+      qc.invalidateQueries({ queryKey: ['queue'] })
+      qc.invalidateQueries({ queryKey: ['farmacia-dispensaciones'] })
+    },
+  })
+}
+
+export const useFarmaciaDispensaciones = (campaignId?: number | null, page = 1) => {
+  return useQuery<any>({
+    queryKey: ['farmacia-dispensaciones', campaignId, page],
+    queryFn: () =>
+      api.get('/farmacia/dispensaciones', { params: { campaign_id: campaignId, page } }).then((r) => r.data),
+  })
+}

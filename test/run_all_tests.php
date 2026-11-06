@@ -9,13 +9,15 @@ $tests = [
     '02_patient_flow_test.php'       => 'Flujo de Admisión y Registro de Paciente (Antecedentes Inactivos)',
     '03_triaje_flow_test.php'        => 'Integridad de Flujo Clínico (Triaje Activo vs Triaje Inactivo)',
     '04_branding_ticket_test.php'    => 'Motor Térmico ESC/POS: Legibilidad, Centrado y Ocultamiento de QR',
+    '05_farmacia_dispensacion_test.php' => 'Farmacia: Descuento de Stock, Firma/Foto y Cargo de Entrega',
+    '06_medicamentos_custom_columns_test.php' => 'Catálogo Medicamentos: Clasificación, Uso y Columnas Dinámicas',
 ];
 
 echo "\n================================================================================\n";
 echo "       SEMILLA TRIAJE - SUITE MAESTRA DE PRUEBAS DE INTEGRIDAD Y FLUJO           \n";
 echo "================================================================================\n";
 echo "Fecha y Hora: " . date('Y-m-d H:i:s') . "\n";
-echo "Versión del Sistema: 1.0.5\n";
+echo "Versión del Sistema: 1.0.6\n";
 echo "Total de Módulos de Prueba: " . count($tests) . "\n";
 echo "--------------------------------------------------------------------------------\n\n";
 

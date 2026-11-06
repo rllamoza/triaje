@@ -124,6 +124,30 @@ function ensure_schema_compatibility(PDO $pdo): void {
             $ins = $pdo->prepare("INSERT INTO system_settings (`key`, `value`, `group`, `description`, created_at, updated_at) VALUES ('registro_fields', :v, 'features', 'Configuracion de campos de registro de beneficiarios', NOW(), NOW())");
             $ins->execute([':v' => $defaultFields]);
         }
+
+        // 6. Asegurar tabla de dispensaciones de farmacia
+        $pdo->exec("CREATE TABLE IF NOT EXISTS medicamento_dispensaciones (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            campaign_id BIGINT UNSIGNED NOT NULL,
+            atencion_id BIGINT UNSIGNED DEFAULT NULL,
+            beneficiario_id BIGINT UNSIGNED DEFAULT NULL,
+            paciente_nombre VARCHAR(255) NOT NULL,
+            paciente_dni VARCHAR(20) DEFAULT NULL,
+            medico_id BIGINT UNSIGNED DEFAULT NULL,
+            medico_nombre VARCHAR(200) NOT NULL,
+            items JSON NOT NULL,
+            modalidad_cargo ENUM('firma', 'foto', 'ambos', 'ninguno') NOT NULL DEFAULT 'firma',
+            firma_base64 LONGTEXT DEFAULT NULL,
+            foto_url LONGTEXT DEFAULT NULL,
+            impreso TINYINT(1) NOT NULL DEFAULT 0,
+            observaciones TEXT DEFAULT NULL,
+            dispensado_por BIGINT UNSIGNED DEFAULT NULL,
+            dispensado_por_nombre VARCHAR(150) DEFAULT NULL,
+            created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            KEY idx_disp_camp (campaign_id),
+            KEY idx_disp_atencion (atencion_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     } catch (\Throwable $e) {
         // En caso de que el usuario de BD no tenga permisos ALTER, continuar sin interrumpir el flujo
     }

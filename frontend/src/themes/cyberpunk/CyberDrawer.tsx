@@ -25,6 +25,7 @@ export function CyberDrawer({ isOpen, onClose, onLogout }: CyberDrawerProps) {
     { path: '/triaje', label: 'Triaje Cuántico & Vitals', icon: 'insights', badge: 'RAC-Q' },
     { path: '/queue', label: 'Cola de Flujo Neuronal', icon: 'view_timeline' },
     { path: '/consulta', label: 'Diagnóstico Clínico', icon: 'stethoscope' },
+    { path: '/farmacia', label: 'Farmacia & Dispensación', icon: 'local_pharmacy', badge: 'STOCK' },
     { path: '/tickets', label: 'Protocolo ESC/POS', icon: 'receipt_long' },
     { path: '/admin/personalizacion', label: 'Calibración Synth & HUD', icon: 'palette' },
     { path: '/admin/telemetria', label: 'Red Mesh & Webhooks', icon: 'hub' },

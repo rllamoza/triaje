@@ -58,7 +58,8 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
     { path: '/triaje', label: 'Triaje Clínico', icon: 'vital_signs', roles: ['triaje', 'admin'] },
     { path: '/queue', label: 'Cola de Espera Médica', icon: 'hourglass_empty', roles: ['admin', 'medico', 'triaje', 'admision', 'acreditacion', 'guardia'] },
     { path: '/consulta', label: 'Consulta Médica', icon: 'clinical_notes', roles: ['medico', 'admin'] },
-    { path: '/tickets', label: 'Ticket Térmico', icon: 'receipt_long', roles: ['admision', 'acreditacion', 'triaje', 'admin'] },
+    { path: '/farmacia', label: 'Farmacia & Entrega', icon: 'local_pharmacy', roles: ['farmacia', 'admin', 'medico', 'guardia'] },
+    { path: '/tickets', label: 'Ticket Térmico', icon: 'receipt_long', roles: ['admision', 'acreditacion', 'triaje', 'admin', 'farmacia'] },
   ].filter((item) => !user ? false : user.role === 'admin' || item.roles.includes(user.role))
 
   const adminLinks = user?.role === 'admin' ? [

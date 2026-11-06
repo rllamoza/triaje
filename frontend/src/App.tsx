@@ -7,6 +7,7 @@ import BeneficiarioPage from './pages/admision/BeneficiarioPage'
 import QueuePage from './pages/queue/QueuePage'
 import SignosVitalesPage from './pages/triaje/SignosVitalesPage'
 import ConsultaPage from './pages/consulta/ConsultaPage'
+import FarmaciaPage from './pages/farmacia/FarmaciaPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
 import TelemetriaPage from './pages/admin/TelemetriaPage'
 import PersonalizacionPage from './pages/admin/PersonalizacionPage'
@@ -38,6 +39,7 @@ function HomeRedirect() {
     medico:   '/consulta',
     triaje:   '/triaje',
     admision: '/admision',
+    farmacia: '/farmacia',
     guardia:  '/queue',
   }
   return <Navigate to={map[user.role] ?? '/queue'} replace />
@@ -90,6 +92,11 @@ export default function App() {
             {/* Consulta Médica - Exclusivo para médicos y admin */}
             <Route element={<RoleRoute allowedRoles={['medico']} />}>
               <Route path="/consulta" element={<ConsultaPage />} />
+            </Route>
+
+            {/* Farmacia & Despacho de Recetas */}
+            <Route element={<RoleRoute allowedRoles={['farmacia', 'medico', 'guardia']} />}>
+              <Route path="/farmacia" element={<FarmaciaPage />} />
             </Route>
 
             {/* Colas y Tickets */}

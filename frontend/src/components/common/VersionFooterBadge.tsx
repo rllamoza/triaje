@@ -2,9 +2,16 @@ import { useState } from 'react'
 
 export const SYSTEM_VERSIONS = [
   {
+    version: 'v1.0.6',
+    date: '05 Nov 2026',
+    current: true,
+    title: 'Farmacia, Dispensación & Descuento de Stock',
+    description: 'Entrega de fármacos con receta, registro de doctor, descuento interactivo en grid/modal, cargos con firma/foto y comprobante configurable.',
+  },
+  {
     version: 'v1.0.5',
     date: '04 Nov 2026',
-    current: true,
+    current: false,
     title: 'Persistencia MySQL & Calibración Térmica',
     description: 'Persistencia de constantes en BD (system_settings), control de antecedentes, centrado geométrico de tickets y suite de pruebas en test/.',
   },
@@ -169,3 +176,4 @@ export function VersionFooterBadge() {
     </>
   )
 }
+

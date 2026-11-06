@@ -36,6 +36,47 @@ function get_default_settings(): array {
         ],
         'consultaEnabled' => true,
         'farmaciaEnabled' => true,
+        'farmaciaConfig' => [
+            'imprimirCargo' => true,
+            'tipoCargo' => 'firma', // 'firma', 'foto', 'ambos', 'ninguno'
+        ],
+        'medicamentosColumns' => [
+            ['key' => 'clasificacion', 'label' => 'Clasificación', 'visible' => true, 'order' => 1],
+            ['key' => 'codigo', 'label' => 'Código', 'visible' => true, 'order' => 2],
+            ['key' => 'medicamento', 'label' => 'Medicamento', 'visible' => true, 'order' => 3],
+            ['key' => 'concentracion', 'label' => 'Concentración', 'visible' => true, 'order' => 4],
+            ['key' => 'forma_farmaceutica', 'label' => 'Forma', 'visible' => true, 'order' => 5],
+            ['key' => 'via_administracion', 'label' => 'Vía', 'visible' => true, 'order' => 6],
+            ['key' => 'stock_actual', 'label' => 'Stock', 'visible' => true, 'order' => 7],
+            ['key' => 'stock_minimo', 'label' => 'Mín.', 'visible' => true, 'order' => 8],
+            ['key' => 'activo', 'label' => 'Estado', 'visible' => true, 'order' => 9],
+            ['key' => 'uso', 'label' => 'Uso', 'visible' => true, 'order' => 10],
+        ],
+        'medicamentosClasificaciones' => [
+            'Antiflatulento',
+            'Antitusivo',
+            'Antibiótico',
+            'Analgésico',
+            'Antiinflamatorio',
+            'Antipirético',
+            'Antihistamínico',
+            'Antiespasmódico',
+            'Antiparasitario',
+            'Antidiarreico',
+            'Antiácido',
+            'Broncodilatador',
+            'Corticoide',
+            'Vitamínico / Suplemento',
+            'Otro',
+        ],
+        'medicamentosUsos' => [
+            'Pediátrico',
+            'Adultos',
+            'Geriátrico / Adulto Mayor',
+            'Neonatal',
+            'Obstétrico / Gestante',
+            'Uso General',
+        ],
         'branding' => [
             'appName' => 'Semilla',
             'appTagline' => 'Triaje Clínico & Campañas',
@@ -93,6 +134,30 @@ function settings_index(): void {
         }
         if (isset($rows['farmacia_enabled'])) {
             $result['farmaciaEnabled'] = filter_var($rows['farmacia_enabled'], FILTER_VALIDATE_BOOLEAN);
+        }
+        if (isset($rows['farmacia_config'])) {
+            $parsed = json_decode($rows['farmacia_config'], true);
+            if (is_array($parsed)) {
+                $result['farmaciaConfig'] = array_merge($defaults['farmaciaConfig'], $parsed);
+            }
+        }
+        if (isset($rows['medicamentos_columns'])) {
+            $parsed = json_decode($rows['medicamentos_columns'], true);
+            if (is_array($parsed)) {
+                $result['medicamentosColumns'] = $parsed;
+            }
+        }
+        if (isset($rows['medicamentos_clasificaciones'])) {
+            $parsed = json_decode($rows['medicamentos_clasificaciones'], true);
+            if (is_array($parsed)) {
+                $result['medicamentosClasificaciones'] = $parsed;
+            }
+        }
+        if (isset($rows['medicamentos_usos'])) {
+            $parsed = json_decode($rows['medicamentos_usos'], true);
+            if (is_array($parsed)) {
+                $result['medicamentosUsos'] = $parsed;
+            }
         }
         if (isset($rows['branding'])) {
             $parsed = json_decode($rows['branding'], true);
@@ -192,6 +257,54 @@ function settings_update(?array $user = null): void {
                 ':val' => $val,
                 ':group' => 'features',
                 ':description' => 'Flag de activación de farmacia',
+            ]);
+        }
+
+        // 5.1 Farmacia config (impresión y tipo de cargo)
+        if (isset($b['farmaciaConfig']) || isset($b['farmacia_config'])) {
+            $fc = $b['farmaciaConfig'] ?? $b['farmacia_config'];
+            $val = is_string($fc) ? $fc : json_encode($fc, JSON_UNESCAPED_UNICODE);
+            $upsertStmt->execute([
+                ':key' => 'farmacia_config',
+                ':val' => $val,
+                ':group' => 'features',
+                ':description' => 'Configuración de entrega de medicamentos, impresión y cargos en farmacia',
+            ]);
+        }
+
+        // 5.2 Medicamentos columns config
+        if (isset($b['medicamentosColumns']) || isset($b['medicamentos_columns'])) {
+            $mc = $b['medicamentosColumns'] ?? $b['medicamentos_columns'];
+            $val = is_string($mc) ? $mc : json_encode($mc, JSON_UNESCAPED_UNICODE);
+            $upsertStmt->execute([
+                ':key' => 'medicamentos_columns',
+                ':val' => $val,
+                ':group' => 'features',
+                ':description' => 'Configuración de visibilidad y orden de columnas del catálogo de medicamentos',
+            ]);
+        }
+
+        // 5.3 Medicamentos clasificaciones
+        if (isset($b['medicamentosClasificaciones']) || isset($b['medicamentos_clasificaciones'])) {
+            $mcl = $b['medicamentosClasificaciones'] ?? $b['medicamentos_clasificaciones'];
+            $val = is_string($mcl) ? $mcl : json_encode($mcl, JSON_UNESCAPED_UNICODE);
+            $upsertStmt->execute([
+                ':key' => 'medicamentos_clasificaciones',
+                ':val' => $val,
+                ':group' => 'features',
+                ':description' => 'Lista maestra de clasificaciones clínicas de medicamentos',
+            ]);
+        }
+
+        // 5.4 Medicamentos usos
+        if (isset($b['medicamentosUsos']) || isset($b['medicamentos_usos'])) {
+            $mu = $b['medicamentosUsos'] ?? $b['medicamentos_usos'];
+            $val = is_string($mu) ? $mu : json_encode($mu, JSON_UNESCAPED_UNICODE);
+            $upsertStmt->execute([
+                ':key' => 'medicamentos_usos',
+                ':val' => $val,
+                ':group' => 'features',
+                ':description' => 'Lista maestra de usos y poblaciones de destino de medicamentos',
             ]);
         }
 

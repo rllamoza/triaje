@@ -27,6 +27,7 @@ export function GlassDrawer({ isOpen, onClose, onLogout }: GlassDrawerProps) {
     { path: '/triaje', label: 'Triaje Clínico & Vitals', icon: 'vital_signs', badge: 'RAC' },
     { path: '/queue', label: 'Cola de Espera Médica', icon: 'view_timeline' },
     { path: '/consulta', label: 'Consulta Médica', icon: 'stethoscope' },
+    { path: '/farmacia', label: 'Farmacia & Entrega', icon: 'local_pharmacy', badge: 'Stock' },
     { path: '/tickets', label: 'Ticket Térmico ESC/POS', icon: 'receipt_long' },
     { path: '/admin/personalizacion', label: 'Personalización & Branding', icon: 'palette' },
     { path: '/admin/telemetria', label: 'Telemetría & Red Mesh', icon: 'hub' },

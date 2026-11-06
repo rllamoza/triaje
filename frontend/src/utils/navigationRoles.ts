@@ -11,11 +11,14 @@ export function isRouteAllowedForRole(role: string | undefined, path: string): b
   if (path === '/consulta') {
     return role === 'medico'
   }
+  if (path === '/farmacia') {
+    return role === 'farmacia' || role === 'medico' || role === 'guardia'
+  }
   if (path === '/queue' || path === '/cola') {
     return true
   }
   if (path === '/tickets') {
-    return role === 'admision' || role === 'acreditacion' || role === 'triaje'
+    return role === 'admision' || role === 'acreditacion' || role === 'triaje' || role === 'farmacia'
   }
   if (path.startsWith('/admin')) {
     return role === 'admin'

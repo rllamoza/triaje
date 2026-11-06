@@ -53,7 +53,7 @@ export function MedicamentoFormModal({
 
   const [codigo, setCodigo] = useState('')
   const [clasificacion, setClasificacion] = useState('')
-  const [uso, setUso] = useState('Uso General')
+  const [uso, setUso] = useState('')
   const [nombreGenerico, setNombreGenerico] = useState('')
   const [nombreComercial, setNombreComercial] = useState('')
   const [concentracion, setConcentracion] = useState('')
@@ -74,7 +74,7 @@ export function MedicamentoFormModal({
     if (medicamentoToEdit) {
       setCodigo(medicamentoToEdit.codigo || '')
       setClasificacion(medicamentoToEdit.clasificacion || '')
-      setUso(medicamentoToEdit.uso || 'Uso General')
+      setUso(medicamentoToEdit.uso || '')
       setNombreGenerico(medicamentoToEdit.nombre_generico || '')
       setNombreComercial(medicamentoToEdit.nombre_comercial || '')
       setConcentracion(medicamentoToEdit.concentracion || '')
@@ -85,8 +85,8 @@ export function MedicamentoFormModal({
       setActivo(Number(medicamentoToEdit.activo) === 1 || Boolean(medicamentoToEdit.activo))
     } else {
       setCodigo('')
-      setClasificacion(medicamentosClasificaciones[0] || 'Analgésico')
-      setUso('Uso General')
+      setClasificacion('')
+      setUso('')
       setNombreGenerico('')
       setNombreComercial('')
       setConcentracion('')
@@ -99,7 +99,7 @@ export function MedicamentoFormModal({
     setErrorMsg(null)
     setShowAddClasif(false)
     setShowAddUso(false)
-  }, [medicamentoToEdit, isOpen, medicamentosClasificaciones])
+  }, [medicamentoToEdit, isOpen, medicamentosClasificaciones, medicamentosUsos])
 
   if (!isOpen) return null
 
@@ -142,12 +142,12 @@ export function MedicamentoFormModal({
     try {
       const payload = {
         campaign_id: campaignId,
-        codigo: codigo.trim() || undefined,
-        clasificacion: clasificacion.trim() || undefined,
-        uso: uso.trim() || undefined,
+        codigo: codigo.trim() ? codigo.trim() : null,
+        clasificacion: clasificacion.trim() ? clasificacion.trim() : null,
+        uso: uso.trim() ? uso.trim() : null,
         nombre_generico: gen,
-        nombre_comercial: nombreComercial.trim() || undefined,
-        concentracion: concentracion.trim() || undefined,
+        nombre_comercial: nombreComercial.trim() ? nombreComercial.trim() : null,
+        concentracion: concentracion.trim() ? concentracion.trim() : null,
         forma_farmaceutica: formaFarmaceutica,
         via_administracion: viaAdministracion,
         stock_actual: Math.max(0, Number(stockActual) || 0),
@@ -262,6 +262,9 @@ export function MedicamentoFormModal({
                   className={`${inputCls} cursor-pointer font-medium`}
                 >
                   <option value="">— Sin clasificación —</option>
+                  {!medicamentosClasificaciones.includes(clasificacion) && clasificacion && (
+                    <option value={clasificacion}>{clasificacion}</option>
+                  )}
                   {medicamentosClasificaciones.map((c) => (
                     <option key={c} value={c}>
                       {c}
@@ -402,6 +405,10 @@ export function MedicamentoFormModal({
                 onChange={(e) => setUso(e.target.value)}
                 className={`${inputCls} cursor-pointer font-medium`}
               >
+                <option value="">— Sin definir —</option>
+                {!medicamentosUsos.includes(uso) && uso && (
+                  <option value={uso}>{uso}</option>
+                )}
                 {medicamentosUsos.map((u) => (
                   <option key={u} value={u}>
                     {u}

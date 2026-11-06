@@ -153,3 +153,4 @@ $pdo->prepare("DELETE FROM beneficiarios WHERE id = :bid")->execute([':bid' => $
 test_assert(true, "Registros de prueba depurados con éxito");
 
 echo "\n>>> TEST 07 COMPLETADO CON ÉXITO: Admisión Multi-Especialidad Verificada al 100% <<<\n";
+

@@ -757,12 +757,15 @@ export default function MedicamentosPage() {
       {/* ── MODAL 1: NUEVO / EDITAR MEDICAMENTO ───────────────────────── */}
       <MedicamentoFormModal
         isOpen={showFormModal}
-        onClose={() => setShowFormModal(false)}
+        onClose={() => {
+          setShowFormModal(false)
+          setMedToEdit(null)
+        }}
         campaignId={campaignId ?? 1}
         medicamentoToEdit={medToEdit}
-        onSaved={(msg) => {
+        onSaved={async (msg) => {
           showToast(msg, 'ok')
-          refetch()
+          await refetch()
         }}
       />
 

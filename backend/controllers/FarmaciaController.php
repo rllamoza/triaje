@@ -314,6 +314,19 @@ function farmacia_stock_publico(): void {
     $stmt->execute([':cid' => $cid]);
     $medicamentos = $stmt->fetchAll();
 
+    // Fallback defensivo: si no hay medicamentos con este campaign_id, traer todos los activos
+    if (empty($medicamentos)) {
+        $stmtAll = db()->query("
+            SELECT id, codigo, clasificacion, uso, nombre_generico, nombre_comercial,
+                   concentracion, forma_farmaceutica, via_administracion,
+                   stock_actual, stock_minimo, stock_updated_at, updated_at
+            FROM medicamentos
+            WHERE activo = 1
+            ORDER BY (stock_actual <= 0) DESC, (stock_actual <= stock_minimo) DESC, nombre_generico ASC
+        ");
+        $medicamentos = $stmtAll->fetchAll();
+    }
+
     $totalMeds = count($medicamentos);
     $totalUnidades = 0;
     $agotados = 0;

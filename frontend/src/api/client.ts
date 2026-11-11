@@ -30,8 +30,8 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       const url = error.config?.url ?? ''
-      // Don't auto-logout if it's the login action itself that returned 401
-      if (!url.includes('/auth/login') && !url.includes('/auth/login-pin')) {
+      // Don't auto-logout if it's the login action itself or a public background poll that returned 401
+      if (!url.includes('/auth/login') && !url.includes('/auth/login-pin') && !url.includes('stock-publico')) {
         useAuthStore.getState().logout()
         try {
           localStorage.removeItem('triaje-auth')

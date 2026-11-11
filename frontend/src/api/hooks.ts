@@ -687,7 +687,7 @@ export const useStoreConsulta = () => {
 export const useUpdateConsulta = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: number; [k: string]: unknown }) =>
+    mutationFn: ({ id, ...data }: { id: number;[k: string]: unknown }) =>
       api.put(`/consultas/${id}`, data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['atenciones'] }),
   })
@@ -759,7 +759,7 @@ export const useStoreUser = () => {
 export const useUpdateUser = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: number; [k: string]: unknown }) =>
+    mutationFn: ({ id, ...data }: { id: number;[k: string]: unknown }) =>
       api.put(`/users/${id}`, data).then((r) => r.data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),
   })
@@ -876,7 +876,66 @@ export interface StockPublicoResponse {
 export const useStockPublico = (refetchIntervalMs: number = 4000) => {
   return useQuery<StockPublicoResponse>({
     queryKey: ['stock-publico'],
-    queryFn: () => api.get('/farmacia/stock-publico').then((r) => r.data),
+    queryFn: async () => {
+      try {
+        const res = await api.get('/farmacia/stock-publico')
+        if (res.data && Array.isArray(res.data.data)) {
+          return res.data
+        }
+        throw new Error('Formato no reconocido')
+      } catch (err: any) {
+        // Fallback defensivo: si el servidor remoto no ha actualizado aún el endpoint público
+        const fallbackRes = await api.get('/farmacia/medicamentos').catch(() => api.get('/medicamentos'))
+        const list: any[] = Array.isArray(fallbackRes.data)
+          ? fallbackRes.data
+          : fallbackRes.data?.data || []
+
+        let agotados = 0
+        let bajos = 0
+        let disponibles = 0
+        let totalUnidades = 0
+
+        const formatted = list.map((m) => {
+          const stock = Number(m.stock_actual ?? 0)
+          const min = Number(m.stock_minimo ?? 10)
+          totalUnidades += Math.max(0, stock)
+          let status_stock: 'disponible' | 'bajo' | 'agotado' = 'disponible'
+
+          if (stock <= 0) {
+            status_stock = 'agotado'
+            agotados++
+          } else if (stock <= min) {
+            status_stock = 'bajo'
+            bajos++
+          } else {
+            disponibles++
+          }
+
+          return {
+            ...m,
+            stock_actual: stock,
+            stock_minimo: min,
+            status_stock,
+          } as StockPublicoMedicamento
+        })
+
+        return {
+          campaign: {
+            id: 1,
+            name: 'Campaña Médica Activa',
+          },
+          timestamp: new Date().toISOString(),
+          total: formatted.length,
+          unidades_totales: totalUnidades,
+          stats: {
+            disponibles,
+            bajos,
+            agotados,
+          },
+          data: formatted,
+        }
+      }
+    },
     refetchInterval: refetchIntervalMs,
     refetchIntervalInBackground: true,
   })

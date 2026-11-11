@@ -4,6 +4,8 @@
  * SIN necesidad de volver a compilar el proyecto.
  */
 window.__APP_CONFIG__ = {
-  // URL base del backend. Puede ser ruta relativa (ej: '/api') o absoluta (ej: 'https://apitriaje.semillaperu.org')
-  API_URL: 'https://apitriaje.semillaperu.org'
+  // Detectar automáticamente si se ejecuta en local o en servidor de producción
+  API_URL: (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+    ? '/api'
+    : 'https://apitriaje.semillaperu.org'
 };

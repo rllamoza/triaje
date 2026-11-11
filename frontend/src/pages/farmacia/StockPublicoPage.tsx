@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 export default function StockPublicoPage() {
   const [refreshInterval, setRefreshInterval] = useState<number>(4000)
-  const { data, isLoading, isFetching, refetch } = useStockPublico(refreshInterval)
+  const { data, isLoading, isFetching, isError, error, refetch } = useStockPublico(refreshInterval)
 
   // Filtros locales
   const [searchTerm, setSearchTerm] = useState('')
@@ -375,6 +375,25 @@ export default function StockPublicoPage() {
             )}
           </div>
         </div>
+
+        {/* Alerta de Error de Conexión */}
+        {isError && (
+          <div className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-amber-600">sync_problem</span>
+              <span>
+                No se pudo sincronizar el inventario: {(error as any)?.message || 'Sin conexión'}.
+                Reintentando automáticamente cada {refreshInterval ? `${refreshInterval / 1000}s` : 'instante'}...
+              </span>
+            </div>
+            <button
+              onClick={() => refetch()}
+              className="px-3 py-1 bg-amber-600 text-white rounded font-bold hover:bg-amber-700 cursor-pointer"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
 
         {/* Contenido: Listado de Fármacos */}
         {isLoading && (

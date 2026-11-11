@@ -3,8 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import { useBrandingStore } from '../../store/brandingStore'
 import { useThemeStore, THEME_OPTIONS } from '../../store/themeStore'
-import { useScannerStore } from '../../store/scannerStore'
-import { useLogout, useNodeStatus, useCampaigns } from '../../api/hooks'
+import { useLogout, useNodeStatus } from '../../api/hooks'
 import { HardwareStatusBar } from '../common/HardwareStatusBar'
 
 interface NavbarProps {
@@ -12,23 +11,15 @@ interface NavbarProps {
 }
 
 export function Navbar({ onOpenMobileMenu }: NavbarProps) {
-  const { user, campaignId, logout: logoutStore } = useAuthStore()
+  const { user, logout: logoutStore } = useAuthStore()
   const branding = useBrandingStore()
   const { theme: currentTheme, setTheme } = useThemeStore()
-  const { openScanner } = useScannerStore()
   const logout = useLogout()
   const navigate = useNavigate()
   const { data: nodeStatus } = useNodeStatus()
-  const { data: campaigns } = useCampaigns()
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-
-  const activeCampaign = campaigns?.find((c) => c.id === campaignId) ?? campaigns?.find((c) => c.status === 'active') ?? {
-    id: 1,
-    name: 'Cusco - Valle Sagrado 2025',
-    location_name: 'Rumichaca, Urubamba (2,870 msnm)',
-  }
 
   const handleLogout = async () => {
     setIsMenuOpen(false)
@@ -93,20 +84,8 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
           </Link>
         </div>
 
-        {/* Campaign & Offline status */}
+        {/* Offline & Hardware telemetry status */}
         <div className="flex items-center gap-2 lg:gap-3 min-w-0">
-          <Link
-            to="/campaigns"
-            className="hidden md:flex items-center bg-surface-container hover:bg-surface-container-high px-2.5 lg:px-3 py-1.5 gap-1.5 lg:gap-2 transition-colors border border-surface-container-high cursor-pointer min-w-0"
-            title="Cambiar campaña activa"
-          >
-            <span className="material-symbols-outlined text-[17px] text-primary shrink-0">local_hospital</span>
-            <span className="text-[12px] lg:text-[13px] font-medium text-on-surface truncate max-w-[120px] lg:max-w-[180px] xl:max-w-[240px]">
-              Campaña: {activeCampaign.name}
-            </span>
-            <span className="material-symbols-outlined text-[17px] text-primary shrink-0">expand_more</span>
-          </Link>
-
           {/* Telemetría Compacta de Hardware y Nodo */}
           <HardwareStatusBar variant="compact" className="hidden sm:inline-flex" />
 
@@ -118,18 +97,8 @@ export function Navbar({ onOpenMobileMenu }: NavbarProps) {
           </div>
         </div>
 
-        {/* QR Scanner, Notifications & User Profile */}
+        {/* Notifications & User Profile */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3 shrink-0" ref={menuRef}>
-          {/* Quick QR Scanner Button */}
-          <button
-            type="button"
-            onClick={openScanner}
-            className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 bg-primary text-on-primary hover:bg-on-primary-fixed-variant text-[11.5px] sm:text-[12.5px] font-bold tracking-wide uppercase transition-colors shadow-xs cursor-pointer rounded-none shrink-0"
-            title="Escanear Código QR de Paciente / Ticket"
-          >
-            <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
-            <span className="hidden lg:inline">Escanear QR</span>
-          </button>
 
           <div
             className="relative flex items-center justify-center p-1.5 sm:p-2 text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer shrink-0"

@@ -57,7 +57,9 @@ export interface TriajeSubOptions {
 }
 
 export interface RegistroFieldsConfig {
-  // Sección 1: Datos Personales complementarios
+  // Sección 1: Datos Personales (DNI y Nombres son los únicos siempre obligatorios)
+  fechaNacimiento: boolean // Fecha de nacimiento y cálculo de edad
+  sexo: boolean // Sexo biológico
   estadoCivil: boolean
   lenguaMaterna: boolean
 
@@ -134,6 +136,8 @@ const defaultFarmaciaConfig: FarmaciaConfig = {
 }
 
 const defaultRegistroFields: RegistroFieldsConfig = {
+  fechaNacimiento: true,
+  sexo: true,
   estadoCivil: true,
   lenguaMaterna: true,
   seccionResidencia: true,

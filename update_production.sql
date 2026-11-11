@@ -16,6 +16,10 @@ CREATE TABLE IF NOT EXISTS `system_settings` (
   UNIQUE KEY `system_settings_key_unique` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 1.1 Asegurar que fecha_nacimiento y sexo en beneficiarios sean opcionales (no obligatorios)
+ALTER TABLE `beneficiarios` MODIFY COLUMN `fecha_nacimiento` DATE NULL DEFAULT NULL;
+ALTER TABLE `beneficiarios` MODIFY COLUMN `sexo` ENUM('M','F','O') NULL DEFAULT 'O';
+
 -- 2. Asegurar nuevas columnas en la tabla `medicamentos`
 -- Nota: En MySQL si la columna ya existe, omite el error o ejecute individualmente
 SET @dbname = DATABASE();

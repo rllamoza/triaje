@@ -1779,20 +1779,45 @@ export default function PersonalizacionPage() {
                 </div>
               </div>
 
-              {/* Bloque 3: SECCIÓN 1 - DATOS COMPLEMENTARIOS */}
+              {/* Bloque 3: SECCIÓN 1 - CAMPOS DE IDENTIFICACIÓN PERSONAL */}
               <div className="p-5 border border-surface-container-high bg-surface space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="w-6 h-6 bg-primary text-on-primary text-xs font-bold flex items-center justify-center">
                     1
                   </span>
                   <h4 className="text-sm font-bold text-on-surface uppercase tracking-wider">
-                    Sección 1: Campos Complementarios de Identificación
+                    Sección 1: Campos de Identificación Personal
                   </h4>
                 </div>
                 <p className="text-xs text-on-surface-variant">
-                  Los campos esenciales (DNI, Nombres, Apellidos, Fecha de Nacimiento y Sexo) son siempre requeridos para la emisión del ticket clínico. Puede activar o desactivar los siguientes datos adicionales:
+                  Únicamente el DNI, Nombres y Apellidos son obligatorios. Puede activar o desactivar la fecha de nacimiento, sexo biológico y los siguientes datos adicionales según las necesidades de la campaña médica:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <label className="p-3 border border-surface-container-high bg-surface-container-low flex items-center gap-2.5 cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={registroFields.fechaNacimiento !== false}
+                      onChange={(e) => handleToggleField('fechaNacimiento', e.target.checked)}
+                      className="accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <span className="font-semibold text-on-surface">Fecha de Nacimiento &amp; Edad</span>
+                      <div className="text-[10px] text-on-surface-variant">Selector de fecha y cálculo automático de edad</div>
+                    </div>
+                  </label>
+
+                  <label className="p-3 border border-surface-container-high bg-surface-container-low flex items-center gap-2.5 cursor-pointer text-xs">
+                    <input
+                      type="checkbox"
+                      checked={registroFields.sexo !== false}
+                      onChange={(e) => handleToggleField('sexo', e.target.checked)}
+                      className="accent-primary h-4 w-4 cursor-pointer"
+                    />
+                    <div>
+                      <span className="font-semibold text-on-surface">Sexo Biológico</span>
+                      <div className="text-[10px] text-on-surface-variant">Masculino, Femenino o Sin especificar</div>
+                    </div>
+                  </label>
                   <label className="p-3 border border-surface-container-high bg-surface-container-low flex items-center gap-2.5 cursor-pointer text-xs">
                     <input
                       type="checkbox"

@@ -76,7 +76,7 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
     setMobileMenuOpen(false)
     try {
       await logout.mutateAsync()
-    } catch {}
+    } catch { }
     logoutStore()
     navigate('/login')
   }
@@ -132,11 +132,10 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                     <Link
                       key={item.path}
                       to={item.path}
-                      className={`flex items-center px-3 py-2 lg:px-3.5 lg:py-2.5 text-[13.5px] lg:text-[14px] transition-colors rounded-none ${
-                        isActive
-                          ? 'bg-primary-container text-on-primary-container font-semibold'
-                          : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
-                      }`}
+                      className={`flex items-center px-3 py-2 lg:px-3.5 lg:py-2.5 text-[13.5px] lg:text-[14px] transition-colors rounded-none ${isActive
+                        ? 'bg-primary-container text-on-primary-container font-semibold'
+                        : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
+                        }`}
                     >
                       <span className="material-symbols-outlined text-[20px] lg:text-[21px] mr-3 text-primary">
                         {item.icon}
@@ -164,11 +163,10 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                         <Link
                           key={item.path}
                           to={item.path}
-                          className={`flex items-center px-3 py-2 lg:px-3.5 lg:py-2.5 text-[13.5px] lg:text-[14px] transition-colors rounded-none ${
-                            isActive
-                              ? 'bg-primary-container text-on-primary-container font-semibold'
-                              : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
-                          }`}
+                          className={`flex items-center px-3 py-2 lg:px-3.5 lg:py-2.5 text-[13.5px] lg:text-[14px] transition-colors rounded-none ${isActive
+                            ? 'bg-primary-container text-on-primary-container font-semibold'
+                            : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
+                            }`}
                         >
                           <span className="material-symbols-outlined text-[20px] lg:text-[21px] mr-3 text-primary">
                             {item.icon}
@@ -312,11 +310,10 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                         key={item.path}
                         to={item.path}
                         onClick={() => setMobileMenuOpen(false)}
-                        className={`flex items-center px-3.5 py-3 text-[14px] transition-colors rounded-none ${
-                          isActive
-                            ? 'bg-primary-container text-on-primary-container font-semibold'
-                            : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
-                        }`}
+                        className={`flex items-center px-3.5 py-3 text-[14px] transition-colors rounded-none ${isActive
+                          ? 'bg-primary-container text-on-primary-container font-semibold'
+                          : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
+                          }`}
                       >
                         <span className="material-symbols-outlined text-[22px] mr-3.5 text-primary">
                           {item.icon}
@@ -340,11 +337,10 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                             key={item.path}
                             to={item.path}
                             onClick={() => setMobileMenuOpen(false)}
-                            className={`flex items-center px-3.5 py-3 text-[14px] transition-colors rounded-none ${
-                              isActive
-                                ? 'bg-primary-container text-on-primary-container font-semibold'
-                                : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
-                            }`}
+                            className={`flex items-center px-3.5 py-3 text-[14px] transition-colors rounded-none ${isActive
+                              ? 'bg-primary-container text-on-primary-container font-semibold'
+                              : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-medium'
+                              }`}
                           >
                             <span className="material-symbols-outlined text-[22px] mr-3.5 text-primary">
                               {item.icon}
@@ -377,11 +373,10 @@ export function AppLayout({ requiredRoles }: AppLayoutProps) {
                         key={opt.id}
                         type="button"
                         onClick={() => setTheme(opt.id)}
-                        className={`p-2 rounded flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-primary-container border-primary text-on-primary-container font-bold shadow-xs ring-1 ring-primary/30'
-                            : 'bg-surface hover:bg-surface-container border-surface-container-high text-on-surface'
-                        }`}
+                        className={`p-2 rounded flex flex-col items-center justify-center text-center border transition-all cursor-pointer ${isSelected
+                          ? 'bg-primary-container border-primary text-on-primary-container font-bold shadow-xs ring-1 ring-primary/30'
+                          : 'bg-surface hover:bg-surface-container border-surface-container-high text-on-surface'
+                          }`}
                       >
                         <div className="flex items-center -space-x-1 mb-1">
                           {opt.previewColors.map((colorHex, idx) => (

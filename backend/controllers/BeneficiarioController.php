@@ -269,15 +269,29 @@ function beneficiarios_store(array $user): void {
     if (empty($b['campaign_id'])) $b['campaign_id'] = 1;
     if (empty($b['celular']) && !empty($b['telefono'])) $b['celular'] = $b['telefono'];
 
-    $required = ['dni','nombres','apellidos','fecha_nacimiento','sexo'];
+    $required = ['dni','nombres','apellidos'];
     foreach ($required as $f) {
-        if (empty($b[$f])) json_error("El campo '$f' es obligatorio.", 422);
+        if (empty(trim((string)($b[$f] ?? '')))) json_error("El campo '$f' es obligatorio.", 422);
     }
-    if (!in_array($b['sexo'], ['M','F','O'])) json_error("Sexo inválido. Use M, F u O.", 422);
 
-    // Calcular edad e IMC
-    $edad = (int)date_diff(date_create($b['fecha_nacimiento']), date_create('today'))->y;
-    $imc  = null;
+    // Fecha de nacimiento y sexo son opcionales
+    $fechaNac = !empty($b['fecha_nacimiento']) ? trim((string)$b['fecha_nacimiento']) : null;
+    $rawSexo  = strtoupper(trim((string)($b['sexo'] ?? '')));
+    $sexo     = in_array($rawSexo, ['M', 'F', 'O']) ? $rawSexo : 'O';
+
+    // Calcular edad e IMC si hay fecha de nacimiento
+    $edad = null;
+    if ($fechaNac) {
+        try {
+            $edad = (int)date_diff(date_create($fechaNac), date_create('today'))->y;
+        } catch (\Throwable $e) {
+            $edad = null;
+        }
+    } elseif (isset($b['edad']) && is_numeric($b['edad'])) {
+        $edad = (int)$b['edad'];
+    }
+
+    $imc = null;
     if (!empty($b['peso_kg']) && !empty($b['talla_cm']) && $b['talla_cm'] > 0) {
         $t   = $b['talla_cm'] / 100;
         $imc = round($b['peso_kg'] / ($t * $t), 1);
@@ -325,8 +339,8 @@ function beneficiarios_store(array $user): void {
     $fields = [
         'nombres'           => $b['nombres'],
         'apellidos'         => $b['apellidos'],
-        'fecha_nacimiento'  => $b['fecha_nacimiento'],
-        'sexo'              => $b['sexo'],
+        'fecha_nacimiento'  => $fechaNac,
+        'sexo'              => $sexo,
         'estado_civil'      => $ec,
         'idioma_principal'  => $idioma,
         'region'            => $b['region'] ?? null,

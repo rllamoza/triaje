@@ -68,6 +68,14 @@ function ensure_schema_compatibility(PDO $pdo): void {
             }
         }
 
+        // 2.1 Asegurar que campos no obligatorios en beneficiarios permitan NULL
+        try {
+            $pdo->exec("ALTER TABLE beneficiarios MODIFY COLUMN fecha_nacimiento DATE NULL DEFAULT NULL");
+            $pdo->exec("ALTER TABLE beneficiarios MODIFY COLUMN sexo ENUM('M','F','O') NULL DEFAULT 'O'");
+        } catch (\Throwable $e) {
+            // Ignorar si ya está modificado o el usuario no tiene permisos de alter
+        }
+
         // 3. Asegurar al menos una campaña activa
         $campCount = (int)$pdo->query("SELECT COUNT(*) FROM campaigns")->fetchColumn();
         if ($campCount === 0) {

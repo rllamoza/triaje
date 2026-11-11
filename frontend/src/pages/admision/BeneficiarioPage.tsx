@@ -203,10 +203,6 @@ export default function BeneficiarioPage() {
       setMessage({ text: 'Debe ingresar nombres y apellidos completos.', type: 'error' })
       return
     }
-    if (!fechaNac) {
-      setMessage({ text: 'Debe ingresar la fecha de nacimiento.', type: 'error' })
-      return
-    }
 
     if (selectedSpecialtyCodes.length === 0) {
       setMessage({
@@ -234,8 +230,8 @@ export default function BeneficiarioPage() {
         dni: cleanDni,
         nombres: nombres.trim().toUpperCase(),
         apellidos: apellidos.trim().toUpperCase(),
-        fecha_nacimiento: fechaNac,
-        sexo,
+        fecha_nacimiento: (registroFields.fechaNacimiento !== false && fechaNac) ? fechaNac : undefined,
+        sexo: (registroFields.sexo !== false && sexo) ? sexo : 'O',
         estado_civil: registroFields.estadoCivil ? (estadoCivil || undefined) : undefined,
         idioma_principal: registroFields.lenguaMaterna ? (idioma || undefined) : undefined,
         comunidad: (registroFields.seccionResidencia && registroFields.comunidad) ? (comunidad || undefined) : undefined,
@@ -570,7 +566,7 @@ export default function BeneficiarioPage() {
                   Identificación y Datos Personales
                 </h2>
               </div>
-              <span className="text-xs text-on-surface-variant font-mono">* Campos obligatorios</span>
+              <span className="text-xs text-on-surface-variant font-mono">* Solo DNI, Nombres y Apellidos son obligatorios</span>
             </div>
 
             <div className="space-y-4">
@@ -663,41 +659,47 @@ export default function BeneficiarioPage() {
 
               {/* Fecha de Nacimiento, Edad, Sexo, Estado Civil, Idioma */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                <div>
-                  <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    F. Nacimiento *
-                  </label>
-                  <input
-                    className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none"
-                    type="date"
-                    value={fechaNac}
-                    onChange={(e) => setFechaNac(e.target.value)}
-                  />
-                </div>
+                {registroFields.fechaNacimiento !== false && (
+                  <>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                        F. Nacimiento
+                      </label>
+                      <input
+                        className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none"
+                        type="date"
+                        value={fechaNac}
+                        onChange={(e) => setFechaNac(e.target.value)}
+                      />
+                    </div>
 
-                <div>
-                  <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Edad Calc.
-                  </label>
-                  <div className="h-10 px-3 bg-surface-container flex items-center justify-between text-sm font-semibold text-on-surface border border-surface-container-high">
-                    <span>{calculateAge(fechaNac)}</span>
-                    <span className="text-[11px] font-normal text-on-surface-variant">años</span>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                        Edad Calc.
+                      </label>
+                      <div className="h-10 px-3 bg-surface-container flex items-center justify-between text-sm font-semibold text-on-surface border border-surface-container-high">
+                        <span>{calculateAge(fechaNac)}</span>
+                        <span className="text-[11px] font-normal text-on-surface-variant">años</span>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {registroFields.sexo !== false && (
+                  <div>
+                    <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                      Sexo Biológico
+                    </label>
+                    <select
+                      className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                      value={sexo}
+                      onChange={(e) => setSexo(e.target.value as 'M' | 'F')}
+                    >
+                      <option value="M">Masculino</option>
+                      <option value="F">Femenino</option>
+                    </select>
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Sexo Biológico *
-                  </label>
-                  <select
-                    className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                    value={sexo}
-                    onChange={(e) => setSexo(e.target.value as 'M' | 'F')}
-                  >
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
-                  </select>
-                </div>
+                )}
 
                 {registroFields.estadoCivil && (
                   <div>
@@ -720,7 +722,7 @@ export default function BeneficiarioPage() {
                 {registroFields.lenguaMaterna && (
                   <div>
                     <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Lengua Materna *
+                      Lengua Materna
                     </label>
                     <select
                       className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
@@ -757,7 +759,7 @@ export default function BeneficiarioPage() {
                 {registroFields.comunidad && (
                   <div className="md:col-span-6">
                     <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Comunidad / Sector Rural *
+                      Comunidad / Sector Rural
                     </label>
                     <select
                       className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
@@ -831,7 +833,7 @@ export default function BeneficiarioPage() {
                 {registroFields.seguro && (
                   <div className="md:col-span-4">
                     <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Afiliación a Seguro Médico *
+                      Afiliación a Seguro Médico
                     </label>
                     <select
                       className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"

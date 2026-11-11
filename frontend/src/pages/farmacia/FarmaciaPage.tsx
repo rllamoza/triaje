@@ -4,8 +4,10 @@ import {
   useFarmaciaAtenciones,
   useMedicos,
   useDispensarMedicamento,
+  useBeneficiariosBuscar,
   type MedicamentoAdmin,
   type FarmaciaItemDispensar,
+  type Beneficiario,
 } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { useFeatureStore } from '../../store/featureStore'
@@ -31,6 +33,11 @@ export default function FarmaciaPage() {
 
   // Paciente & Doctor
   const [selectedAtencionId, setSelectedAtencionId] = useState<number | null>(null)
+  const [selectedBeneficiarioId, setSelectedBeneficiarioId] = useState<number | null>(null)
+  const [searchPacienteQuery, setSearchPacienteQuery] = useState('')
+  const [isSearchPacienteOpen, setIsSearchPacienteOpen] = useState(false)
+  const { data: searchPacientesData, isLoading: isSearchingPacientes } = useBeneficiariosBuscar(searchPacienteQuery)
+
   const [pacienteNombre, setPacienteNombre] = useState('')
   const [pacienteDni, setPacienteDni] = useState('')
   const [pacienteComunidad, setPacienteComunidad] = useState('')
@@ -108,9 +115,22 @@ export default function FarmaciaPage() {
     return Array.from(set)
   }, [medicamentos])
 
+  // Al seleccionar un paciente del padrón
+  const handleSelectBeneficiario = (b: Beneficiario) => {
+    setSelectedBeneficiarioId(b.id)
+    setPacienteNombre(`${b.apellidos}, ${b.nombres}`)
+    setPacienteDni(b.dni || '')
+    setPacienteComunidad(b.comunidad || '')
+    setSearchPacienteQuery('')
+    setIsSearchPacienteOpen(false)
+  }
+
   // Al seleccionar un paciente de la cola
   const handleSelectAtencionCola = (at: any) => {
     setSelectedAtencionId(at.atencion_id)
+    if (at.beneficiario_id) {
+      setSelectedBeneficiarioId(at.beneficiario_id)
+    }
     setPacienteNombre(`${at.apellidos}, ${at.nombres}`)
     setPacienteDni(at.dni || '')
     setPacienteComunidad(at.comunidad || '')
@@ -229,6 +249,7 @@ export default function FarmaciaPage() {
       const res = await dispensarMutation.mutateAsync({
         campaign_id: campaignId ?? 1,
         atencion_id: selectedAtencionId,
+        beneficiario_id: selectedBeneficiarioId || undefined,
         paciente_nombre: pacienteNombre.trim(),
         paciente_dni: pacienteDni.trim() || undefined,
         medico_id: selectedMedicoId && selectedMedicoId !== 'externo' ? parseInt(selectedMedicoId) : null,
@@ -263,6 +284,8 @@ export default function FarmaciaPage() {
       // Limpiar formulario de atención
       setCanastaItems([])
       setSelectedAtencionId(null)
+      setSelectedBeneficiarioId(null)
+      setSearchPacienteQuery('')
       setPacienteNombre('')
       setPacienteDni('')
       setPacienteComunidad('')
@@ -367,22 +390,141 @@ export default function FarmaciaPage() {
               <span className="material-symbols-outlined text-sm text-primary">person</span>
               <span>1. Paciente a Atender</span>
             </span>
-            {selectedAtencionId && (
+            {(selectedAtencionId || selectedBeneficiarioId || pacienteNombre || pacienteDni) && (
               <button
                 type="button"
                 onClick={() => {
                   setSelectedAtencionId(null)
+                  setSelectedBeneficiarioId(null)
+                  setSearchPacienteQuery('')
                   setPacienteNombre('')
                   setPacienteDni('')
                   setPacienteComunidad('')
                   setCanastaItems([])
                 }}
-                className="text-[11px] text-error hover:underline cursor-pointer"
+                className="text-[11px] text-error hover:underline cursor-pointer flex items-center gap-1"
               >
-                Limpiar Selección
+                <span className="material-symbols-outlined text-xs">close</span>
+                Limpiar Paciente
               </button>
             )}
           </div>
+
+          {/* BUSCADOR PREDICTIVO EN PADRÓN (DNI O APELLIDOS / NOMBRES) */}
+          <div className="relative mb-3">
+            <label className="block text-[11px] font-bold uppercase text-primary mb-1 flex items-center gap-1">
+              <span className="material-symbols-outlined text-xs">person_search</span>
+              <span>Buscar en Padrón de Pacientes (por DNI o Apellidos / Nombres)</span>
+            </label>
+            <div className="relative">
+              <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-primary text-base select-none pointer-events-none">
+                search
+              </span>
+              <input
+                type="text"
+                placeholder="Escriba DNI o Apellidos / Nombres para autocompletar..."
+                value={searchPacienteQuery}
+                onChange={(e) => {
+                  setSearchPacienteQuery(e.target.value)
+                  setIsSearchPacienteOpen(true)
+                }}
+                onFocus={() => {
+                  if (searchPacienteQuery.trim().length >= 1) setIsSearchPacienteOpen(true)
+                }}
+                className="w-full h-9 pl-9 pr-8 text-xs bg-surface-container-low border border-primary/40 focus:border-primary text-on-surface focus:outline-none placeholder:text-on-surface-variant/60 font-medium transition-all"
+              />
+              {searchPacienteQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchPacienteQuery('')
+                    setIsSearchPacienteOpen(false)
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-0.5 cursor-pointer"
+                  title="Limpiar búsqueda"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              )}
+            </div>
+
+            {/* Dropdown flotante de resultados predictivos */}
+            {isSearchPacienteOpen && searchPacienteQuery.trim().length >= 1 && (
+              <>
+                <div
+                  className="fixed inset-0 z-20"
+                  onClick={() => setIsSearchPacienteOpen(false)}
+                />
+                <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-surface border border-surface-container-high shadow-xl max-h-60 overflow-y-auto rounded-none">
+                  {isSearchingPacientes && (
+                    <div className="p-3 text-xs text-on-surface-variant flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm animate-spin text-primary">progress_activity</span>
+                      Buscando en padrón de pacientes...
+                    </div>
+                  )}
+                  {!isSearchingPacientes && (!searchPacientesData?.data || searchPacientesData.data.length === 0) && (
+                    <div className="p-3 text-xs text-on-surface-variant">
+                      No se encontraron pacientes para &quot;{searchPacienteQuery}&quot;. Puede completar los datos manualmente abajo.
+                    </div>
+                  )}
+                  {!isSearchingPacientes && searchPacientesData?.data && searchPacientesData.data.length > 0 && (
+                    <div className="divide-y divide-surface-container-high">
+                      {searchPacientesData.data.map((ben) => {
+                        const hasNoDni = !ben.dni || ben.dni.trim() === ''
+                        return (
+                          <button
+                            key={ben.id}
+                            type="button"
+                            onClick={() => handleSelectBeneficiario(ben)}
+                            className="w-full text-left px-3 py-2 hover:bg-surface-container transition-colors flex items-center justify-between gap-3 text-xs cursor-pointer group"
+                          >
+                            <div>
+                              <div className="font-semibold text-on-surface group-hover:text-primary">
+                                {ben.apellidos}, {ben.nombres}
+                              </div>
+                              <div className="text-[11px] text-on-surface-variant flex items-center gap-2 mt-0.5">
+                                {hasNoDni ? (
+                                  <span className="px-1.5 py-0.2 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-mono text-[10px] rounded-xs font-semibold">
+                                    ⚠️ Sin DNI
+                                  </span>
+                                ) : (
+                                  <span className="font-mono text-[11px] font-semibold text-primary">
+                                    DNI: {ben.dni}
+                                  </span>
+                                )}
+                                {ben.comunidad && <span>• {ben.comunidad}</span>}
+                                {ben.edad_calculada ? <span>• {ben.edad_calculada} años</span> : null}
+                              </div>
+                            </div>
+                            <span className="material-symbols-outlined text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                              check_circle
+                            </span>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Cartel de vinculación con Padrón */}
+          {selectedBeneficiarioId && (
+            <div className="mb-3 px-2.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-medium">
+                <span className="material-symbols-outlined text-sm text-emerald-600">verified</span>
+                <span>Paciente Vinculado al Padrón (#ID: {selectedBeneficiarioId})</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedBeneficiarioId(null)}
+                className="text-[10px] uppercase font-bold text-emerald-700 dark:text-emerald-400 hover:underline cursor-pointer"
+              >
+                Desvincular
+              </button>
+            </div>
+          )}
 
           {/* Cola Rápida de Farmacia (si hay pacientes con recetas pendientes) */}
           {atencionesCola.length > 0 && (

@@ -145,6 +145,17 @@ function farmacia_dispensar(array $user): void {
     $observaciones = !empty($b['observaciones']) ? trim((string)$b['observaciones']) : null;
 
     $pdo = db();
+
+    // Si no vino beneficiario_id explícito pero sí atencion_id, resolverlo desde la atención
+    if (!$beneficiarioId && $atencionId) {
+        $stmtBen = $pdo->prepare("SELECT beneficiario_id FROM atenciones WHERE id = :at_id LIMIT 1");
+        $stmtBen->execute([':at_id' => $atencionId]);
+        $foundBenId = $stmtBen->fetchColumn();
+        if ($foundBenId) {
+            $beneficiarioId = (int)$foundBenId;
+        }
+    }
+
     $pdo->beginTransaction();
 
     try {

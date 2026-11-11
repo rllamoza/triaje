@@ -879,12 +879,12 @@ export default function BeneficiarioPage() {
                           </label>
                           <button
                             type="button"
-                            onClick={() => setIsAddingComunidad((prev) => !prev)}
-                            className="text-[10px] text-primary hover:text-on-primary-fixed-variant font-bold uppercase flex items-center gap-0.5 cursor-pointer"
-                            title="Ingresar nueva comunidad previamente no registrada"
+                            onClick={() => setIsAddingComunidad(true)}
+                            className="w-5 h-5 flex items-center justify-center text-primary hover:text-on-primary hover:bg-primary border border-primary/40 transition-colors cursor-pointer"
+                            title="Agregar nueva comunidad"
+                            aria-label="Agregar comunidad"
                           >
-                            <span className="material-symbols-outlined text-[13px]">add</span>
-                            <span>{isAddingComunidad ? 'Cerrar' : '+ Nueva'}</span>
+                            <span className="material-symbols-outlined text-[15px]">add</span>
                           </button>
                         </div>
                         <select
@@ -904,45 +904,7 @@ export default function BeneficiarioPage() {
                   </div>
                 )}
 
-                {/* Formulario rápido desplegable para ingresar una nueva comunidad */}
-                {isAddingComunidad && (
-                  <div className="p-3 bg-surface-container border border-primary/40 shadow-xs flex flex-wrap items-center gap-2 animate-fade-in">
-                    <span className="text-[11px] font-bold text-on-surface uppercase tracking-wider">
-                      Registrar Nueva Comunidad:
-                    </span>
-                    <input
-                      type="text"
-                      placeholder="Ej. Yanahuara Alta, Sector Rumichaca, Ayllu..."
-                      value={newComunidadName}
-                      onChange={(e) => setNewComunidadName(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleSaveNewComunidad()
-                        }
-                      }}
-                      className="flex-1 min-w-[220px] h-8 px-3 bg-surface text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none"
-                      autoFocus
-                    />
-                    <button
-                      type="button"
-                      onClick={handleSaveNewComunidad}
-                      className="h-8 px-3 bg-primary text-on-primary text-xs font-bold uppercase hover:bg-on-primary-fixed-variant transition-colors cursor-pointer rounded-none"
-                    >
-                      Guardar y Seleccionar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsAddingComunidad(false)
-                        setNewComunidadName('')
-                      }}
-                      className="h-8 px-2 text-xs text-on-surface-variant hover:text-on-surface cursor-pointer"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                )}
+
 
                 {/* Fila 2: Móvil, Altitud, Tiempo de Traslado y Afiliación a Seguro */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
@@ -1504,6 +1466,84 @@ export default function BeneficiarioPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal para Agregar Nueva Comunidad */}
+      {isAddingComunidad && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+          <div className="w-full max-w-md bg-surface border border-surface-container-high shadow-2xl flex flex-col overflow-hidden text-on-surface animate-scale-in">
+            {/* Header */}
+            <div className="px-5 py-3.5 bg-surface-container-low border-b border-surface-container-high flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[20px]">
+                  location_city
+                </span>
+                <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+                  Agregar Nueva Comunidad / Sector
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAddingComunidad(false)
+                  setNewComunidadName('')
+                }}
+                className="p-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-5 space-y-3">
+              <p className="text-xs text-on-surface-variant">
+                Ingrese el nombre de la comunidad, anexo o sector rural. Quedará guardada en el catálogo y se seleccionará automáticamente para este registro.
+              </p>
+              <div>
+                <label className="block text-[11px] font-bold text-on-surface uppercase tracking-wider mb-1">
+                  Nombre de la Comunidad:
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ej. Rumichaca Alto, Yanahuara, Sector Piri..."
+                  value={newComunidadName}
+                  onChange={(e) => setNewComunidadName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleSaveNewComunidad()
+                    }
+                  }}
+                  className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-sm border border-surface-container-high focus:border-primary focus:outline-none"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="px-5 py-3.5 bg-surface-container-low border-t border-surface-container-high flex items-center justify-end gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAddingComunidad(false)
+                  setNewComunidadName('')
+                }}
+                className="h-9 px-4 border border-surface-container-highest text-xs font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer rounded-none"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveNewComunidad}
+                disabled={!newComunidadName.trim()}
+                className="h-9 px-4 bg-primary text-on-primary hover:bg-on-primary-fixed-variant disabled:opacity-50 text-xs font-bold uppercase transition-colors flex items-center gap-1.5 cursor-pointer rounded-none shadow-xs"
+              >
+                <span className="material-symbols-outlined text-[16px]">save</span>
+                <span>Guardar y Seleccionar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal de Impresión Térmica Inmediata del / de los Ticket(s) Asignado(s) */}
       <TicketModal

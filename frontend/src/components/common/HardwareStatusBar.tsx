@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNodeStatus, useCampaigns } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
+import { useEnvironmentalData } from '../../hooks/useEnvironmentalData'
 import { ApiConnectionModal } from './ApiConnectionModal'
 
 interface BatteryStatus {
@@ -23,6 +24,7 @@ export function HardwareStatusBar({
   const { data: nodeStatus } = useNodeStatus()
   const { campaignId } = useAuthStore()
   const { data: campaigns } = useCampaigns()
+  const { altitude, humidity, temperature, city, source: envSource } = useEnvironmentalData()
 
   // 1. Detección de conectividad del navegador en tiempo real
   const [isOnline, setIsOnline] = useState<boolean>(
@@ -167,6 +169,17 @@ export function HardwareStatusBar({
               {nodeStatus?.printer_ok ? 'Conectada' : 'Offline'}
             </span>
           </div>
+
+          {/* Altitud & Humedad del lugar */}
+          <div className="hidden lg:flex items-center gap-1.5 shrink-0 text-xs">
+            <span className="material-symbols-outlined text-sm text-tertiary">terrain</span>
+            <span className="text-on-surface">ALTITUD: {altitude != null ? `${altitude} msnm` : '---'}</span>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-1.5 shrink-0 text-xs">
+            <span className="material-symbols-outlined text-sm text-primary">water_drop</span>
+            <span className="text-on-surface">HUMEDAD: {humidity != null ? `${humidity}%` : '---'}</span>
+          </div>
         </div>
 
         {/* Lado Derecho: DB Sync, Validar API & Ubicación */}
@@ -214,8 +227,8 @@ export function HardwareStatusBar({
   return (
     <>
       <div
-        className={`inline-flex items-center gap-2 px-2.5 py-1 bg-surface-container text-xs font-mono text-on-surface-variant border border-surface-container-high shrink-0 ${className}`}
-        title={`Nodo: ${nodeId} (${hardwareModel}) | Batería: ${batteryPct}% ${batteryLabel} | Latencia: ${nodeStatus?.latency_ms ?? 38}ms | Ubicación: ${locationText}`}
+        className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 bg-surface-container text-xs font-mono text-on-surface-variant border border-surface-container-high shrink-0 ${className}`}
+        title={`Nodo: ${nodeId} (${hardwareModel}) | Batería: ${batteryPct}% ${batteryLabel} | Altitud: ${altitude != null ? `${altitude} msnm` : 'Detectando...'} | Humedad: ${humidity != null ? `${humidity}%` : 'Detectando...'} | Ubicación: ${city || locationText} | Latencia: ${nodeStatus?.latency_ms ?? 38}ms`}
       >
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
@@ -236,6 +249,28 @@ export function HardwareStatusBar({
             {getBatteryIcon(batteryPct, isCharging)}
           </span>
           <span>{batteryPct}%</span>
+        </div>
+
+        <span className="text-outline-variant">•</span>
+
+        {/* Altitud de la ubicación de apertura */}
+        <div
+          className="flex items-center gap-1 shrink-0 text-[11px]"
+          title={`Altitud Calculada: ${altitude != null ? `${altitude} msnm` : 'Detectando...'} (${city || envSource})`}
+        >
+          <span className="material-symbols-outlined text-[15px] text-tertiary">terrain</span>
+          <span className="font-semibold text-on-surface">{altitude != null ? `${altitude} msnm` : '---'}</span>
+        </div>
+
+        <span className="text-outline-variant">•</span>
+
+        {/* Humedad de la ubicación de apertura */}
+        <div
+          className="flex items-center gap-1 shrink-0 text-[11px]"
+          title={`Humedad Relativa: ${humidity != null ? `${humidity}%` : 'Detectando...'} | Temp: ${temperature != null ? `${temperature}°C` : '--'} (${city || envSource})`}
+        >
+          <span className="material-symbols-outlined text-[15px] text-primary">water_drop</span>
+          <span className="font-semibold text-on-surface">{humidity != null ? `${humidity}%` : '---'}</span>
         </div>
 
         <span className="text-outline-variant hidden sm:inline">•</span>

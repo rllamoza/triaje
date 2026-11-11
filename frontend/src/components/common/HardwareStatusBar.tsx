@@ -24,7 +24,7 @@ export function HardwareStatusBar({
   const { data: nodeStatus } = useNodeStatus()
   const { campaignId } = useAuthStore()
   const { data: campaigns } = useCampaigns()
-  const { altitude, humidity, temperature, city, source: envSource } = useEnvironmentalData()
+  const { altitude, humidity, temperature, city, locationText: envLocationText, source: envSource } = useEnvironmentalData()
 
   // 1. Detección de conectividad del navegador en tiempo real
   const [isOnline, setIsOnline] = useState<boolean>(
@@ -118,14 +118,14 @@ export function HardwareStatusBar({
         className={`w-full bg-surface-container-high py-2.5 px-4 sm:px-6 flex items-center justify-between text-xs font-mono text-on-surface-variant select-none border-b border-surface-container-highest transition-colors ${className}`}
       >
         <div className="flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar">
-          {/* Nodo Local */}
+          {/* Ubicación Actual (Región y Provincia) */}
           <div className="flex items-center gap-2 shrink-0">
             <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
             <span className="font-semibold text-on-surface uppercase tracking-wider">
-              NODO LOCAL: {nodeId}
+              UBICACIÓN: {envLocationText}
             </span>
             <span className="text-secondary hidden sm:inline">
-              ({hardwareModel})
+              (Nodo: {nodeId} • {hardwareModel})
             </span>
           </div>
 
@@ -228,12 +228,12 @@ export function HardwareStatusBar({
     <>
       <div
         className={`inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 bg-surface-container text-xs font-mono text-on-surface-variant border border-surface-container-high shrink-0 ${className}`}
-        title={`Nodo: ${nodeId} (${hardwareModel}) | Batería: ${batteryPct}% ${batteryLabel} | Altitud: ${altitude != null ? `${altitude} msnm` : 'Detectando...'} | Humedad: ${humidity != null ? `${humidity}%` : 'Detectando...'} | Ubicación: ${city || locationText} | Latencia: ${nodeStatus?.latency_ms ?? 38}ms`}
+        title={`Ubicación Actual: ${envLocationText} (${envSource}) | Altitud: ${altitude != null ? `${altitude} msnm` : 'Detectando...'} | Humedad: ${humidity != null ? `${humidity}%` : 'Detectando...'} | Batería: ${batteryPct}% | Nodo: ${nodeId}`}
       >
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0" title={`Ubicación detectada: ${envLocationText} (${envSource})`}>
           <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-          <span className="font-semibold text-on-surface text-[11px]">
-            {nodeId}
+          <span className="font-semibold text-on-surface text-[11px] uppercase tracking-wide">
+            {envLocationText}
           </span>
         </div>
 

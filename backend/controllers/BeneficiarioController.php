@@ -4,8 +4,9 @@
 // ============================================================
 
 function beneficiarios_reniec(string $dni): void {
-    if (!preg_match('/^\d{8}$/', $dni)) {
-        json_error('DNI debe tener 8 dígitos numéricos', 422);
+    $dni = trim($dni);
+    if (empty($dni)) {
+        json_error('DNI no puede estar vacío', 422);
     }
 
     // 1. Buscar en la base de datos local primero
@@ -55,6 +56,7 @@ function beneficiarios_reniec(string $dni): void {
             'from_cache'       => true,
             'source'           => 'Padrón Comunitario',
             'data'             => $local,
+            'id'               => $local['id'],
             'dni'              => $local['dni'],
             'nombres'          => $local['nombres'],
             'apellido_paterno' => explode(' ', $local['apellidos'])[0] ?? '',
@@ -67,15 +69,15 @@ function beneficiarios_reniec(string $dni): void {
             'distrito'         => $local['distrito'] ?? null,
             'comunidad'        => $local['comunidad'],
             'telefono'         => $local['celular'],
-            'direccion'        => null,
+            'direccion'        => $local['direccion_libre'] ?? null,
             'has_history'      => !empty($atenciones),
             'historial_campanas'   => array_values($campanas),
             'historial_atenciones' => $atenciones,
         ]);
     }
 
-    // 2. Intentar API RENIEC
-    if (RENIEC_TOKEN && RENIEC_URL) {
+    // 2. Intentar API RENIEC si son exactamente 8 dígitos
+    if (preg_match('/^\d{8}$/', $dni) && RENIEC_TOKEN && RENIEC_URL) {
         $ctx = stream_context_create(['http' => [
             'header' => "Authorization: Bearer " . RENIEC_TOKEN . "\r\nAccept: application/json\r\n",
             'timeout' => 8,
@@ -224,22 +226,32 @@ function beneficiarios_check_duplicate(string $dni): void {
 function beneficiarios_index(): void {
     $search     = get_param('search');
     $campaignId = get_param('campaign_id');
+    $filter     = get_param('filter'); // 'sin_dni', 'fecha_estimada', 'completos'
     $page       = max(1, (int)get_param('page', 1));
-    $perPage    = 20;
+    $perPage    = min(100, max(5, (int)get_param('per_page', 20)));
 
     $where  = [];
     $params = [];
 
     if ($search) {
-        $where[]        = "(b.dni LIKE :s1 OR b.nombres LIKE :s2 OR b.apellidos LIKE :s3)";
+        $where[]        = "(b.dni LIKE :s1 OR b.nombres LIKE :s2 OR b.apellidos LIKE :s3 OR CONCAT(b.nombres, ' ', b.apellidos) LIKE :s4 OR CONCAT(b.apellidos, ' ', b.nombres) LIKE :s5)";
         $like           = "%$search%";
         $params[':s1']  = $like;
         $params[':s2']  = $like;
         $params[':s3']  = $like;
+        $params[':s4']  = $like;
+        $params[':s5']  = $like;
     }
     if ($campaignId) {
         $where[]           = "b.campaign_id = :cid";
         $params[':cid']    = $campaignId;
+    }
+    if ($filter === 'sin_dni') {
+        $where[] = "(b.dni IS NULL OR TRIM(b.dni) = '')";
+    } elseif ($filter === 'fecha_estimada') {
+        $where[] = "b.fecha_nacimiento LIKE '%-01-01'";
+    } elseif ($filter === 'completos') {
+        $where[] = "(b.dni IS NOT NULL AND TRIM(b.dni) != '' AND (b.fecha_nacimiento IS NULL OR b.fecha_nacimiento NOT LIKE '%-01-01'))";
     }
 
     $whereClause = $where ? "WHERE " . implode(' AND ', $where) : '';
@@ -264,7 +276,224 @@ function beneficiarios_index(): void {
         $whereClause 
         ORDER BY b.apellidos
     ";
-    json_ok(paginate($sql, $params, $perPage, $page));
+    $paginated = paginate($sql, $params, $perPage, $page);
+    
+    // Add missing_dni and is_estimated_birth markers to each item
+    if (!empty($paginated['data']) && is_array($paginated['data'])) {
+        foreach ($paginated['data'] as &$item) {
+            $dob = $item['fecha_nacimiento'] ?? '';
+            $item['missing_dni'] = empty($item['dni']);
+            $item['is_estimated_birth'] = !empty($dob) && str_ends_with($dob, '-01-01');
+        }
+        unset($item);
+    }
+
+    json_ok($paginated);
+}
+
+// Búsqueda rápida predictiva por DNI o Apellidos / Nombres (para autocomplete en Admisión)
+function beneficiarios_buscar(): void {
+    $q = trim((string)get_param('q', ''));
+    if (strlen($q) < 2) {
+        json_ok(['total' => 0, 'data' => []]);
+    }
+
+    $sql = "
+        SELECT b.id, b.dni, b.nombres, b.apellidos, b.fecha_nacimiento, b.edad_calculada,
+               b.sexo, b.estado_civil, b.idioma_principal, b.region, b.provincia, b.distrito,
+               b.comunidad, b.direccion_libre, b.celular, b.tipo_seguro, b.campaign_id
+        FROM beneficiarios b
+        WHERE b.dni LIKE :s1
+           OR b.nombres LIKE :s2
+           OR b.apellidos LIKE :s3
+           OR CONCAT(b.nombres, ' ', b.apellidos) LIKE :s4
+           OR CONCAT(b.apellidos, ' ', b.nombres) LIKE :s5
+        ORDER BY 
+           CASE WHEN b.dni = :exact1 THEN 1
+                WHEN CONCAT(b.nombres, ' ', b.apellidos) = :exact2 THEN 2
+                WHEN CONCAT(b.apellidos, ' ', b.nombres) = :exact3 THEN 3
+                WHEN b.apellidos LIKE :prefix THEN 4
+                ELSE 5
+           END,
+           b.apellidos ASC
+        LIMIT 25
+    ";
+    $like = "%$q%";
+    $prefix = "$q%";
+    $stmt = db()->prepare($sql);
+    $stmt->execute([
+        ':s1'     => $like,
+        ':s2'     => $like,
+        ':s3'     => $like,
+        ':s4'     => $like,
+        ':s5'     => $like,
+        ':exact1' => $q,
+        ':exact2' => $q,
+        ':exact3' => $q,
+        ':prefix' => $prefix
+    ]);
+    $results = $stmt->fetchAll();
+
+    $data = array_map(function($r) {
+        $dob = $r['fecha_nacimiento'] ?? '';
+        $r['missing_dni'] = empty($r['dni']);
+        $r['is_estimated_birth'] = !empty($dob) && str_ends_with($dob, '-01-01');
+        return $r;
+    }, $results);
+
+    json_ok(['total' => count($data), 'data' => $data]);
+}
+
+// Resumen estadístico del padrón (totales, faltantes de DNI, fechas estimadas)
+function beneficiarios_stats(): void {
+    $pdo = db();
+    $total = (int)$pdo->query("SELECT COUNT(*) FROM beneficiarios")->fetchColumn();
+    $sinDni = (int)$pdo->query("SELECT COUNT(*) FROM beneficiarios WHERE dni IS NULL OR TRIM(dni) = ''")->fetchColumn();
+    $conDni = $total - $sinDni;
+    $fechaEstimada = (int)$pdo->query("SELECT COUNT(*) FROM beneficiarios WHERE fecha_nacimiento LIKE '%-01-01'")->fetchColumn();
+
+    json_ok([
+        'total'          => $total,
+        'con_dni'        => $conDni,
+        'sin_dni'        => $sinDni,
+        'fecha_estimada' => $fechaEstimada,
+        'completos'      => max(0, $total - $sinDni - $fechaEstimada)
+    ]);
+}
+
+// Carga masiva / importación de padrón desde Personalización
+function beneficiarios_import_padron(array $user): void {
+    $b = body();
+    $records = $b['records'] ?? [];
+    if (!is_array($records) || empty($records)) {
+        json_error("No se enviaron registros para importar.", 422);
+    }
+
+    $campaignId = (int)($b['campaign_id'] ?? 1);
+    $defaultComunidad = trim((string)($b['comunidad'] ?? 'Jose Maria Arguedas'));
+
+    $pdo = db();
+    $pdo->beginTransaction();
+
+    $stCheckDni = $pdo->prepare("SELECT id FROM beneficiarios WHERE dni = :dni AND (nombres = :nombres OR apellidos = :apellidos) LIMIT 1");
+    $stCheckName = $pdo->prepare("SELECT id FROM beneficiarios WHERE (dni IS NULL OR dni = '') AND nombres = :nombres AND apellidos = :apellidos LIMIT 1");
+
+    $stInsert = $pdo->prepare("
+        INSERT INTO beneficiarios (
+            dni, nombres, apellidos, fecha_nacimiento, edad_calculada,
+            sexo, idioma_principal, tipo_seguro, comunidad, direccion_libre,
+            region, provincia, distrito, campaign_id, registered_by, created_at, updated_at
+        ) VALUES (
+            :dni, :nombres, :apellidos, :fecha_nacimiento, :edad_calculada,
+            :sexo, 'espanol', 'SIS', :comunidad, :direccion_libre,
+            'Cusco', 'Urubamba', 'Urubamba', :campaign_id, :registered_by, NOW(), NOW()
+        )
+    ");
+
+    $stUpdate = $pdo->prepare("
+        UPDATE beneficiarios SET
+            dni = COALESCE(:dni, dni),
+            fecha_nacimiento = COALESCE(:fecha_nacimiento, fecha_nacimiento),
+            edad_calculada = COALESCE(:edad_calculada, edad_calculada),
+            direccion_libre = COALESCE(:direccion_libre, direccion_libre),
+            comunidad = COALESCE(:comunidad, comunidad),
+            updated_at = NOW()
+        WHERE id = :id
+    ");
+
+    $inserted = 0;
+    $updated = 0;
+    $errors = [];
+
+    foreach ($records as $idx => $r) {
+        $nomb = trim((string)($r['nombres'] ?? ''));
+        $ape  = trim((string)($r['apellidos'] ?? ''));
+        $rawFull = trim((string)($r['nombre_completo'] ?? ''));
+
+        if (!$nomb && !$ape && $rawFull) {
+            $words = preg_split('/\s+/', $rawFull);
+            if (count($words) === 1) {
+                $nomb = $words[0];
+                $ape = '';
+            } elseif (count($words) === 2) {
+                $nomb = $words[0];
+                $ape = $words[1];
+            } elseif (count($words) === 3) {
+                $nomb = $words[0];
+                $ape = $words[1] . ' ' . $words[2];
+            } else {
+                $nomb = implode(' ', array_slice($words, 0, -2));
+                $ape = implode(' ', array_slice($words, -2));
+            }
+        }
+
+        if (empty($nomb) && empty($ape)) {
+            continue;
+        }
+
+        $dni = !empty($r['dni']) ? trim((string)$r['dni']) : null;
+        $dob = !empty($r['fecha_nacimiento']) ? trim((string)$r['fecha_nacimiento']) : null;
+        $edad = isset($r['edad']) && is_numeric($r['edad']) ? (int)$r['edad'] : null;
+        if ($dob && !$edad) {
+            try {
+                $edad = (int)date_diff(date_create($dob), date_create('today'))->y;
+            } catch (\Throwable $e) {}
+        }
+        $dom = !empty($r['domicilio']) ? trim((string)$r['domicilio']) : (!empty($r['direccion_libre']) ? trim((string)$r['direccion_libre']) : null);
+        $com = !empty($r['comunidad']) ? trim((string)$r['comunidad']) : $defaultComunidad;
+        $sexo = in_array(strtoupper(trim((string)($r['sexo'] ?? ''))), ['M', 'F']) ? strtoupper(trim((string)$r['sexo'])) : 'O';
+
+        $existingId = null;
+        if (!empty($dni)) {
+            $stCheckDni->execute([':dni' => $dni, ':nombres' => $nomb, ':apellidos' => $ape]);
+            $row = $stCheckDni->fetch();
+            if ($row) $existingId = $row['id'];
+        } else {
+            $stCheckName->execute([':nombres' => $nomb, ':apellidos' => $ape]);
+            $row = $stCheckName->fetch();
+            if ($row) $existingId = $row['id'];
+        }
+
+        try {
+            if ($existingId) {
+                $stUpdate->execute([
+                    ':dni' => $dni,
+                    ':fecha_nacimiento' => $dob,
+                    ':edad_calculada' => $edad,
+                    ':direccion_libre' => $dom,
+                    ':comunidad' => $com,
+                    ':id' => $existingId
+                ]);
+                $updated++;
+            } else {
+                $stInsert->execute([
+                    ':dni' => $dni,
+                    ':nombres' => $nomb,
+                    ':apellidos' => $ape,
+                    ':fecha_nacimiento' => $dob,
+                    ':edad_calculada' => $edad,
+                    ':sexo' => $sexo,
+                    ':comunidad' => $com,
+                    ':direccion_libre' => $dom,
+                    ':campaign_id' => $campaignId,
+                    ':registered_by' => $user['id'] ?? null
+                ]);
+                $inserted++;
+            }
+        } catch (\Throwable $e) {
+            $errors[] = "Fila " . ($idx + 1) . ": " . $e->getMessage();
+        }
+    }
+
+    $pdo->commit();
+
+    json_ok([
+        'success'         => true,
+        'total_processed' => count($records),
+        'inserted'        => $inserted,
+        'updated'         => $updated,
+        'errors'          => $errors
+    ]);
 }
 
 function beneficiarios_store(array $user): void {
@@ -272,10 +501,13 @@ function beneficiarios_store(array $user): void {
     if (empty($b['campaign_id'])) $b['campaign_id'] = 1;
     if (empty($b['celular']) && !empty($b['telefono'])) $b['celular'] = $b['telefono'];
 
-    $required = ['dni','nombres','apellidos'];
+    // Únicamente nombres y apellidos son estrictamente obligatorios (DNI puede ser opcional/pendiente)
+    $required = ['nombres','apellidos'];
     foreach ($required as $f) {
         if (empty(trim((string)($b[$f] ?? '')))) json_error("El campo '$f' es obligatorio.", 422);
     }
+
+    $cleanDni = !empty($b['dni']) ? trim((string)$b['dni']) : null;
 
     // Fecha de nacimiento y sexo son opcionales
     $fechaNac = !empty($b['fecha_nacimiento']) ? trim((string)$b['fecha_nacimiento']) : null;
@@ -300,10 +532,17 @@ function beneficiarios_store(array $user): void {
         $imc = round($b['peso_kg'] / ($t * $t), 1);
     }
 
-    // updateOrCreate por dni
-    $check = db()->prepare("SELECT id FROM beneficiarios WHERE dni = :dni");
-    $check->execute([':dni' => $b['dni']]);
-    $existing = $check->fetch();
+    // Buscar si existe beneficiario previo
+    $existing = null;
+    if (!empty($cleanDni)) {
+        $check = db()->prepare("SELECT id FROM beneficiarios WHERE dni = :dni LIMIT 1");
+        $check->execute([':dni' => $cleanDni]);
+        $existing = $check->fetch();
+    } elseif (!empty($b['id'])) {
+        $check = db()->prepare("SELECT id FROM beneficiarios WHERE id = :id LIMIT 1");
+        $check->execute([':id' => (int)$b['id']]);
+        $existing = $check->fetch();
+    }
 
     // Normalizar idioma_principal según enum('espanol','quechua','aymara','otro')
     $rawIdioma = strtolower(trim((string)($b['idioma_principal'] ?? '')));
@@ -340,6 +579,7 @@ function beneficiarios_store(array $user): void {
     $ec = in_array($rawEc, ['soltero', 'casado', 'conviviente', 'viudo', 'divorciado']) ? $rawEc : null;
 
     $fields = [
+        'dni'               => $cleanDni,
         'nombres'           => $b['nombres'],
         'apellidos'         => $b['apellidos'],
         'fecha_nacimiento'  => $fechaNac,
@@ -350,6 +590,7 @@ function beneficiarios_store(array $user): void {
         'provincia'         => $b['provincia'] ?? null,
         'distrito'          => $b['distrito'] ?? null,
         'comunidad'         => $b['comunidad'] ?? null,
+        'direccion_libre'   => $b['direccion_libre'] ?? ($b['domicilio'] ?? null),
         'altitud_residencia'=> isset($b['altitud_residencia']) ? (int)$b['altitud_residencia'] : null,
         'tipo_seguro'       => $seguro,
         'numero_afiliacion' => $b['numero_afiliacion'] ?? null,
@@ -361,7 +602,7 @@ function beneficiarios_store(array $user): void {
         'edad_calculada'    => $edad,
         'reniec_verified'   => isset($b['reniec_verified']) ? (int)(bool)$b['reniec_verified'] : 0,
         'campaign_id'       => (int)($b['campaign_id'] ?? 1),
-        'registered_by'     => $user['id'],
+        'registered_by'     => $user['id'] ?? null,
         'updated_at'        => now_str(),
     ];
 
@@ -383,7 +624,6 @@ function beneficiarios_store(array $user): void {
         db()->prepare("UPDATE beneficiarios SET $set WHERE id = :id")->execute($params);
         $benefId = $existing['id'];
     } else {
-        $fields['dni']        = $b['dni'];
         $fields['created_at'] = now_str();
         $cols   = implode(', ', array_keys($fields));
         $vals   = implode(', ', array_map(fn($k) => ":$k", array_keys($fields)));

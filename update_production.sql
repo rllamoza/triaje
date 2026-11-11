@@ -16,9 +16,17 @@ CREATE TABLE IF NOT EXISTS `system_settings` (
   UNIQUE KEY `system_settings_key_unique` (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 1.1 Asegurar que fecha_nacimiento y sexo en beneficiarios sean opcionales (no obligatorios)
+-- 1.1 Asegurar que dni, fecha_nacimiento y sexo en beneficiarios sean opcionales y flexibles
+ALTER TABLE `beneficiarios` MODIFY COLUMN `dni` VARCHAR(15) NULL DEFAULT NULL;
 ALTER TABLE `beneficiarios` MODIFY COLUMN `fecha_nacimiento` DATE NULL DEFAULT NULL;
 ALTER TABLE `beneficiarios` MODIFY COLUMN `sexo` ENUM('M','F','O') NULL DEFAULT 'O';
+-- Dropear unique de DNI si existe y agregar índices ordinarios
+SET @drop_dni_unique = (SELECT IF(COUNT(*) > 0, 'ALTER TABLE `beneficiarios` DROP INDEX `beneficiarios_dni_unique`', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'beneficiarios' AND INDEX_NAME = 'beneficiarios_dni_unique');
+PREPARE stmt_drop FROM @drop_dni_unique; EXECUTE stmt_drop; DEALLOCATE PREPARE stmt_drop;
+SET @add_dni_idx = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `beneficiarios` ADD INDEX `idx_beneficiarios_dni` (`dni`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'beneficiarios' AND INDEX_NAME = 'idx_beneficiarios_dni');
+PREPARE stmt_idx1 FROM @add_dni_idx; EXECUTE stmt_idx1; DEALLOCATE PREPARE stmt_idx1;
+SET @add_ape_idx = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `beneficiarios` ADD INDEX `idx_beneficiarios_apellidos` (`apellidos`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'beneficiarios' AND INDEX_NAME = 'idx_beneficiarios_apellidos');
+PREPARE stmt_idx2 FROM @add_ape_idx; EXECUTE stmt_idx2; DEALLOCATE PREPARE stmt_idx2;
 
 -- 2. Asegurar nuevas columnas en la tabla `medicamentos`
 -- Nota: En MySQL si la columna ya existe, omite el error o ejecute individualmente

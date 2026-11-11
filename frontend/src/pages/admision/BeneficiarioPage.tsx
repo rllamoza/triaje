@@ -11,6 +11,7 @@ import {
   useCampaigns,
   useCampaignSpecialties,
   useHistorialComunalByDni,
+  useBeneficiariosBuscar,
 } from '../../api/hooks'
 import { useAuthStore } from '../../store/authStore'
 import { PATIENT_DATABASE } from '../../services/patientRegistry'
@@ -84,6 +85,56 @@ export default function BeneficiarioPage() {
 
   // Selección múltiple de especialidades médicas
   const [selectedSpecialtyCodes, setSelectedSpecialtyCodes] = useState<string[]>([])
+
+  // Búsqueda interactiva por DNI o Apellidos / Nombres
+  const [searchBeneficiarioQuery, setSearchBeneficiarioQuery] = useState('')
+  const [isSearchBeneficiarioOpen, setIsSearchBeneficiarioOpen] = useState(false)
+  const { data: searchBeneficiariosData, isLoading: isSearchingBeneficiarios } = useBeneficiariosBuscar(searchBeneficiarioQuery)
+
+  const handleSelectBeneficiario = (p: any) => {
+    setDni(p.dni || '')
+    setNombres(p.nombres || '')
+    setApellidos(p.apellidos || '')
+    setFechaNac(p.fecha_nacimiento || '')
+    setSexo((p.sexo === 'F' ? 'F' : 'M') as 'M' | 'F')
+    if (p.region) {
+      setRegion(p.region)
+      const provs = getProvincias(p.region)
+      if (p.provincia && provs.includes(p.provincia)) {
+        setProvincia(p.provincia)
+        const dists = getDistritos(p.region, p.provincia)
+        if (p.distrito && dists.includes(p.distrito)) {
+          setDistrito(p.distrito)
+        }
+      }
+    }
+    if (p.comunidad) {
+      setComunidad(p.comunidad)
+      if (!useFeatureStore.getState().comunidades.includes(p.comunidad)) {
+        addComunidad(p.comunidad)
+      }
+    }
+    if (p.celular || p.telefono) setTelefono(p.celular || p.telefono)
+    if (p.estado_civil) setEstadoCivil(p.estado_civil)
+    if (p.idioma_principal) setIdioma(p.idioma_principal)
+    if (p.altitud_residencia) setAltitud(p.altitud_residencia)
+    if (p.tipo_seguro) setSeguro(p.tipo_seguro)
+
+    setPatientExists(true)
+    setIsSearchBeneficiarioOpen(false)
+    setSearchBeneficiarioQuery('')
+
+    const alerts = []
+    if (!p.dni) alerts.push('⚠️ Paciente sin DNI en padrón (DNI pendiente)')
+    if (p.fecha_nacimiento && p.fecha_nacimiento.endsWith('-01-01')) {
+      alerts.push('⚠️ Fecha estimada (1 de Enero) - favor confirmar día y mes exacto')
+    }
+
+    setMessage({
+      text: `✓ Beneficiario cargado: ${p.nombres} ${p.apellidos}.${alerts.length ? ' ' + alerts.join(' | ') : ''} Seleccione la ESPECIALIDAD requerida.`,
+      type: 'success',
+    })
+  }
 
   const reniecLookup = useReniecLookup()
   const createBeneficiario = useStoreBeneficiario()
@@ -246,12 +297,13 @@ export default function BeneficiarioPage() {
   const handleSubmit = async () => {
     setMessage(null)
     const cleanDni = dni.trim()
-    if (cleanDni.length !== 8 || !/^\d{8}$/.test(cleanDni)) {
-      setMessage({ text: 'Por favor ingrese un número de DNI válido de 8 dígitos numéricos.', type: 'error' })
+    // Solo si el usuario ingresó DNI se valida su formato numérico
+    if (cleanDni && !/^\d{8,15}$/.test(cleanDni)) {
+      setMessage({ text: 'El DNI debe contener entre 8 y 15 dígitos numéricos si se especifica.', type: 'error' })
       return
     }
     if (!nombres.trim() || !apellidos.trim()) {
-      setMessage({ text: 'Debe ingresar nombres y apellidos completos.', type: 'error' })
+      setMessage({ text: 'Debe ingresar nombres y apellidos completos del beneficiario.', type: 'error' })
       return
     }
 
@@ -278,7 +330,7 @@ export default function BeneficiarioPage() {
     try {
       // 1. Guardar todos los campos del paciente que aparecen en pantalla
       const b = await createBeneficiario.mutateAsync({
-        dni: cleanDni,
+        dni: cleanDni || undefined,
         nombres: nombres.trim().toUpperCase(),
         apellidos: apellidos.trim().toUpperCase(),
         fecha_nacimiento: (registroFields.fechaNacimiento !== false && fechaNac) ? fechaNac : undefined,
@@ -325,7 +377,7 @@ export default function BeneficiarioPage() {
       const generatedTickets: TicketInfo[] = rawList.map((atn: any) => ({
         ticket: atn.ticket_codigo || `T-${atn.ticket_number}`,
         paciente: `${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}`,
-        dni: cleanDni,
+        dni: cleanDni || 'S/DNI',
         comunidad: comunidad || 'Comunidad General',
         hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : nowHora,
         especialidad: atn.specialty_name || 'Medicina General',
@@ -627,38 +679,152 @@ export default function BeneficiarioPage() {
             </div>
 
             <div className="space-y-4">
-              {/* DNI with RENIEC API Lookup */}
+              {/* BÚSQUEDA PREDICTIVA POR DNI O APELLIDOS */}
+              <div className="relative bg-surface-container-low p-3.5 border-2 border-primary/30 shadow-xs">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base">person_search</span>
+                    <span>Búsqueda Rápida de Beneficiario (Por DNI o Apellidos / Nombres)</span>
+                  </label>
+                  <span className="text-[11px] text-on-surface-variant font-mono">
+                    Escriba para autocompletar desde el padrón
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    className="w-full h-11 px-3.5 pl-10 bg-surface text-on-surface text-sm border border-surface-container-high focus:border-primary focus:outline-none placeholder:text-on-surface-variant/50 placeholder:italic font-medium shadow-xs"
+                    placeholder="Buscar por DNI o Apellidos (ej. 47361781 o NEYRA OSCCO o CAROLA)..."
+                    value={searchBeneficiarioQuery}
+                    onChange={(e) => {
+                      setSearchBeneficiarioQuery(e.target.value)
+                      setIsSearchBeneficiarioOpen(true)
+                    }}
+                    onFocus={() => {
+                      if (searchBeneficiarioQuery.trim().length >= 2) setIsSearchBeneficiarioOpen(true)
+                    }}
+                  />
+                  <span className="material-symbols-outlined absolute left-3 top-3 text-primary text-[18px]">
+                    search
+                  </span>
+                  {isSearchingBeneficiarios && (
+                    <span className="material-symbols-outlined absolute right-3 top-3 text-primary text-[18px] animate-spin">
+                      sync
+                    </span>
+                  )}
+                </div>
+
+                {/* Autocomplete Dropdown */}
+                {isSearchBeneficiarioOpen && searchBeneficiarioQuery.trim().length >= 2 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-surface border-2 border-primary shadow-2xl z-50 max-h-72 overflow-y-auto divide-y divide-surface-container">
+                    {searchBeneficiariosData?.data && searchBeneficiariosData.data.length > 0 ? (
+                      searchBeneficiariosData.data.map((b) => {
+                        const hasNoDni = !b.dni || b.dni.trim() === ''
+                        const isJan1st = Boolean(b.fecha_nacimiento && b.fecha_nacimiento.endsWith('-01-01'))
+                        return (
+                          <div
+                            key={b.id}
+                            onClick={() => handleSelectBeneficiario(b)}
+                            className="p-3 hover:bg-primary/5 cursor-pointer transition-colors flex items-center justify-between gap-3"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-sm text-on-surface">
+                                  {b.apellidos}, {b.nombres}
+                                </span>
+                                {hasNoDni ? (
+                                  <span className="px-2 py-0.5 text-[10px] font-bold bg-error-container text-error rounded border border-error/50">
+                                    ⚠️ Sin DNI (Pendiente)
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 text-[10px] font-bold bg-surface-container-high text-on-surface rounded font-mono">
+                                    DNI: {b.dni}
+                                  </span>
+                                )}
+                                {isJan1st && (
+                                  <span className="px-2 py-0.5 text-[10px] font-bold bg-error-container text-error rounded border border-error/50">
+                                    ⚠️ F. Estimada (1 de Ene)
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs text-on-surface-variant flex items-center gap-3 mt-1 flex-wrap">
+                                {b.fecha_nacimiento && (
+                                  <span>
+                                    F. Nac: <strong className={isJan1st ? 'text-error font-bold' : ''}>{b.fecha_nacimiento}</strong> ({b.edad_calculada ?? calculateAge(b.fecha_nacimiento)} años)
+                                  </span>
+                                )}
+                                {b.comunidad && <span>Comunidad: <strong>{b.comunidad}</strong></span>}
+                                {b.direccion_libre && <span>Dir: {b.direccion_libre}</span>}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              className="px-3 py-1.5 bg-primary text-on-primary text-xs font-bold uppercase rounded-none hover:bg-on-primary-fixed-variant whitespace-nowrap"
+                            >
+                              Seleccionar
+                            </button>
+                          </div>
+                        )
+                      })
+                    ) : !isSearchingBeneficiarios ? (
+                      <div className="p-4 text-center text-xs text-on-surface-variant">
+                        No se encontraron personas con "{searchBeneficiarioQuery}". Ingrese los datos en el formulario para registrarlo.
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+
+              {/* DNI with RENIEC API Lookup & RED Alert if missing */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                 <div className="md:col-span-7">
-                  <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                    Documento Nacional de Identidad (DNI) *
-                  </label>
-                  <div className="relative flex border border-surface-container-high bg-surface-container-low focus-within:border-primary focus-within:bg-surface">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+                      Documento Nacional de Identidad (DNI)
+                    </label>
+                    {(!dni.trim() && patientExists) && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 bg-error-container text-error rounded border border-error/50 flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[13px]">warning</span>
+                        DNI pendiente de registrar
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className={`relative flex border transition-colors ${
+                      !dni.trim() && patientExists
+                        ? 'border-error bg-error-container/20 text-error focus-within:border-error'
+                        : 'border-surface-container-high bg-surface-container-low focus-within:border-primary focus-within:bg-surface'
+                    }`}
+                  >
                     <input
-                      className="w-full h-10 px-3 bg-transparent text-on-surface text-sm font-mono placeholder:text-on-surface-variant/40 placeholder:italic focus:outline-none"
-                      maxLength={8}
-                      placeholder="Ingrese 8 dígitos de DNI"
+                      className={`w-full h-10 px-3 bg-transparent text-sm font-mono focus:outline-none placeholder:italic ${
+                        !dni.trim() && patientExists
+                          ? 'text-error font-bold placeholder:text-error/60'
+                          : 'text-on-surface placeholder:text-on-surface-variant/40'
+                      }`}
+                      maxLength={15}
+                      placeholder={!dni.trim() && patientExists ? "⚠️ Sin DNI (Pendiente de registrar)" : "Ingrese DNI o deje vacío si no cuenta"}
                       type="text"
                       value={dni}
                       onChange={(e) => {
-                        const clean = e.target.value.replace(/\D/g, '')
-                        setDni(clean)
-                        if (clean.length === 8) {
-                          handleReniec(clean)
-                        } else if (clean.length < 8 && patientExists) {
-                          setPatientExists(false)
+                        const val = e.target.value.trim()
+                        setDni(val)
+                        if (val.length === 8 && /^\d{8}$/.test(val)) {
+                          handleReniec(val)
+                        } else if (val.length < 8 && patientExists && !searchBeneficiarioQuery) {
+                          // Mantener estado
                         }
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter') {
                           e.preventDefault()
-                          handleReniec()
+                          if (dni.trim()) handleReniec()
                         }
                       }}
                     />
                     <button
                       type="button"
-                      disabled={isSearchingReniec}
+                      disabled={isSearchingReniec || !dni.trim()}
                       onClick={() => handleReniec()}
                       className="h-10 px-4 bg-primary hover:bg-on-primary-fixed-variant text-on-primary text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-colors whitespace-nowrap cursor-pointer rounded-none disabled:opacity-50"
                       title="Buscar datos del paciente por DNI (Enter o clic)"
@@ -673,9 +839,17 @@ export default function BeneficiarioPage() {
 
                 <div className="md:col-span-5 flex items-center gap-2 pb-2 text-xs">
                   {patientExists ? (
-                    <div className="flex items-center gap-1.5 text-tertiary font-bold bg-tertiary-container/30 px-2.5 py-1 border border-tertiary/30">
-                      <span className="material-symbols-outlined text-[18px]">verified</span>
-                      <span>Paciente en Padrón (Autollenado)</span>
+                    <div className={`flex items-center gap-1.5 font-bold px-2.5 py-1 border ${
+                      !dni.trim()
+                        ? 'bg-error-container/30 text-error border-error/40'
+                        : 'text-tertiary bg-tertiary-container/30 border-tertiary/30'
+                    }`}>
+                      <span className="material-symbols-outlined text-[18px]">
+                        {!dni.trim() ? 'error' : 'verified'}
+                      </span>
+                      <span>
+                        {!dni.trim() ? 'Beneficiario en Padrón (Sin DNI)' : 'Beneficiario en Padrón (Autollenado)'}
+                      </span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5 text-on-surface-variant font-medium">
@@ -719,15 +893,31 @@ export default function BeneficiarioPage() {
                 {registroFields.fechaNacimiento !== false && (
                   <>
                     <div>
-                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                        F. Nacimiento
-                      </label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
+                          F. Nacimiento
+                        </label>
+                        {fechaNac && fechaNac.endsWith('-01-01') && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.2 bg-error-container text-error rounded border border-error/50">
+                            ⚠️ 1 Ene (Estimada)
+                          </span>
+                        )}
+                      </div>
                       <input
-                        className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none"
+                        className={`w-full h-10 px-2 text-xs border focus:outline-none transition-colors ${
+                          fechaNac && fechaNac.endsWith('-01-01')
+                            ? 'border-error bg-error-container/20 text-error font-bold focus:border-error'
+                            : 'border-surface-container-high bg-surface-container-low text-on-surface focus:border-primary'
+                        }`}
                         type="date"
                         value={fechaNac}
                         onChange={(e) => setFechaNac(e.target.value)}
                       />
+                      {fechaNac && fechaNac.endsWith('-01-01') && (
+                        <span className="text-[10px] text-error font-semibold mt-1 block leading-tight">
+                          * Fecha estimada (1 de Enero) - Ingrese día y mes
+                        </span>
+                      )}
                     </div>
 
                     <div>

@@ -136,6 +136,15 @@ try {
     }
 
     // Beneficiarios
+    if ($method === 'GET' && $path === 'beneficiarios/buscar') {
+        beneficiarios_buscar();
+    }
+    if ($method === 'GET' && $path === 'beneficiarios/stats') {
+        beneficiarios_stats();
+    }
+    if ($method === 'POST' && $path === 'beneficiarios/import-padron') {
+        beneficiarios_import_padron($user);
+    }
     if ($method === 'GET' && $path === 'beneficiarios') {
         beneficiarios_index();
     }

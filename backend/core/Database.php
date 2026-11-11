@@ -68,10 +68,14 @@ function ensure_schema_compatibility(PDO $pdo): void {
             }
         }
 
-        // 2.1 Asegurar que campos no obligatorios en beneficiarios permitan NULL
+        // 2.1 Asegurar que campos no obligatorios en beneficiarios permitan NULL y DNI no sea restrictivo
         try {
+            $pdo->exec("ALTER TABLE beneficiarios MODIFY COLUMN dni VARCHAR(15) NULL DEFAULT NULL");
             $pdo->exec("ALTER TABLE beneficiarios MODIFY COLUMN fecha_nacimiento DATE NULL DEFAULT NULL");
             $pdo->exec("ALTER TABLE beneficiarios MODIFY COLUMN sexo ENUM('M','F','O') NULL DEFAULT 'O'");
+            try { $pdo->exec("ALTER TABLE beneficiarios DROP INDEX beneficiarios_dni_unique"); } catch (\Throwable $e) {}
+            try { $pdo->exec("ALTER TABLE beneficiarios ADD KEY idx_beneficiarios_dni (dni)"); } catch (\Throwable $e) {}
+            try { $pdo->exec("ALTER TABLE beneficiarios ADD KEY idx_beneficiarios_apellidos (apellidos)"); } catch (\Throwable $e) {}
         } catch (\Throwable $e) {
             // Ignorar si ya está modificado o el usuario no tiene permisos de alter
         }

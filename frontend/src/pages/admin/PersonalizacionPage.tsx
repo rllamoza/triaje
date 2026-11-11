@@ -1,7 +1,13 @@
 import { useState, useRef } from 'react'
+import * as XLSX from 'xlsx'
 import { useBrandingStore, DEFAULT_BRANDING } from '../../store/brandingStore'
 import { useFeatureStore } from '../../store/featureStore'
 import { saveSystemSettings } from '../../services/settingsService'
+import {
+  useBeneficiarios,
+  useBeneficiariosStats,
+  useImportPadron,
+} from '../../api/hooks'
 
 export default function PersonalizacionPage() {
   const branding = useBrandingStore()
@@ -56,9 +62,130 @@ export default function PersonalizacionPage() {
     ticketPaperWidth: branding.ticketPaperWidth ?? '80mm',
   })
 
-  const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion' | 'modulos'>('cabecera')
+  const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion' | 'modulos' | 'padron'>('cabecera')
   const [savedSuccess, setSavedSuccess] = useState(false)
   const [newComunidadInput, setNewComunidadInput] = useState('')
+
+  // Padrón y Carga Masiva State
+  const { data: padronStats, refetch: refetchStats } = useBeneficiariosStats()
+  const [padronSearch, setPadronSearch] = useState('')
+  const [padronFilter, setPadronFilter] = useState<'todos' | 'sin_dni' | 'fecha_estimada' | 'completos'>('todos')
+  const [padronPage, setPadronPage] = useState(1)
+  const {
+    data: padronData,
+    isLoading: loadingPadron,
+    refetch: refetchPadron,
+  } = useBeneficiarios({
+    search: padronSearch || undefined,
+    filter: padronFilter === 'todos' ? undefined : padronFilter,
+    page: padronPage,
+    per_page: 25,
+  })
+
+  const importPadronMutation = useImportPadron()
+  const [parsedImportRows, setParsedImportRows] = useState<any[]>([])
+  const [importStatusMessage, setImportStatusMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+  const [isParsingFile, setIsParsingFile] = useState(false)
+  const filePadronInputRef = useRef<HTMLInputElement>(null)
+
+  const handlePadronFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setIsParsingFile(true)
+    setImportStatusMessage(null)
+    try {
+      const data = await file.arrayBuffer()
+      const workbook = XLSX.read(data, { type: 'array' })
+      const sheetName = workbook.SheetNames[0]
+      const worksheet = workbook.Sheets[sheetName]
+      const rawJson: any[][] = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' })
+
+      const parsed: any[] = []
+      for (let i = 0; i < rawJson.length; i++) {
+        const row = rawJson[i]
+        if (!row || row.length === 0) continue
+        const firstCol = String(row[0] || '').trim()
+        const isNum = /^\d+$/.test(firstCol)
+        const rawName = String(isNum ? row[1] : row[0] || '').trim()
+        if (
+          !rawName ||
+          rawName.toLowerCase().includes('nombre') ||
+          rawName.toLowerCase().includes('campaña') ||
+          rawName.toLowerCase().includes('red')
+        ) {
+          continue
+        }
+
+        const rawDni = String(isNum ? row[2] : row[1] || '').trim()
+        const rawEdad = String(isNum ? row[3] : row[2] || '').trim()
+        const rawDom = String(isNum ? row[4] : row[3] || '').trim()
+        const rawFecha = row[isNum ? 5 : 4]
+
+        let fechaNac = ''
+        if (typeof rawFecha === 'number') {
+          const dateObj = new Date(Math.round((rawFecha - 25569) * 86400 * 1000))
+          if (!isNaN(dateObj.getTime())) {
+            fechaNac = dateObj.toISOString().slice(0, 10)
+          }
+        } else if (rawFecha) {
+          fechaNac = String(rawFecha).trim()
+        }
+
+        parsed.push({
+          num: isNum ? parseInt(firstCol, 10) : parsed.length + 1,
+          nombre_completo: rawName,
+          dni: rawDni,
+          edad: rawEdad ? parseInt(rawEdad, 10) : undefined,
+          domicilio: rawDom,
+          fecha_nacimiento: fechaNac,
+          missing_dni: !rawDni,
+          is_estimated_birth: Boolean(fechaNac && fechaNac.endsWith('-01-01')),
+        })
+      }
+
+      setParsedImportRows(parsed)
+      const sinDniCnt = parsed.filter((p) => p.missing_dni).length
+      const estCnt = parsed.filter((p) => p.is_estimated_birth).length
+      setImportStatusMessage({
+        text: `✓ Archivo leído: ${parsed.length} personas encontradas (${sinDniCnt} sin DNI en rojo, ${estCnt} con fecha 1 de Enero en rojo). Revise la previsualización y haga clic en 'Guardar en Base de Datos'.`,
+        type: 'success',
+      })
+    } catch (err: any) {
+      setImportStatusMessage({
+        text: `Error al procesar el archivo Excel/CSV: ${err.message || 'Formato no compatible'}`,
+        type: 'error',
+      })
+    } finally {
+      setIsParsingFile(false)
+    }
+  }
+
+  const handleExecuteImport = async () => {
+    if (parsedImportRows.length === 0) return
+    setIsParsingFile(true)
+    setImportStatusMessage(null)
+    try {
+      const res = await importPadronMutation.mutateAsync({
+        records: parsedImportRows,
+        campaign_id: 1,
+        comunidad: 'Jose Maria Arguedas',
+      })
+      setImportStatusMessage({
+        text: `✓ ¡Importación completada con éxito! Procesados: ${res.total_processed}, Insertados: ${res.inserted}, Actualizados: ${res.updated}.`,
+        type: 'success',
+      })
+      setParsedImportRows([])
+      refetchStats()
+      refetchPadron()
+    } catch (err: any) {
+      setImportStatusMessage({
+        text: `Error al guardar en base de datos: ${err.message || 'Error de conexión'}`,
+        type: 'error',
+      })
+    } finally {
+      setIsParsingFile(false)
+    }
+  }
 
   // File input refs
   const logoFileRef = useRef<HTMLInputElement>(null)
@@ -306,6 +433,7 @@ export default function PersonalizacionPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab('modulos')}
           className={`px-5 py-3 text-[14px] font-bold flex items-center gap-2.5 border-b-2 transition-colors cursor-pointer ${
             activeTab === 'modulos'
@@ -318,6 +446,27 @@ export default function PersonalizacionPage() {
           {!triajeEnabled && (
             <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 bg-error-container text-on-error-container border border-error/30 font-bold ml-1">
               Triaje OFF
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('padron')}
+          className={`px-5 py-3 text-[14px] font-bold flex items-center gap-2.5 border-b-2 transition-colors cursor-pointer ${
+            activeTab === 'padron'
+              ? 'border-primary text-primary bg-surface'
+              : 'border-transparent text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low font-medium'
+          }`}
+        >
+          <span className="material-symbols-outlined text-[20px]">badge</span>
+          <span>5. Carga de Padrón y Beneficiarios</span>
+          <span className="text-[10px] uppercase font-mono px-2 py-0.5 bg-primary/10 text-primary border border-primary/30 font-bold ml-1">
+            {padronStats?.total ?? 480} Pacientes
+          </span>
+          {Boolean(padronStats && padronStats.sin_dni > 0) && (
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-error-container text-error border border-error/40 font-bold">
+              {padronStats?.sin_dni} Sin DNI
             </span>
           )}
         </button>
@@ -1931,6 +2080,431 @@ export default function PersonalizacionPage() {
                   </label>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: CARGA DE PADRÓN Y BENEFICIARIOS */}
+        {activeTab === 'padron' && (
+          <div className="space-y-6">
+            {/* Banner Informativo */}
+            <div className="p-4 bg-surface border border-surface-container-high flex items-start gap-3">
+              <span className="material-symbols-outlined text-primary text-[24px]">folder_shared</span>
+              <div>
+                <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider">
+                  Gestión y Carga de Padrón Comunitario de Beneficiarios
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-0.5">
+                  Cargue masivamente beneficiarios desde archivos Excel (.xlsx) o CSV. Aquellos sin DNI o con fecha de nacimiento estimada (1 de Enero) se resaltan en <strong className="text-error">color rojo</strong> para que el personal de admisión complete los datos pendientes en mesa de registro.
+                </p>
+              </div>
+            </div>
+
+            {/* Tarjetas KPI de Estado del Padrón */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-surface p-4 border border-surface-container-high shadow-xs">
+                <div className="flex items-center justify-between text-on-surface-variant mb-1">
+                  <span className="text-xs font-bold uppercase tracking-wider">Total en Padrón</span>
+                  <span className="material-symbols-outlined text-[20px] text-primary">groups</span>
+                </div>
+                <div className="text-2xl font-bold text-on-surface font-mono">
+                  {padronStats?.total ?? 0}
+                </div>
+                <div className="text-[11px] text-on-surface-variant mt-1">
+                  Beneficiarios registrados en base de datos
+                </div>
+              </div>
+
+              <div className="bg-surface p-4 border border-surface-container-high shadow-xs">
+                <div className="flex items-center justify-between text-on-surface-variant mb-1">
+                  <span className="text-xs font-bold uppercase tracking-wider">Con DNI Válido</span>
+                  <span className="material-symbols-outlined text-[20px] text-tertiary">badge</span>
+                </div>
+                <div className="text-2xl font-bold text-tertiary font-mono">
+                  {padronStats?.con_dni ?? 0}
+                </div>
+                <div className="text-[11px] text-on-surface-variant mt-1">
+                  Identificados con documento oficial
+                </div>
+              </div>
+
+              {/* CARD EN ROJO: SIN DNI */}
+              <div className="bg-error-container/20 p-4 border-2 border-error/50 shadow-xs">
+                <div className="flex items-center justify-between text-error mb-1">
+                  <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[18px]">warning</span>
+                    Sin DNI (Pendientes)
+                  </span>
+                  <span className="material-symbols-outlined text-[20px]">no_accounts</span>
+                </div>
+                <div className="text-2xl font-bold text-error font-mono">
+                  {padronStats?.sin_dni ?? 0}
+                </div>
+                <div className="text-[11px] text-error font-semibold mt-1">
+                  * Datos por completar (resaltados en rojo en admisión)
+                </div>
+              </div>
+
+              {/* CARD EN ROJO: FECHA ESTIMADA 01/01 */}
+              <div className="bg-error-container/20 p-4 border-2 border-error/50 shadow-xs">
+                <div className="flex items-center justify-between text-error mb-1">
+                  <span className="text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[18px]">event_busy</span>
+                    F. Estimada 01 de Enero
+                  </span>
+                  <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+                </div>
+                <div className="text-2xl font-bold text-error font-mono">
+                  {padronStats?.fecha_estimada ?? 0}
+                </div>
+                <div className="text-[11px] text-error font-semibold mt-1">
+                  * Año estimado por edad (confirmar día y mes)
+                </div>
+              </div>
+            </div>
+
+            {/* SECCIÓN 1: CARGA MASIVA DE ARCHIVO EXCEL / CSV */}
+            <div className="bg-surface p-6 border border-surface-container-high space-y-4">
+              <div className="flex items-center justify-between border-b border-surface-container-high pb-3">
+                <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">upload_file</span>
+                  <span>Importar Padrón desde Excel o CSV</span>
+                </h3>
+                <span className="text-xs text-on-surface-variant font-mono">
+                  Columnas: N°, NOMBRE Y APELLIDO, DNI, EDAD, DOMICILIO, FECHA DE NACIMIENTO
+                </span>
+              </div>
+
+              <input
+                type="file"
+                ref={filePadronInputRef}
+                accept=".xlsx,.xls,.csv"
+                onChange={handlePadronFileChange}
+                className="hidden"
+              />
+
+              <div
+                onClick={() => filePadronInputRef.current?.click()}
+                className="border-2 border-dashed border-primary/40 hover:border-primary p-6 text-center cursor-pointer bg-surface-container-low transition-colors group"
+              >
+                <span className="material-symbols-outlined text-4xl text-primary group-hover:scale-110 transition-transform">
+                  cloud_upload
+                </span>
+                <p className="text-sm font-bold text-on-surface mt-2">
+                  Haga clic para seleccionar archivo Excel (.xlsx, .csv)
+                </p>
+                <p className="text-xs text-on-surface-variant mt-1">
+                  Permite cargar automáticamente beneficiarios, domicilios y fechas estimadas
+                </p>
+              </div>
+
+              {importStatusMessage && (
+                <div
+                  className={`p-3 text-xs flex items-center gap-2 border ${
+                    importStatusMessage.type === 'success'
+                      ? 'bg-tertiary-container text-on-tertiary-container border-tertiary/40'
+                      : 'bg-error-container text-on-error-container border-error/40'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-base">
+                    {importStatusMessage.type === 'success' ? 'check_circle' : 'error'}
+                  </span>
+                  <span>{importStatusMessage.text}</span>
+                </div>
+              )}
+
+              {/* Previsualización antes de guardar */}
+              {parsedImportRows.length > 0 && (
+                <div className="space-y-3 pt-3 border-t border-surface-container-high">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-on-surface">
+                      Previsualización de registros a importar ({parsedImportRows.length} personas):
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setParsedImportRows([])}
+                        className="px-3 py-1.5 text-xs text-on-surface-variant hover:text-on-surface border border-surface-container-highest cursor-pointer"
+                      >
+                        Descartar
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isParsingFile}
+                        onClick={handleExecuteImport}
+                        className="px-4 py-1.5 bg-primary text-on-primary text-xs font-bold uppercase rounded-none hover:bg-on-primary-fixed-variant transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <span className="material-symbols-outlined text-sm">save</span>
+                        <span>Guardar {parsedImportRows.length} en Base de Datos</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="max-h-60 overflow-y-auto border border-surface-container-high">
+                    <table className="w-full text-xs text-left border-collapse">
+                      <thead className="bg-surface-container-high text-on-surface font-semibold sticky top-0">
+                        <tr>
+                          <th className="p-2 border-b">N°</th>
+                          <th className="p-2 border-b">DNI</th>
+                          <th className="p-2 border-b">Nombre Completo</th>
+                          <th className="p-2 border-b">F. Nacimiento</th>
+                          <th className="p-2 border-b">Edad</th>
+                          <th className="p-2 border-b">Domicilio</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-surface-container">
+                        {parsedImportRows.slice(0, 15).map((row, idx) => (
+                          <tr key={idx} className="hover:bg-surface-container-low">
+                            <td className="p-2 font-mono">{row.num}</td>
+                            <td className="p-2 font-mono">
+                              {row.missing_dni ? (
+                                <span className="px-1.5 py-0.5 text-[10px] font-bold bg-error-container text-error rounded border border-error/50">
+                                  ⚠️ Sin DNI
+                                </span>
+                              ) : (
+                                row.dni
+                              )}
+                            </td>
+                            <td className="p-2 font-bold">{row.nombre_completo}</td>
+                            <td className="p-2">
+                              {row.is_estimated_birth ? (
+                                <span className="text-error font-bold flex items-center gap-1">
+                                  <span>{row.fecha_nacimiento}</span>
+                                  <span className="text-[9px] bg-error-container text-error px-1 py-0.2 rounded border border-error/40">
+                                    1 Ene (Estimada)
+                                  </span>
+                                </span>
+                              ) : (
+                                row.fecha_nacimiento || '-'
+                              )}
+                            </td>
+                            <td className="p-2">{row.edad ?? '-'} años</td>
+                            <td className="p-2 text-on-surface-variant">{row.domicilio || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {parsedImportRows.length > 15 && (
+                    <div className="text-[11px] text-on-surface-variant italic text-center">
+                      ... y {parsedImportRows.length - 15} personas adicionales listas para guardar en MySQL.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* SECCIÓN 2: EXPLORADOR DEL PADRÓN EN BASE DE DATOS */}
+            <div className="bg-surface p-6 border border-surface-container-high space-y-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-surface-container-high pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-on-surface uppercase tracking-wider flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary text-[20px]">contacts</span>
+                    <span>Directorio del Padrón en Base de Datos</span>
+                  </h3>
+                  <p className="text-xs text-on-surface-variant mt-0.5">
+                    Mostrando los beneficiarios registrados con alertas en rojo para datos incompletos.
+                  </p>
+                </div>
+
+                {/* Filtros de Estado */}
+                <div className="flex items-center gap-1 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => { setPadronFilter('todos'); setPadronPage(1); }}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded cursor-pointer transition-colors ${
+                      padronFilter === 'todos'
+                        ? 'bg-primary text-on-primary'
+                        : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
+                    }`}
+                  >
+                    Todos ({padronStats?.total ?? 0})
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setPadronFilter('sin_dni'); setPadronPage(1); }}
+                    className={`px-2.5 py-1 text-xs font-bold rounded cursor-pointer transition-colors border ${
+                      padronFilter === 'sin_dni'
+                        ? 'bg-error text-on-error border-error'
+                        : 'bg-error-container/30 text-error border-error/40 hover:bg-error-container/50'
+                    }`}
+                  >
+                    ⚠️ Sin DNI ({padronStats?.sin_dni ?? 0})
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setPadronFilter('fecha_estimada'); setPadronPage(1); }}
+                    className={`px-2.5 py-1 text-xs font-bold rounded cursor-pointer transition-colors border ${
+                      padronFilter === 'fecha_estimada'
+                        ? 'bg-error text-on-error border-error'
+                        : 'bg-error-container/30 text-error border-error/40 hover:bg-error-container/50'
+                    }`}
+                  >
+                    ⚠️ F. Estimada 01/01 ({padronStats?.fecha_estimada ?? 0})
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { setPadronFilter('completos'); setPadronPage(1); }}
+                    className={`px-2.5 py-1 text-xs font-semibold rounded cursor-pointer transition-colors ${
+                      padronFilter === 'completos'
+                        ? 'bg-tertiary text-on-tertiary'
+                        : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
+                    }`}
+                  >
+                    Completos ({padronStats?.completos ?? 0})
+                  </button>
+                </div>
+              </div>
+
+              {/* Barra de búsqueda */}
+              <div className="relative">
+                <input
+                  type="text"
+                  className="w-full h-10 px-3 pl-9 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none"
+                  placeholder="Buscar beneficiario por DNI o Apellidos / Nombres..."
+                  value={padronSearch}
+                  onChange={(e) => {
+                    setPadronSearch(e.target.value)
+                    setPadronPage(1)
+                  }}
+                />
+                <span className="material-symbols-outlined absolute left-2.5 top-2.5 text-on-surface-variant text-[18px]">
+                  search
+                </span>
+                {padronSearch && (
+                  <button
+                    type="button"
+                    onClick={() => setPadronSearch('')}
+                    className="absolute right-2.5 top-2.5 text-on-surface-variant hover:text-on-surface text-xs font-bold"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {/* Tabla de Padrón */}
+              <div className="overflow-x-auto border border-surface-container-high">
+                <table className="w-full text-xs text-left border-collapse">
+                  <thead className="bg-surface-container-high text-on-surface font-semibold">
+                    <tr>
+                      <th className="p-2.5 border-b">ID</th>
+                      <th className="p-2.5 border-b">DNI</th>
+                      <th className="p-2.5 border-b">Apellidos y Nombres</th>
+                      <th className="p-2.5 border-b">Fecha de Nacimiento</th>
+                      <th className="p-2.5 border-b">Edad</th>
+                      <th className="p-2.5 border-b">Comunidad / Domicilio</th>
+                      <th className="p-2.5 border-b">Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-surface-container">
+                    {loadingPadron ? (
+                      <tr>
+                        <td colSpan={7} className="p-6 text-center text-on-surface-variant">
+                          <span className="material-symbols-outlined animate-spin text-xl text-primary inline-block mr-2">
+                            sync
+                          </span>
+                          Cargando datos del padrón...
+                        </td>
+                      </tr>
+                    ) : padronData?.data && padronData.data.length > 0 ? (
+                      padronData.data.map((b) => {
+                        const noDni = !b.dni || b.dni.trim() === ''
+                        const isJan1 = Boolean(b.fecha_nacimiento && b.fecha_nacimiento.endsWith('-01-01'))
+                        return (
+                          <tr key={b.id} className="hover:bg-surface-container-low transition-colors">
+                            <td className="p-2.5 font-mono text-on-surface-variant">#{b.id}</td>
+                            <td className="p-2.5 font-mono">
+                              {noDni ? (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-error-container text-error rounded border border-error/50 flex items-center gap-1 w-max">
+                                  <span className="material-symbols-outlined text-[12px]">warning</span>
+                                  Sin DNI (Pendiente)
+                                </span>
+                              ) : (
+                                <span className="font-semibold text-on-surface">{b.dni}</span>
+                              )}
+                            </td>
+                            <td className="p-2.5 font-bold text-on-surface">
+                              {b.apellidos}, {b.nombres}
+                            </td>
+                            <td className="p-2.5">
+                              {isJan1 ? (
+                                <span className="text-error font-bold flex items-center gap-1.5 w-max">
+                                  <span className="w-2 h-2 rounded-full bg-error inline-block"></span>
+                                  <span>{b.fecha_nacimiento}</span>
+                                  <span className="text-[9px] bg-error-container text-error px-1 py-0.2 rounded border border-error/40 font-bold">
+                                    1 Ene (Estimada)
+                                  </span>
+                                </span>
+                              ) : (
+                                <span className="text-on-surface">{b.fecha_nacimiento || '-'}</span>
+                              )}
+                            </td>
+                            <td className="p-2.5 text-on-surface">
+                              {b.edad_calculada ?? '-'} años
+                            </td>
+                            <td className="p-2.5 text-on-surface-variant">
+                              <span className="font-medium text-on-surface">{b.comunidad || 'Jose Maria Arguedas'}</span>
+                              {b.direccion_libre && (
+                                <span className="block text-[11px] text-on-surface-variant truncate max-w-xs">
+                                  {b.direccion_libre}
+                                </span>
+                              )}
+                            </td>
+                            <td className="p-2.5">
+                              {noDni || isJan1 ? (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-error-container text-error rounded border border-error/40">
+                                  Datos por Completar
+                                </span>
+                              ) : (
+                                <span className="px-2 py-0.5 text-[10px] font-bold bg-tertiary-container text-on-tertiary-container rounded">
+                                  Completo
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      })
+                    ) : (
+                      <tr>
+                        <td colSpan={7} className="p-6 text-center text-on-surface-variant">
+                          No se encontraron beneficiarios que coincidan con la búsqueda o filtro.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Paginación */}
+              {padronData && padronData.last_page > 1 && (
+                <div className="flex items-center justify-between text-xs text-on-surface-variant pt-2">
+                  <div>
+                    Página <strong className="text-on-surface">{padronData.page}</strong> de{' '}
+                    <strong className="text-on-surface">{padronData.last_page}</strong> ({padronData.total} registros en total)
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={padronPage <= 1}
+                      onClick={() => setPadronPage((p) => Math.max(1, p - 1))}
+                      className="px-3 py-1 bg-surface-container-low text-on-surface border border-surface-container-high rounded disabled:opacity-40 cursor-pointer"
+                    >
+                      Anterior
+                    </button>
+                    <button
+                      type="button"
+                      disabled={padronPage >= padronData.last_page}
+                      onClick={() => setPadronPage((p) => p + 1)}
+                      className="px-3 py-1 bg-surface-container-low text-on-surface border border-surface-container-high rounded disabled:opacity-40 cursor-pointer"
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

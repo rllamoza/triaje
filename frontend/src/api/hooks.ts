@@ -57,6 +57,9 @@ export interface Beneficiario {
   provincia?: string | null
   distrito?: string | null
   comunidad?: string
+  direccion_libre?: string | null
+  missing_dni?: boolean
+  is_estimated_birth?: boolean
   altitud_residencia?: number | null
   estado_civil?: string | null
   celular: string | null
@@ -356,12 +359,51 @@ export const useCheckDuplicate = () =>
         .then((r) => r.data),
   })
 
-export const useBeneficiarios = (params?: { search?: string; campaign_id?: number; page?: number }) => {
+export const useBeneficiarios = (params?: { search?: string; campaign_id?: number; filter?: string; page?: number; per_page?: number }) => {
   const token = useAuthStore((s) => s.token)
   return useQuery<{ data: Beneficiario[]; total: number; page: number; last_page: number }>({
     queryKey: ['beneficiarios', params],
     queryFn: () => api.get('/beneficiarios', { params }).then((r) => r.data),
     enabled: !!token,
+  })
+}
+
+export const useBeneficiariosBuscar = (q: string) => {
+  const token = useAuthStore((s) => s.token)
+  const clean = q.trim()
+  return useQuery<{ total: number; data: (Beneficiario & { missing_dni?: boolean; is_estimated_birth?: boolean })[] }>({
+    queryKey: ['beneficiarios-buscar', clean],
+    queryFn: () => api.get('/beneficiarios/buscar', { params: { q: clean } }).then((r) => r.data),
+    enabled: clean.length >= 2 && !!token,
+    staleTime: 3000,
+  })
+}
+
+export const useBeneficiariosStats = () => {
+  const token = useAuthStore((s) => s.token)
+  return useQuery<{
+    total: number
+    con_dni: number
+    sin_dni: number
+    fecha_estimada: number
+    completos: number
+  }>({
+    queryKey: ['beneficiarios-stats'],
+    queryFn: () => api.get('/beneficiarios/stats').then((r) => r.data),
+    enabled: !!token,
+    staleTime: 5000,
+  })
+}
+
+export const useImportPadron = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { records: any[]; campaign_id?: number; comunidad?: string }) =>
+      api.post('/beneficiarios/import-padron', data).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['beneficiarios'] })
+      qc.invalidateQueries({ queryKey: ['beneficiarios-stats'] })
+    },
   })
 }
 

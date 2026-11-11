@@ -286,3 +286,69 @@ function farmacia_dispensaciones(): void {
     json_ok($res);
 }
 
+/**
+ * Monitor público de stock de farmacia en tiempo real (médicos, farmacia, monitores de carpa)
+ * Accesible públicamente sin requerir sesión o token JWT.
+ */
+function farmacia_stock_publico(): void {
+    farmacia_ensure_schema();
+    $cid = farmacia_active_campaign_id();
+
+    // Campaña activa
+    $campStmt = db()->prepare("SELECT id, code, name, location_name, province, department, status FROM campaigns WHERE id = :cid LIMIT 1");
+    $campStmt->execute([':cid' => $cid]);
+    $campaign = $campStmt->fetch() ?: ['id' => $cid, 'name' => 'Campaña Médica Activa', 'location_name' => ''];
+
+    // Listado de medicamentos con clasificación y stock
+    $stmt = db()->prepare("
+        SELECT id, codigo, clasificacion, uso, nombre_generico, nombre_comercial,
+               concentracion, forma_farmaceutica, via_administracion,
+               stock_actual, stock_minimo, stock_updated_at, updated_at
+        FROM medicamentos
+        WHERE campaign_id = :cid AND activo = 1
+        ORDER BY 
+            (stock_actual <= 0) DESC,
+            (stock_actual <= stock_minimo) DESC,
+            nombre_generico ASC
+    ");
+    $stmt->execute([':cid' => $cid]);
+    $medicamentos = $stmt->fetchAll();
+
+    $totalMeds = count($medicamentos);
+    $totalUnidades = 0;
+    $agotados = 0;
+    $bajos = 0;
+    $disponibles = 0;
+
+    foreach ($medicamentos as &$m) {
+        $stock = (int)$m['stock_actual'];
+        $min = (int)$m['stock_minimo'];
+        $totalUnidades += max(0, $stock);
+
+        if ($stock <= 0) {
+            $m['status_stock'] = 'agotado';
+            $agotados++;
+        } elseif ($stock <= $min) {
+            $m['status_stock'] = 'bajo';
+            $bajos++;
+        } else {
+            $m['status_stock'] = 'disponible';
+            $disponibles++;
+        }
+    }
+
+    json_ok([
+        'campaign' => $campaign,
+        'timestamp' => now_str(),
+        'total' => $totalMeds,
+        'unidades_totales' => $totalUnidades,
+        'stats' => [
+            'disponibles' => $disponibles,
+            'bajos' => $bajos,
+            'agotados' => $agotados,
+        ],
+        'data' => $medicamentos,
+    ]);
+}
+
+

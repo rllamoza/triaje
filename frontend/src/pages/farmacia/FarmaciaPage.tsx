@@ -350,6 +350,19 @@ export default function FarmaciaPage() {
 
         {/* Controles de Configuración Rápida en Cabecera */}
         <div className="flex flex-wrap items-center gap-3 bg-surface p-2.5 border border-surface-container-high shadow-2xs">
+          {/* Botón Ver Pantalla Pública de Stock */}
+          <a
+            href="/stock"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-semibold flex items-center gap-1.5 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
+            title="Abrir pantalla pública en vivo para médicos"
+          >
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="material-symbols-outlined text-sm">visibility</span>
+            <span>Stock en Vivo (Público)</span>
+          </a>
+
           {/* Switch de Impresión */}
           <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-on-surface select-none pr-3 border-r border-surface-container-high">
             <input

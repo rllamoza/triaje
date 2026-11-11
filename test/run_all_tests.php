@@ -12,6 +12,7 @@ $tests = [
     '05_farmacia_dispensacion_test.php' => 'Farmacia: Descuento de Stock, Firma/Foto y Cargo de Entrega',
     '06_medicamentos_custom_columns_test.php' => 'Catálogo Medicamentos: Clasificación, Uso y Columnas Dinámicas',
     '07_multi_specialty_tickets_test.php' => 'Admisión Multi-Especialidad: Tickets Múltiples y Correlativos',
+    '08_stock_publico_test.php'      => 'Monitoreo de Stock en Tiempo Real & Descuento por Asignación',
 ];
 
 echo "\n================================================================================\n";

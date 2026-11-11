@@ -924,9 +924,22 @@ export default function ConsultaPage() {
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
                 {/* Selector de Medicamento */}
                 <div className="sm:col-span-6">
-                  <label className="block text-[10px] font-bold text-secondary uppercase mb-1">
-                    Seleccionar Medicamento (Vademécum):
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] font-bold text-secondary uppercase">
+                      Seleccionar Medicamento (Vademécum):
+                    </label>
+                    <a
+                      href="/stock"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 font-bold flex items-center gap-1 hover:underline"
+                      title="Abrir catálogo y stock en tiempo real"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Stock en Vivo</span>
+                      <span className="material-symbols-outlined text-[11px]">open_in_new</span>
+                    </a>
+                  </div>
                   <select
                     value={selectedMedId}
                     onChange={(e) => handleSelectMedicamento(e.target.value)}

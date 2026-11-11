@@ -8,6 +8,7 @@ import QueuePage from './pages/queue/QueuePage'
 import SignosVitalesPage from './pages/triaje/SignosVitalesPage'
 import ConsultaPage from './pages/consulta/ConsultaPage'
 import FarmaciaPage from './pages/farmacia/FarmaciaPage'
+import StockPublicoPage from './pages/farmacia/StockPublicoPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
 import TelemetriaPage from './pages/admin/TelemetriaPage'
 import PersonalizacionPage from './pages/admin/PersonalizacionPage'
@@ -72,8 +73,10 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Public */}
-          <Route path="/login"     element={<LoginPage />} />
-          <Route path="/campaigns" element={<CampaignSelectPage />} />
+          <Route path="/login"         element={<LoginPage />} />
+          <Route path="/campaigns"     element={<CampaignSelectPage />} />
+          <Route path="/stock"         element={<StockPublicoPage />} />
+          <Route path="/stock-publico" element={<StockPublicoPage />} />
 
           {/* Protected */}
           <Route element={<AppLayout />}>

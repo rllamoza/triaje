@@ -847,3 +847,37 @@ export const useFarmaciaDispensaciones = (campaignId?: number | null, page = 1) 
       api.get('/farmacia/dispensaciones', { params: { campaign_id: campaignId, page } }).then((r) => r.data),
   })
 }
+
+export interface StockPublicoMedicamento extends MedicamentoAdmin {
+  status_stock: 'disponible' | 'bajo' | 'agotado'
+}
+
+export interface StockPublicoResponse {
+  campaign: {
+    id: number
+    code?: string
+    name: string
+    location_name?: string
+    province?: string
+    department?: string
+    status?: string
+  }
+  timestamp: string
+  total: number
+  unidades_totales: number
+  stats: {
+    disponibles: number
+    bajos: number
+    agotados: number
+  }
+  data: StockPublicoMedicamento[]
+}
+
+export const useStockPublico = (refetchIntervalMs: number = 4000) => {
+  return useQuery<StockPublicoResponse>({
+    queryKey: ['stock-publico'],
+    queryFn: () => api.get('/farmacia/stock-publico').then((r) => r.data),
+    refetchInterval: refetchIntervalMs,
+    refetchIntervalInBackground: true,
+  })
+}

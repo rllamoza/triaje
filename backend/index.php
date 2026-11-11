@@ -72,6 +72,9 @@ try {
     if (($method === 'POST' || $method === 'PUT') && $path === 'settings/public') {
         settings_update(null);
     }
+    if ($method === 'GET' && ($path === 'farmacia/stock-publico' || $path === 'medicamentos/stock-publico')) {
+        farmacia_stock_publico();
+    }
 
     // ── RUTAS PROTEGIDAS (Requieren Token Bearer) ───────────────
     $user = resolve_auth();

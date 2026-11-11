@@ -18,9 +18,12 @@ function get_default_settings(): array {
             'imprimirTicketTriaje' => true,
         ],
         'registroFields' => [
+            'fechaNacimiento' => true,
+            'sexo' => true,
             'estadoCivil' => true,
             'lenguaMaterna' => true,
             'seccionResidencia' => true,
+            'ubigeo' => true,
             'comunidad' => true,
             'telefono' => true,
             'altitud' => true,
@@ -76,6 +79,24 @@ function get_default_settings(): array {
             'Neonatal',
             'Obstétrico / Gestante',
             'Uso General',
+        ],
+        'comunidades' => [
+            'Rumichaca (Sector Alto)',
+            'Ollantaytambo (Comunidad Willoq)',
+            'Marcas - Huayllabamba',
+            'Urubamba Centro',
+            'Yanahuara',
+            'Chinchero',
+            'Maras',
+            'Patacancha',
+            'Paucartambo',
+            'Willoq Alto',
+            'Media Luna',
+            'Palcaraqui',
+            'Piri',
+            'Pachar',
+            'Huilloc',
+            'Pumamarca',
         ],
         'branding' => [
             'appName' => 'Semilla',
@@ -157,6 +178,12 @@ function settings_index(): void {
             $parsed = json_decode($rows['medicamentos_usos'], true);
             if (is_array($parsed)) {
                 $result['medicamentosUsos'] = $parsed;
+            }
+        }
+        if (isset($rows['comunidades'])) {
+            $parsed = json_decode($rows['comunidades'], true);
+            if (is_array($parsed)) {
+                $result['comunidades'] = $parsed;
             }
         }
         if (isset($rows['branding'])) {
@@ -305,6 +332,18 @@ function settings_update(?array $user = null): void {
                 ':val' => $val,
                 ':group' => 'features',
                 ':description' => 'Lista maestra de usos y poblaciones de destino de medicamentos',
+            ]);
+        }
+
+        // 5.5 Comunidades / Sectores previamente ingresadas
+        if (isset($b['comunidades'])) {
+            $com = $b['comunidades'];
+            $val = is_string($com) ? $com : json_encode($com, JSON_UNESCAPED_UNICODE);
+            $upsertStmt->execute([
+                ':key' => 'comunidades',
+                ':val' => $val,
+                ':group' => 'features',
+                ':description' => 'Lista maestra de comunidades y sectores rurales previamente ingresadas',
             ]);
         }
 

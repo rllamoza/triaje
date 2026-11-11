@@ -21,6 +21,9 @@ export default function PersonalizacionPage() {
     medicamentosColumns,
     medicamentosClasificaciones,
     medicamentosUsos,
+    comunidades,
+    addComunidad,
+    removeComunidad,
         toggleMedicamentoColumn,
     moveMedicamentoColumn,
     addMedicamentoClasificacion,
@@ -55,6 +58,7 @@ export default function PersonalizacionPage() {
 
   const [activeTab, setActiveTab] = useState<'cabecera' | 'pie' | 'exportacion' | 'modulos'>('cabecera')
   const [savedSuccess, setSavedSuccess] = useState(false)
+  const [newComunidadInput, setNewComunidadInput] = useState('')
 
   // File input refs
   const logoFileRef = useRef<HTMLInputElement>(null)
@@ -84,6 +88,7 @@ export default function PersonalizacionPage() {
       consultaEnabled: useFeatureStore.getState().consultaEnabled,
       farmaciaEnabled: useFeatureStore.getState().farmaciaEnabled,
       farmaciaConfig: useFeatureStore.getState().farmaciaConfig,
+      comunidades: useFeatureStore.getState().comunidades,
     })
     setSavedSuccess(true)
     setTimeout(() => setSavedSuccess(false), 3500)
@@ -107,7 +112,22 @@ export default function PersonalizacionPage() {
     await saveSystemSettings({ registroFields: updated })
   }
 
-      // Estados locales para adición de clasificación y uso en personalización
+  const handleAddComunidadSetting = async () => {
+    const clean = newComunidadInput.trim()
+    if (!clean) return
+    addComunidad(clean)
+    setNewComunidadInput('')
+    const updated = [...useFeatureStore.getState().comunidades, clean]
+    await saveSystemSettings({ comunidades: updated })
+  }
+
+  const handleRemoveComunidadSetting = async (nom: string) => {
+    removeComunidad(nom)
+    const updated = useFeatureStore.getState().comunidades.filter((c) => c !== nom)
+    await saveSystemSettings({ comunidades: updated })
+  }
+
+  // Estados locales para adición de clasificación y uso en personalización
   const [newClasifSettingInput, setNewClasifSettingInput] = useState('')
   const [newUsoSettingInput, setNewUsoSettingInput] = useState('')
 
@@ -1751,6 +1771,7 @@ export default function PersonalizacionPage() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
                     {[
+                      { key: 'ubigeo', label: 'Ubigeo Perú (Región, Prov., Dist.)' },
                       { key: 'comunidad', label: 'Comunidad / Sector Rural' },
                       { key: 'telefono', label: 'Móvil / WhatsApp de Contacto' },
                       { key: 'altitud', label: 'Altitud Habitual (msnm)' },
@@ -1776,6 +1797,71 @@ export default function PersonalizacionPage() {
                       </label>
                     ))}
                   </div>
+
+                  {/* Catálogo de Comunidades / Sectores Previamente Ingresadas */}
+                  {registroFields.comunidad && (
+                    <div className="mt-4 pt-4 border-t border-surface-container-high space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                          <div className="text-[12px] font-bold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                            <span className="material-symbols-outlined text-[17px] text-primary">location_city</span>
+                            <span>Comunidades y Sectores Previamente Ingresadas</span>
+                          </div>
+                          <p className="text-[11px] text-on-surface-variant">
+                            Las comunidades ingresadas previamente aquí aparecen en el menú desplegable del registro de pacientes.
+                          </p>
+                        </div>
+                        <span className="text-xs font-mono font-bold text-primary bg-primary/10 px-2 py-0.5 border border-primary/20">
+                          {comunidades.length} comunidades
+                        </span>
+                      </div>
+
+                      {/* Input para agregar nueva comunidad */}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newComunidadInput}
+                          onChange={(e) => setNewComunidadInput(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              handleAddComunidadSetting()
+                            }
+                          }}
+                          placeholder="Escriba el nombre de la comunidad (Ej. Rumichaca Alto)..."
+                          className="flex-1 h-9 px-3 bg-surface text-on-surface text-xs border border-surface-container-highest focus:border-primary focus:outline-none placeholder:text-on-surface-variant/40 placeholder:italic"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddComunidadSetting}
+                          className="h-9 px-4 bg-primary text-on-primary hover:bg-on-primary-fixed-variant text-xs font-bold uppercase transition-colors flex items-center gap-1.5 cursor-pointer rounded-none whitespace-nowrap"
+                        >
+                          <span className="material-symbols-outlined text-sm">add</span>
+                          <span>Agregar Comunidad</span>
+                        </button>
+                      </div>
+
+                      {/* Chips de comunidades */}
+                      <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-2.5 bg-surface-container-low border border-surface-container-high">
+                        {comunidades.map((c) => (
+                          <span
+                            key={c}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface border border-surface-container-highest text-xs text-on-surface font-medium shadow-2xs group"
+                          >
+                            <span>{c}</span>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveComunidadSetting(c)}
+                              className="text-on-surface-variant hover:text-error transition-colors cursor-pointer text-xs flex items-center"
+                              title={`Eliminar ${c}`}
+                            >
+                              <span className="material-symbols-outlined text-[14px]">close</span>
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

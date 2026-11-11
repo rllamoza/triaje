@@ -53,6 +53,9 @@ export interface Beneficiario {
   sexo: 'M' | 'F' | 'O'
   idioma_principal: string
   tipo_seguro: string
+  region?: string | null
+  provincia?: string | null
+  distrito?: string | null
   comunidad?: string
   altitud_residencia?: number | null
   estado_civil?: string | null

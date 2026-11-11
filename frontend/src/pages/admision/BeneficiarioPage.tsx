@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { TicketModal, type TicketInfo } from '../../components/common/TicketModal'
 import { useFeatureStore } from '../../store/featureStore'
+import { getRegiones, getProvincias, getDistritos } from '../../data/peruUbigeo'
+import { saveSystemSettings } from '../../services/settingsService'
 import {
   useStoreBeneficiario,
   useReniecLookup,
@@ -14,8 +16,41 @@ import { useAuthStore } from '../../store/authStore'
 import { PATIENT_DATABASE } from '../../services/patientRegistry'
 
 export default function BeneficiarioPage() {
-  const { registroFields } = useFeatureStore()
+  const { registroFields, comunidades, addComunidad } = useFeatureStore()
   const [dni, setDni] = useState('')
+  const [region, setRegion] = useState('Cusco')
+  const [provincia, setProvincia] = useState('Urubamba')
+  const [distrito, setDistrito] = useState('Urubamba')
+  const [isAddingComunidad, setIsAddingComunidad] = useState(false)
+  const [newComunidadName, setNewComunidadName] = useState('')
+
+  const handleRegionChange = (newReg: string) => {
+    setRegion(newReg)
+    const provs = getProvincias(newReg)
+    const firstProv = provs[0] || ''
+    setProvincia(firstProv)
+    const dists = getDistritos(newReg, firstProv)
+    setDistrito(dists[0] || '')
+  }
+
+  const handleProvinciaChange = (newProv: string) => {
+    setProvincia(newProv)
+    const dists = getDistritos(region, newProv)
+    setDistrito(dists[0] || '')
+  }
+
+  const handleSaveNewComunidad = async () => {
+    const clean = newComunidadName.trim()
+    if (!clean) return
+    addComunidad(clean)
+    setComunidad(clean)
+    setIsAddingComunidad(false)
+    setNewComunidadName('')
+    try {
+      const updated = [...useFeatureStore.getState().comunidades, clean]
+      await saveSystemSettings({ comunidades: updated })
+    } catch {}
+  }
   const [nombres, setNombres] = useState('')
   const [apellidos, setApellidos] = useState('')
   const [fechaNac, setFechaNac] = useState('')
@@ -125,7 +160,23 @@ export default function BeneficiarioPage() {
       setApellidos(ape)
       if (dob) setFechaNac(dob)
       setSexo(sex)
-      if (p.comunidad) setComunidad(p.comunidad)
+      if (p.region) {
+        setRegion(p.region)
+        const provs = getProvincias(p.region)
+        if (p.provincia && provs.includes(p.provincia)) {
+          setProvincia(p.provincia)
+          const dists = getDistritos(p.region, p.provincia)
+          if (p.distrito && dists.includes(p.distrito)) {
+            setDistrito(p.distrito)
+          }
+        }
+      }
+      if (p.comunidad) {
+        setComunidad(p.comunidad)
+        if (!useFeatureStore.getState().comunidades.includes(p.comunidad)) {
+          addComunidad(p.comunidad)
+        }
+      }
       if (p.celular || p.telefono) setTelefono(p.celular || p.telefono)
       if (p.estado_civil) setEstadoCivil(p.estado_civil)
       if (p.idioma_principal) setIdioma(p.idioma_principal)
@@ -234,6 +285,9 @@ export default function BeneficiarioPage() {
         sexo: (registroFields.sexo !== false && sexo) ? sexo : 'O',
         estado_civil: registroFields.estadoCivil ? (estadoCivil || undefined) : undefined,
         idioma_principal: registroFields.lenguaMaterna ? (idioma || undefined) : undefined,
+        region: (registroFields.seccionResidencia && registroFields.ubigeo !== false) ? (region || undefined) : undefined,
+        provincia: (registroFields.seccionResidencia && registroFields.ubigeo !== false) ? (provincia || undefined) : undefined,
+        distrito: (registroFields.seccionResidencia && registroFields.ubigeo !== false) ? (distrito || undefined) : undefined,
         comunidad: (registroFields.seccionResidencia && registroFields.comunidad) ? (comunidad || undefined) : undefined,
         celular: (registroFields.seccionResidencia && registroFields.telefono) ? (telefono || undefined) : undefined,
         telefono: (registroFields.seccionResidencia && registroFields.telefono) ? (telefono || undefined) : undefined,
@@ -298,6 +352,9 @@ export default function BeneficiarioPage() {
       setSexo('M')
       setEstadoCivil('')
       setIdioma('')
+      setRegion('Cusco')
+      setProvincia('Urubamba')
+      setDistrito('Urubamba')
       setComunidad('')
       setTelefono('')
       setAltitud('')
@@ -755,98 +812,214 @@ export default function BeneficiarioPage() {
                 <span className="text-xs text-on-surface-variant">Acceso geográfico y cobertura</span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-                {registroFields.comunidad && (
-                  <div className="md:col-span-6">
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Comunidad / Sector Rural
-                    </label>
-                    <select
-                      className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                      value={comunidad}
-                      onChange={(e) => setComunidad(e.target.value)}
-                    >
-                      <option value="rumichaca">Rumichaca (Sector Alto)</option>
-                      <option value="ollantaytambo">Ollantaytambo (Comunidad Willoq)</option>
-                      <option value="marcas">Marcas - Huayllabamba</option>
-                      <option value="urubamba">Urubamba Centro</option>
-                      <option value="yanahuara">Yanahuara</option>
-                    </select>
+              <div className="space-y-4">
+                {/* Fila 1: Ubigeo Territorial Minimalista (Región, Provincia, Distrito) y Comunidad */}
+                {(registroFields.ubigeo !== false || registroFields.comunidad) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                    {registroFields.ubigeo !== false && (
+                      <>
+                        <div>
+                          <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                            Región / Depto.
+                          </label>
+                          <select
+                            className="w-full h-10 px-2.5 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                            value={region}
+                            onChange={(e) => handleRegionChange(e.target.value)}
+                          >
+                            {getRegiones().map((r) => (
+                              <option key={r} value={r}>
+                                {r}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                            Provincia
+                          </label>
+                          <select
+                            className="w-full h-10 px-2.5 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                            value={provincia}
+                            onChange={(e) => handleProvinciaChange(e.target.value)}
+                          >
+                            {getProvincias(region).map((p) => (
+                              <option key={p} value={p}>
+                                {p}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                            Distrito
+                          </label>
+                          <select
+                            className="w-full h-10 px-2.5 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                            value={distrito}
+                            onChange={(e) => setDistrito(e.target.value)}
+                          >
+                            {getDistritos(region, provincia).map((d) => (
+                              <option key={d} value={d}>
+                                {d}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </>
+                    )}
+
+                    {registroFields.comunidad && (
+                      <div className={registroFields.ubigeo === false ? 'sm:col-span-2 md:col-span-4' : ''}>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider">
+                            Comunidad / Sector
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setIsAddingComunidad((prev) => !prev)}
+                            className="text-[10px] text-primary hover:text-on-primary-fixed-variant font-bold uppercase flex items-center gap-0.5 cursor-pointer"
+                            title="Ingresar nueva comunidad previamente no registrada"
+                          >
+                            <span className="material-symbols-outlined text-[13px]">add</span>
+                            <span>{isAddingComunidad ? 'Cerrar' : '+ Nueva'}</span>
+                          </button>
+                        </div>
+                        <select
+                          className="w-full h-10 px-2.5 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                          value={comunidad}
+                          onChange={(e) => setComunidad(e.target.value)}
+                        >
+                          <option value="">-- Seleccionar Comunidad --</option>
+                          {comunidades.map((c) => (
+                            <option key={c} value={c}>
+                              {c}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
                 )}
 
-                {registroFields.telefono && (
-                  <div className={registroFields.comunidad ? 'md:col-span-6' : 'md:col-span-12'}>
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Móvil / WhatsApp de Contacto
-                    </label>
-                    <div className="flex border border-surface-container-high bg-surface-container-low focus-within:border-primary">
-                      <span className="h-10 px-3 bg-surface-container text-xs text-on-surface-variant flex items-center font-mono">
-                        +51
-                      </span>
-                      <input
-                        className="w-full h-10 px-3 bg-transparent text-on-surface text-sm placeholder:text-on-surface-variant/40 placeholder:italic focus:outline-none"
-                        type="tel"
-                        placeholder="Ej. 984 312 809"
-                        value={telefono}
-                        onChange={(e) => setTelefono(e.target.value)}
-                      />
+                {/* Formulario rápido desplegable para ingresar una nueva comunidad */}
+                {isAddingComunidad && (
+                  <div className="p-3 bg-surface-container border border-primary/40 shadow-xs flex flex-wrap items-center gap-2 animate-fade-in">
+                    <span className="text-[11px] font-bold text-on-surface uppercase tracking-wider">
+                      Registrar Nueva Comunidad:
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Ej. Yanahuara Alta, Sector Rumichaca, Ayllu..."
+                      value={newComunidadName}
+                      onChange={(e) => setNewComunidadName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleSaveNewComunidad()
+                        }
+                      }}
+                      className="flex-1 min-w-[220px] h-8 px-3 bg-surface text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveNewComunidad}
+                      className="h-8 px-3 bg-primary text-on-primary text-xs font-bold uppercase hover:bg-on-primary-fixed-variant transition-colors cursor-pointer rounded-none"
+                    >
+                      Guardar y Seleccionar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsAddingComunidad(false)
+                        setNewComunidadName('')
+                      }}
+                      className="h-8 px-2 text-xs text-on-surface-variant hover:text-on-surface cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                )}
+
+                {/* Fila 2: Móvil, Altitud, Tiempo de Traslado y Afiliación a Seguro */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                  {registroFields.telefono && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                        Móvil / WhatsApp de Contacto
+                      </label>
+                      <div className="flex border border-surface-container-high bg-surface-container-low focus-within:border-primary">
+                        <span className="h-10 px-2.5 bg-surface-container text-xs text-on-surface-variant flex items-center font-mono">
+                          +51
+                        </span>
+                        <input
+                          className="w-full h-10 px-2.5 bg-transparent text-on-surface text-xs placeholder:text-on-surface-variant/40 placeholder:italic focus:outline-none"
+                          type="tel"
+                          placeholder="Ej. 984 312 809"
+                          value={telefono}
+                          onChange={(e) => setTelefono(e.target.value)}
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {registroFields.altitud && (
-                  <div className="md:col-span-4">
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Altitud Habitual (msnm)
-                    </label>
-                    <div className="relative border border-surface-container-high bg-surface-container-low">
-                      <input
-                        className="w-full h-10 px-3 bg-transparent text-on-surface text-sm focus:outline-none"
-                        type="number"
-                        value={altitud}
-                        onChange={(e) => setAltitud(Number(e.target.value))}
-                      />
-                      <span className="absolute right-3 top-2.5 text-xs text-on-surface-variant">msnm</span>
+                  {registroFields.altitud && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                        Altitud Habitual (msnm)
+                      </label>
+                      <div className="relative border border-surface-container-high bg-surface-container-low">
+                        <input
+                          className="w-full h-10 px-2.5 bg-transparent text-on-surface text-xs focus:outline-none"
+                          type="number"
+                          placeholder="2870"
+                          value={altitud}
+                          onChange={(e) => setAltitud(Number(e.target.value))}
+                        />
+                        <span className="absolute right-2.5 top-2.5 text-[11px] text-on-surface-variant">msnm</span>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {registroFields.tiempoViaje && (
-                  <div className="md:col-span-4">
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Tiempo de Traslado a pie
-                    </label>
-                    <select
-                      className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                      value={tiempoViaje}
-                      onChange={(e) => setTiempoViaje(e.target.value)}
-                    >
-                      <option value="30">Menos de 30 min</option>
-                      <option value="60">30 min a 1 hora</option>
-                      <option value="120">1 a 2 horas a pie</option>
-                      <option value="180">Más de 2 horas a pie</option>
-                    </select>
-                  </div>
-                )}
+                  {registroFields.tiempoViaje && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                        Tiempo de Traslado a pie
+                      </label>
+                      <select
+                        className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                        value={tiempoViaje}
+                        onChange={(e) => setTiempoViaje(e.target.value)}
+                      >
+                        <option value="30">Menos de 30 min</option>
+                        <option value="60">30 min a 1 hora</option>
+                        <option value="120">1 a 2 horas a pie</option>
+                        <option value="180">Más de 2 horas a pie</option>
+                      </select>
+                    </div>
+                  )}
 
-                {registroFields.seguro && (
-                  <div className="md:col-span-4">
-                    <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
-                      Afiliación a Seguro Médico
-                    </label>
-                    <select
-                      className="w-full h-10 px-3 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
-                      value={seguro}
-                      onChange={(e) => setSeguro(e.target.value as 'sis' | 'essalud' | 'ninguno' | 'privado')}
-                    >
-                      <option value="sis">SIS Gratuito Subsidiado</option>
-                      <option value="essalud">EsSalud (Seguro Social)</option>
-                      <option value="ninguno">Sin Seguro / No Afiliado</option>
-                      <option value="privado">Seguro Privado / FFAA</option>
-                    </select>
-                  </div>
-                )}
+                  {registroFields.seguro && (
+                    <div>
+                      <label className="block text-[11px] font-semibold text-on-surface-variant uppercase tracking-wider mb-1">
+                        Afiliación a Seguro Médico
+                      </label>
+                      <select
+                        className="w-full h-10 px-2 bg-surface-container-low text-on-surface text-xs border border-surface-container-high focus:border-primary focus:outline-none cursor-pointer"
+                        value={seguro}
+                        onChange={(e) => setSeguro(e.target.value as 'sis' | 'essalud' | 'ninguno' | 'privado')}
+                      >
+                        <option value="sis">SIS Gratuito Subsidiado</option>
+                        <option value="essalud">EsSalud (Seguro Social)</option>
+                        <option value="ninguno">Sin Seguro / No Afiliado</option>
+                        <option value="privado">Seguro Privado / FFAA</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
           )}

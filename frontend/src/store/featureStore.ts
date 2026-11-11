@@ -45,6 +45,25 @@ export const DEFAULT_USOS: string[] = [
   'Uso General',
 ]
 
+export const DEFAULT_COMUNIDADES: string[] = [
+  'Rumichaca (Sector Alto)',
+  'Ollantaytambo (Comunidad Willoq)',
+  'Marcas - Huayllabamba',
+  'Urubamba Centro',
+  'Yanahuara',
+  'Chinchero',
+  'Maras',
+  'Patacancha',
+  'Paucartambo',
+  'Willoq Alto',
+  'Media Luna',
+  'Palcaraqui',
+  'Piri',
+  'Pachar',
+  'Huilloc',
+  'Pumamarca',
+]
+
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -65,6 +84,7 @@ export interface RegistroFieldsConfig {
 
   // Sección 2: Datos de Residencia y Contacto
   seccionResidencia: boolean
+  ubigeo: boolean // Región, Provincia, Distrito
   comunidad: boolean
   telefono: boolean
   altitud: boolean
@@ -101,8 +121,9 @@ export interface FeatureState {
   medicamentosColumns: MedicamentoColumnConfig[]
   medicamentosClasificaciones: string[]
   medicamentosUsos: string[]
+  comunidades: string[]
 
-  // Acciones medicamentos
+  // Acciones medicamentos y comunidades
   setMedicamentosColumns: (cols: MedicamentoColumnConfig[]) => void
   toggleMedicamentoColumn: (key: string, visible: boolean) => void
   moveMedicamentoColumn: (key: string, direction: 'up' | 'down') => void
@@ -110,6 +131,8 @@ export interface FeatureState {
   removeMedicamentoClasificacion: (clasif: string) => void
   addMedicamentoUso: (uso: string) => void
   removeMedicamentoUso: (uso: string) => void
+  addComunidad: (nombre: string) => void
+  removeComunidad: (nombre: string) => void
 
   // Acciones
   setTriajeEnabled: (enabled: boolean) => void
@@ -141,6 +164,7 @@ const defaultRegistroFields: RegistroFieldsConfig = {
   estadoCivil: true,
   lenguaMaterna: true,
   seccionResidencia: true,
+  ubigeo: true,
   comunidad: true,
   telefono: true,
   altitud: true,
@@ -167,6 +191,7 @@ export const useFeatureStore = create<FeatureState>()(
       medicamentosColumns: [...DEFAULT_MEDICAMENTOS_COLUMNS],
       medicamentosClasificaciones: [...DEFAULT_CLASIFICACIONES],
       medicamentosUsos: [...DEFAULT_USOS],
+      comunidades: [...DEFAULT_COMUNIDADES],
 
       setMedicamentosColumns: (cols) => set({ medicamentosColumns: cols }),
 
@@ -222,6 +247,20 @@ export const useFeatureStore = create<FeatureState>()(
           medicamentosUsos: state.medicamentosUsos.filter((u) => u !== uso),
         })),
 
+      addComunidad: (nombre) =>
+        set((state) => {
+          const clean = nombre.trim()
+          if (!clean || state.comunidades.includes(clean)) return state
+          return {
+            comunidades: [...state.comunidades, clean],
+          }
+        }),
+
+      removeComunidad: (nombre) =>
+        set((state) => ({
+          comunidades: state.comunidades.filter((c) => c !== nombre),
+        })),
+
       setTriajeEnabled: (enabled: boolean) => set({ triajeEnabled: enabled }),
       setTriajeOption: (option, value) =>
         set((state) => ({
@@ -274,6 +313,7 @@ export const useFeatureStore = create<FeatureState>()(
           medicamentosColumns: [...DEFAULT_MEDICAMENTOS_COLUMNS],
           medicamentosClasificaciones: [...DEFAULT_CLASIFICACIONES],
           medicamentosUsos: [...DEFAULT_USOS],
+          comunidades: [...DEFAULT_COMUNIDADES],
         }),
     }),
     {

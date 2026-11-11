@@ -13,6 +13,7 @@ export interface SystemSettingsPayload {
   medicamentosColumns?: MedicamentoColumnConfig[]
   medicamentosClasificaciones?: string[]
   medicamentosUsos?: string[]
+  comunidades?: string[]
 }
 
 /**
@@ -63,6 +64,9 @@ export async function loadSystemSettings(): Promise<boolean> {
       }
       if (Array.isArray(d.medicamentosUsos)) {
         useFeatureStore.setState({ medicamentosUsos: d.medicamentosUsos })
+      }
+      if (Array.isArray(d.comunidades)) {
+        useFeatureStore.setState({ comunidades: d.comunidades })
       }
 
       // Hidratar branding institucional

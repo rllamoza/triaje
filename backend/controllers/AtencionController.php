@@ -215,7 +215,7 @@ function atenciones_store(array $user): void {
 
             $stmtFull = $pdo->prepare("
                 SELECT a.*,
-                       b.nombres, b.apellidos, b.dni, b.distrito, b.comunidad,
+                       b.nombres, b.apellidos, b.dni, b.fecha_nacimiento, b.edad_calculada, b.distrito, b.comunidad,
                        c.name as campaign_name,
                        s.label as station_label,
                        CONCAT(um.name, ' ', um.apellidos) as medico_asignado_nombre

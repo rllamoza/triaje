@@ -8,6 +8,7 @@ export interface TicketInfo {
   correlativo?: number | string
   paciente: string
   dni: string
+  edad?: string | number
   comunidad?: string
   distrito?: string
   hora: string
@@ -85,6 +86,13 @@ export function TicketModal({
 
   // Distrito del paciente para el ticket
   const displayDistrito = firstTicket?.distrito || firstTicket?.comunidad || 'Distrito General'
+
+  // Edad formateada del paciente para el ticket
+  const displayEdad = (() => {
+    if (firstTicket?.edad === undefined || firstTicket?.edad === null || String(firstTicket.edad).trim() === '') return ''
+    const val = String(firstTicket.edad).trim()
+    return val.includes('año') ? val : `${val} años`
+  })()
 
   useEffect(() => {
     if (ticketList.length === 0 || isAdmision) return
@@ -181,10 +189,14 @@ export function TicketModal({
               </strong>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-3 gap-2 text-xs">
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase font-bold text-on-surface-variant font-mono">DNI:</span>
                 <strong className="text-xs font-mono font-bold text-on-surface">{firstTicket.dni}</strong>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-bold text-on-surface-variant">Edad:</span>
+                <strong className="text-xs font-bold text-on-surface">{displayEdad || '—'}</strong>
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase font-bold text-on-surface-variant">Distrito:</span>
@@ -297,6 +309,13 @@ export function TicketModal({
                     <strong className="font-mono font-black text-xs text-black">{firstTicket.dni}</strong>
                   </div>
 
+                  {displayEdad && (
+                    <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-0.5">
+                      <span className="font-black text-black text-[10px] uppercase">EDAD:</span>
+                      <strong className="font-mono font-black text-xs text-black">{displayEdad}</strong>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-0.5">
                     <span className="font-black text-black text-[10px] uppercase">DISTRITO:</span>
                     <span className="font-bold uppercase text-xs truncate max-w-[65%] text-black">
@@ -397,6 +416,12 @@ export function TicketModal({
                       <span className="font-black text-[11px] uppercase">DNI:</span>
                       <strong className="font-mono font-black text-xs">{t.dni}</strong>
                     </div>
+                    {t.edad && (
+                      <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
+                        <span className="font-black text-[11px] uppercase">EDAD:</span>
+                        <strong className="font-mono font-black text-xs">{t.edad}</strong>
+                      </div>
+                    )}
                     <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
                       <span className="font-black text-[11px] uppercase">DISTRITO:</span>
                       <span className="font-bold uppercase text-xs truncate max-w-[65%]">{t.distrito || t.comunidad || displayDistrito}</span>

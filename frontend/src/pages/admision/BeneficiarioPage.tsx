@@ -375,6 +375,7 @@ export default function BeneficiarioPage() {
       const now = new Date()
       const nowHora = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       const nowFecha = now.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      const patientAge = fechaNac ? calculateAge(fechaNac) : undefined
 
       const generatedTickets: TicketInfo[] = rawList.map((atn: any) => {
         const corr = atn.ticket_number || (atn.ticket_codigo ? atn.ticket_codigo.match(/(\d+)$/)?.[1] : undefined)
@@ -383,6 +384,7 @@ export default function BeneficiarioPage() {
           correlativo: corr || atn.ticket_number,
           paciente: `${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}`,
           dni: cleanDni || 'S/DNI',
+          edad: patientAge ? `${patientAge} años` : (atn.edad_calculada ? `${atn.edad_calculada} años` : undefined),
           comunidad: comunidad || 'Comunidad General',
           distrito: (distrito && distrito !== 'Otro') ? distrito : (atn.distrito || comunidad || 'Urubamba'),
           fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : nowFecha,
@@ -1641,6 +1643,7 @@ export default function BeneficiarioPage() {
                               correlativo: corr,
                               paciente: `${ape}, ${nom}`,
                               dni: doc,
+                              edad: atn.edad_calculada ? `${atn.edad_calculada} años` : (atn.fecha_nacimiento ? `${calculateAge(atn.fecha_nacimiento)} años` : undefined),
                               comunidad: atn.comunidad || 'Comunidad General',
                               distrito: atn.distrito || atn.comunidad || 'Urubamba',
                               fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),

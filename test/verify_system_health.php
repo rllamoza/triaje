@@ -211,6 +211,7 @@ try {
             'nombres' => 'JUAN CARLOS',
             'apellidos' => 'MAMANI QUISPE',
             'dni' => '45678901',
+            'edad_calculada' => 42,
             'distrito' => 'Urubamba',
             'comunidad' => 'Rumichaca'
         ]
@@ -232,6 +233,13 @@ try {
     } else {
         echo "  [FALLO] Campo distrito no encontrado en el buffer binario\n";
         $errors[] = "Campo DISTRITO no presente en ESC/POS";
+    }
+
+    if (strpos($bin, "EDAD: ") !== false && strpos($bin, "42") !== false) {
+        echo "  [OK] Campo 'EDAD: 42 años' confirmado en el ticket térmico\n";
+    } else {
+        echo "  [FALLO] Campo edad no encontrado en el buffer binario\n";
+        $errors[] = "Campo EDAD no presente en ESC/POS";
     }
 
     if (strpos($bin, "TICKET DE INSCRIPCION") === false) {

@@ -264,6 +264,7 @@ class ESCPOSService
             $paciente = 'PACIENTE GENERAL';
         }
         $dni = $b['dni'] ?? 'S/DNI';
+        $edad = !empty($b['edad_calculada']) ? $b['edad_calculada'] . ' años' : (!empty($b['edad']) ? $b['edad'] : '');
         $distrito = !empty($b['distrito']) ? $b['distrito'] : (!empty($b['comunidad']) ? $b['comunidad'] : 'Urubamba');
         $fecha = date('d/m/Y');
         $hora = date('H:i');
@@ -289,7 +290,11 @@ class ESCPOSService
         // 2. Datos del Paciente (CON FECHA Y HORA, SIN MEDICO)
         $out .= self::LEFT;
         $out .= self::BOLD_ON . $this->encodeText("PACIENTE: ") . $this->encodeText($this->wrapText($paciente, 32)) . self::BOLD_OFF . self::LF;
-        $out .= self::BOLD_ON . $this->encodeText("DNI: ") . self::BOLD_OFF . $this->encodeText("{$dni}\n");
+        $out .= self::BOLD_ON . $this->encodeText("DNI: ") . self::BOLD_OFF . $this->encodeText("{$dni}");
+        if ($edad) {
+            $out .= $this->encodeText("  |  ") . self::BOLD_ON . $this->encodeText("EDAD: ") . self::BOLD_OFF . $this->encodeText("{$edad}");
+        }
+        $out .= self::LF;
         $out .= self::BOLD_ON . $this->encodeText("DISTRITO: ") . self::BOLD_OFF . $this->encodeText("{$distrito}\n");
         $out .= self::BOLD_ON . $this->encodeText("FECHA: ") . self::BOLD_OFF . $this->encodeText("{$fecha}  ") . self::BOLD_ON . $this->encodeText("HORA: ") . self::BOLD_OFF . $this->encodeText("{$hora}\n");
         $out .= $singleSep;

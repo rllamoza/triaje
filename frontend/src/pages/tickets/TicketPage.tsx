@@ -21,6 +21,7 @@ function mapAtencionToPatient(atn: any): DetailedPatient {
     edad,
     sexo: atn.sexo === 'F' ? 'F' : 'M',
     comunidad: atn.comunidad || 'Comunidad General',
+    distrito: atn.distrito || atn.comunidad || 'Urubamba',
     telefono: atn.celular || atn.telefono || '',
     prioridad: atn.prioridad || 'verde',
     prioridadLabel: atn.prioridad_label || (atn.prioridad === 'rojo' ? 'PRIORIDAD I' : atn.prioridad === 'amarillo' ? 'PRIORIDAD II' : 'PRIORIDAD III - ESTABLE'),
@@ -177,6 +178,7 @@ export default function TicketPage() {
       edad: currentPatient.edad,
       sexo: currentPatient.sexo,
       comunidad: currentPatient.comunidad,
+      distrito: currentPatient.distrito || currentPatient.comunidad || 'Urubamba',
       telefono: currentPatient.telefono,
       seguro: currentPatient.seguro,
       motivo: currentPatient.motivo,
@@ -809,7 +811,7 @@ export default function TicketPage() {
                 <img
                   src={effectiveLogo}
                   alt="Logo Ticket"
-                  className="h-12 w-auto max-w-[170px] object-contain mb-1 filter grayscale contrast-200"
+                  className="h-16 w-auto max-w-[210px] object-contain mb-1 filter grayscale contrast-200"
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full border-2 border-[#000000] flex items-center justify-center mb-1 font-black text-base text-black">
@@ -884,8 +886,8 @@ export default function TicketPage() {
                   <strong className="truncate max-w-[190px] font-black">{currentPatient.seguro}</strong>
                 </div>
                 <div className="flex justify-between text-black">
-                  <span>PROCEDENCIA:</span>
-                  <span className="truncate max-w-[190px] text-right font-bold">{currentPatient.comunidad}</span>
+                  <span>DISTRITO:</span>
+                  <span className="truncate max-w-[190px] text-right font-bold">{currentPatient.distrito || currentPatient.comunidad || 'Distrito General'}</span>
                 </div>
                 {currentPatient.telefono && (
                   <div className="flex justify-between text-black">

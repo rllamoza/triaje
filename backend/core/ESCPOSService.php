@@ -130,7 +130,7 @@ class ESCPOSService
         $dni         = $p['dni'] ?? '00000000';
         $edad        = $p['edad'] ?? '';
         $sexo        = $p['sexo'] ?? '';
-        $comunidad   = $p['comunidad'] ?? 'Comunidad';
+        $distrito    = !empty($p['distrito']) ? $p['distrito'] : (!empty($p['comunidad']) ? $p['comunidad'] : 'Distrito General');
         $seguro      = $p['seguro'] ?? 'SIS Gratuito';
         $prioridad   = $p['prioridadLabel'] ?? 'NO URGENTE';
         $espera      = $p['espera'] ?? '15 min';
@@ -187,7 +187,7 @@ class ESCPOSService
         $out .= self::LEFT;
         $out .= self::BOLD_ON . $this->encodeText("PACIENTE: ") . $this->encodeText($this->wrapText($paciente, 32)) . self::BOLD_OFF . self::LF;
         $out .= self::BOLD_ON . $this->encodeText("DNI: ") . self::BOLD_OFF . $this->encodeText("{$dni} | ") . self::BOLD_ON . $this->encodeText("Edad: ") . self::BOLD_OFF . $this->encodeText("{$edad} | ") . self::BOLD_ON . $this->encodeText("Sexo: ") . self::BOLD_OFF . $this->encodeText("{$sexo}\n");
-        if ($comunidad) $out .= self::BOLD_ON . $this->encodeText("Comunidad: ") . self::BOLD_OFF . $this->encodeText("{$comunidad}\n");
+        if ($distrito)  $out .= self::BOLD_ON . $this->encodeText("Distrito: ") . self::BOLD_OFF . $this->encodeText("{$distrito}\n");
         if ($seguro)    $out .= self::BOLD_ON . $this->encodeText("Seguro: ") . self::BOLD_OFF . $this->encodeText("{$seguro}\n");
 
         // 4. Signos vitales
@@ -264,7 +264,7 @@ class ESCPOSService
             $paciente = 'PACIENTE GENERAL';
         }
         $dni = $b['dni'] ?? 'S/DNI';
-        $comunidad = $b['comunidad'] ?? 'Comunidad General';
+        $distrito = !empty($b['distrito']) ? $b['distrito'] : (!empty($b['comunidad']) ? $b['comunidad'] : 'Urubamba');
         $fecha = date('d/m/Y');
         $hora = date('H:i');
         $especialidades = $atencion['especialidades'] ?? [];
@@ -291,7 +291,7 @@ class ESCPOSService
         $out .= self::LEFT;
         $out .= self::BOLD_ON . $this->encodeText("PACIENTE: ") . $this->encodeText($this->wrapText($paciente, 32)) . self::BOLD_OFF . self::LF;
         $out .= self::BOLD_ON . $this->encodeText("DNI: ") . self::BOLD_OFF . $this->encodeText("{$dni}\n");
-        $out .= self::BOLD_ON . $this->encodeText("COMUNIDAD: ") . self::BOLD_OFF . $this->encodeText("{$comunidad}\n");
+        $out .= self::BOLD_ON . $this->encodeText("DISTRITO: ") . self::BOLD_OFF . $this->encodeText("{$distrito}\n");
         $out .= self::BOLD_ON . $this->encodeText("FECHA: ") . self::BOLD_OFF . $this->encodeText("{$fecha}  ") . self::BOLD_ON . $this->encodeText("HORA: ") . self::BOLD_OFF . $this->encodeText("{$hora}\n");
         $out .= $singleSep;
 
@@ -348,6 +348,7 @@ class ESCPOSService
             'edad'           => ($b['edad_calculada'] ?? '') . ' años',
             'sexo'           => $b['sexo'] ?? '',
             'comunidad'      => $b['comunidad'] ?? '',
+            'distrito'       => !empty($b['distrito']) ? $b['distrito'] : (!empty($b['comunidad']) ? $b['comunidad'] : 'Urubamba'),
             'prioridadLabel' => 'RECETA Y CONSULTA',
             'destino'        => $atencion['station_label'] ?? 'Consultorio Médico',
             'medico'         => $c['medico_nombre'] ?? 'Médico Asignado',

@@ -8,7 +8,8 @@ export interface TicketInfo {
   correlativo?: number | string
   paciente: string
   dni: string
-  comunidad: string
+  comunidad?: string
+  distrito?: string
   hora: string
   fecha?: string
   especialidad?: string
@@ -82,6 +83,9 @@ export function TicketModal({
     return '0001'
   })()
 
+  // Distrito del paciente para el ticket
+  const displayDistrito = firstTicket?.distrito || firstTicket?.comunidad || 'Distrito General'
+
   useEffect(() => {
     if (ticketList.length === 0 || isAdmision) return
 
@@ -145,16 +149,16 @@ export function TicketModal({
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
       <div className="bg-surface border-2 border-primary shadow-2xl w-full max-w-lg p-6 text-on-surface text-center animate-fade-in my-8 max-h-[94vh] flex flex-col justify-between overflow-y-auto">
         <div>
-          {/* Logo Mediano Institucional en Admisión */}
+          {/* Logo Mediano/Grande Institucional en Admisión */}
           {effectiveLogo ? (
             <img
               src={effectiveLogo}
               alt="Logo Institucional"
-              className="max-h-20 h-16 sm:h-20 mx-auto mb-2 object-contain"
+              className="max-h-28 sm:max-h-32 h-24 sm:h-28 mx-auto mb-2 object-contain"
             />
           ) : (
-            <div className="w-14 h-14 mx-auto mb-2 bg-tertiary-container text-tertiary flex items-center justify-center rounded-full border border-tertiary/30">
-              <span className="material-symbols-outlined text-3xl">check_circle</span>
+            <div className="w-16 h-16 mx-auto mb-2 bg-tertiary-container text-tertiary flex items-center justify-center rounded-full border border-tertiary/30">
+              <span className="material-symbols-outlined text-4xl">check_circle</span>
             </div>
           )}
 
@@ -181,8 +185,8 @@ export function TicketModal({
                 <strong className="text-xs font-mono font-bold text-on-surface">{firstTicket.dni}</strong>
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] uppercase font-bold text-on-surface-variant">Comunidad:</span>
-                <span className="text-xs text-on-surface capitalize font-medium">{firstTicket.comunidad}</span>
+                <span className="text-[10px] uppercase font-bold text-on-surface-variant">Distrito:</span>
+                <span className="text-xs text-on-surface capitalize font-medium">{displayDistrito}</span>
               </div>
             </div>
 
@@ -289,13 +293,13 @@ export function TicketModal({
             {isAdmision ? (
               // === TICKET DE INSCRIPCIÓN (Consolidado con Logo Mediano, Datos + Fecha, Especialidades y 4 Cuadrantes para Sellos) ===
               <div className="thermal-ticket-unit text-black bg-white">
-                {/* 1. Logo Mediano y Cabecera */}
+                {/* 1. Logo Mediano/Grande y Cabecera */}
                 <div className="text-center pb-2 border-b-2 border-black">
                   {effectiveLogo ? (
                     <img
                       src={effectiveLogo}
                       alt="Logo"
-                      className="max-h-20 h-16 sm:h-20 mx-auto mb-1.5 object-contain"
+                      className="max-h-24 sm:max-h-28 h-20 sm:h-24 mx-auto mb-1.5 object-contain"
                     />
                   ) : (
                     <div className="font-bold text-base uppercase tracking-wider">{branding.appName}</div>
@@ -324,9 +328,9 @@ export function TicketModal({
                   </div>
 
                   <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-0.5">
-                    <span className="font-black text-black text-[10px] uppercase">COMUNIDAD:</span>
+                    <span className="font-black text-black text-[10px] uppercase">DISTRITO:</span>
                     <span className="font-bold uppercase text-xs truncate max-w-[65%] text-black">
-                      {firstTicket.comunidad}
+                      {displayDistrito}
                     </span>
                   </div>
 
@@ -421,7 +425,7 @@ export function TicketModal({
                       <img
                         src={effectiveLogo}
                         alt="Logo"
-                        className="max-h-12 mx-auto mb-1 object-contain"
+                        className="max-h-20 h-16 sm:h-20 mx-auto mb-1 object-contain"
                       />
                     )}
                     <div className="font-bold text-sm uppercase">{branding.appName}</div>
@@ -448,8 +452,8 @@ export function TicketModal({
                       <strong className="font-mono font-black text-xs">{t.dni}</strong>
                     </div>
                     <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
-                      <span className="font-black text-[11px] uppercase">COMUNIDAD:</span>
-                      <span className="font-bold uppercase text-xs truncate max-w-[65%]">{t.comunidad}</span>
+                      <span className="font-black text-[11px] uppercase">DISTRITO:</span>
+                      <span className="font-bold uppercase text-xs truncate max-w-[65%]">{t.distrito || t.comunidad || displayDistrito}</span>
                     </div>
                     <div className="flex items-center justify-between border-t border-dotted border-black/60 pt-1">
                       <span className="font-black text-[11px] uppercase">HORA:</span>

@@ -6,6 +6,7 @@ export interface DetailedPatient {
   edad: string
   sexo: 'M' | 'F'
   comunidad: string
+  distrito?: string
   telefono?: string
   prioridad: 'rojo' | 'amarillo' | 'verde'
   prioridadLabel: string

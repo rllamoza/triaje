@@ -19,7 +19,7 @@ function atenciones_index(): void {
     $wc  = $where ? "WHERE " . implode(' AND ', $where) : '';
     $sql = "
         SELECT a.*,
-               b.nombres, b.apellidos, b.dni, b.fecha_nacimiento, b.sexo, b.celular, b.comunidad, b.edad_calculada, b.tipo_seguro, b.altitud_residencia, b.idioma_principal,
+               b.nombres, b.apellidos, b.dni, b.fecha_nacimiento, b.sexo, b.celular, b.distrito, b.comunidad, b.edad_calculada, b.tipo_seguro, b.altitud_residencia, b.idioma_principal,
                t.id as triaje_id, t.prioridad, t.prioridad_color, t.prioridad_label,
                t.temperatura_c, t.presion_sistolica, t.presion_diastolica,
                t.frecuencia_cardiaca, t.frecuencia_respiratoria, t.saturacion_o2_pct, t.saturacion_corregida, t.glucosa_mg_dl,
@@ -215,7 +215,7 @@ function atenciones_store(array $user): void {
 
             $stmtFull = $pdo->prepare("
                 SELECT a.*,
-                       b.nombres, b.apellidos, b.dni, b.comunidad,
+                       b.nombres, b.apellidos, b.dni, b.distrito, b.comunidad,
                        c.name as campaign_name,
                        s.label as station_label,
                        CONCAT(um.name, ' ', um.apellidos) as medico_asignado_nombre

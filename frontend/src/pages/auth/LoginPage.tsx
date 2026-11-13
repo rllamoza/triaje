@@ -20,8 +20,8 @@ export default function LoginPage() {
   }
 
   const [mode, setMode] = useState<LoginMode>('credential')
-  const [credential, setCredential] = useState('admin@semilla.pe')
-  const [password, setPassword] = useState('Admin2025!')
+  const [credential, setCredential] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [role, setRole] = useState('admin')
   const [error, setError] = useState('')
@@ -29,13 +29,13 @@ export default function LoginPage() {
   const [isApiModalOpen, setIsApiModalOpen] = useState(false)
 
   // PIN
-  const [pin, setPin] = useState(['1', '2', '3', '4'])
-  const [responsable, setResponsable] = useState('Dr. M. Benavides (Med. General)')
+  const [pin, setPin] = useState(['', '', '', ''])
+  const [responsable, setResponsable] = useState('')
   const [pinError, setPinError] = useState('')
 
   // Campaigns & Stations por defecto
   const [selectedCampaignId] = useState<number>(1)
-  const [selectedStation, setSelectedStation] = useState('ADM-01')
+  const [selectedStation] = useState('ADM-01')
 
   const loginMutation = useLogin()
   const pinMutation = useLoginPin()
@@ -142,12 +142,6 @@ export default function LoginPage() {
       setPin(next)
       document.getElementById(`pin-box-${Math.min(3, text.length)}`)?.focus()
     }
-  }
-
-  const handleSelectPinPreset = (presetPin: string, presetResponsable: string) => {
-    setPin(presetPin.split(''))
-    setResponsable(presetResponsable)
-    setPinError('')
   }
 
   return (
@@ -277,41 +271,6 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* Accesos Rápidos de Prueba */}
-              <div className="bg-surface-container-lowest p-2.5 border border-surface-container-high space-y-1.5">
-                <div className="text-[10px] uppercase font-bold text-secondary tracking-wider flex items-center justify-between">
-                  <span>Cuentas de Prueba (1 Clic)</span>
-                  <span className="text-[10px] text-primary font-mono">BD Remota</span>
-                </div>
-                <div className="grid grid-cols-4 gap-1.5">
-                  {[
-                    { label: 'Admin', email: 'admin@semilla.pe', pass: 'Admin2025!', r: 'admin', st: 'ADM-01' },
-                    { label: 'Médico', email: 'mhuaman@semilla.pe', pass: 'Med2025!', r: 'medico', st: 'MED-01' },
-                    { label: 'Triaje', email: 'sbenavides@semilla.pe', pass: 'Enf2025!', r: 'triaje', st: 'TRJ-01' },
-                    { label: 'Admisión', email: 'atorres@semilla.pe', pass: 'Adm2025!', r: 'admision', st: 'ADM-01' },
-                  ].map((demo) => (
-                    <button
-                      key={demo.label}
-                      type="button"
-                      onClick={() => {
-                        setCredential(demo.email)
-                        setPassword(demo.pass)
-                        setRole(demo.r)
-                        setSelectedStation(demo.st)
-                        setError('')
-                      }}
-                      className={`text-[11px] py-1 px-1.5 border text-center transition-all cursor-pointer font-medium ${
-                        credential === demo.email
-                          ? 'bg-primary text-on-primary border-primary font-semibold'
-                          : 'bg-surface hover:bg-surface-container text-on-surface border-surface-container-high'
-                      }`}
-                    >
-                      {demo.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                   Rol Funcional en Carpa
@@ -365,7 +324,7 @@ export default function LoginPage() {
 
               <label className="flex items-start gap-2.5 cursor-pointer select-none">
                 <input
-                  defaultChecked
+                  defaultChecked={false}
                   type="checkbox"
                   className="mt-0.5 accent-primary h-4 w-4 rounded-none cursor-pointer"
                 />
@@ -407,9 +366,6 @@ export default function LoginPage() {
                   <label className="block text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
                     PIN de Contingencia (4 Dígitos)
                   </label>
-                  <span className="text-[11px] text-secondary font-mono">
-                    Admin: 1234
-                  </span>
                 </div>
                 <div className="flex justify-center gap-3">
                   {[0, 1, 2, 3].map((i) => (
@@ -428,36 +384,6 @@ export default function LoginPage() {
                       className="w-12 h-14 bg-surface-container border border-surface-container-high text-center text-2xl font-mono font-bold text-on-surface focus:bg-surface focus:border-primary focus:outline-none rounded-none shadow-xs"
                     />
                   ))}
-                </div>
-
-                {/* Quick Preset PIN Chips */}
-                <div className="pt-2">
-                  <div className="text-[11px] text-on-surface-variant mb-1.5 font-medium">
-                    PINs rápidos configurados:
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => handleSelectPinPreset('1234', 'Dr. Administrador de Guardia')}
-                      className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
-                    >
-                      ⚡ 1234 (Admin)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectPinPreset('8247', 'Dr. Marco Huamán Quispe')}
-                      className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
-                    >
-                      🩺 8247 (Médico)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSelectPinPreset('5519', 'Lic. Sofía Benavides Roca')}
-                      className="px-2 py-1 bg-surface-container hover:bg-surface-container-high border border-surface-container-high text-[11.5px] font-mono text-on-surface cursor-pointer rounded-xs"
-                    >
-                      📋 5519 (Triaje)
-                    </button>
-                  </div>
                 </div>
               </div>
 

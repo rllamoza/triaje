@@ -10,6 +10,7 @@ export default function StockPublicoPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState<'todos' | 'disponible' | 'bajo' | 'agotado'>('todos')
   const [selectedVia, setSelectedVia] = useState<string>('todas')
+  const [selectedClasificacion, setSelectedClasificacion] = useState<string>('todas')
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
   const [copiedLink, setCopiedLink] = useState(false)
 
@@ -21,6 +22,18 @@ export default function StockPublicoPage() {
       if (m.via_administracion) set.add(m.via_administracion)
     })
     return Array.from(set)
+  }, [data?.data])
+
+  // Clasificaciones terapéuticas únicas
+  const availableClasificaciones = useMemo(() => {
+    if (!data?.data) return []
+    const set = new Set<string>()
+    data.data.forEach((m) => {
+      if (m.clasificacion && m.clasificacion.trim()) {
+        set.add(m.clasificacion.trim())
+      }
+    })
+    return Array.from(set).sort()
   }, [data?.data])
 
   // Filtrado reactivo
@@ -37,6 +50,10 @@ export default function StockPublicoPage() {
       if (selectedVia !== 'todas' && m.via_administracion?.toLowerCase() !== selectedVia.toLowerCase()) {
         return false
       }
+      // Clasificación
+      if (selectedClasificacion !== 'todas' && (m.clasificacion || '').toLowerCase() !== selectedClasificacion.toLowerCase()) {
+        return false
+      }
       // Búsqueda
       if (!q) return true
       return (
@@ -49,7 +66,7 @@ export default function StockPublicoPage() {
         (m.uso || '').toLowerCase().includes(q)
       )
     })
-  }, [data?.data, searchTerm, selectedStatus, selectedVia])
+  }, [data?.data, searchTerm, selectedStatus, selectedVia, selectedClasificacion])
 
   // Copiar link público
   const handleCopyLink = () => {
@@ -90,8 +107,11 @@ export default function StockPublicoPage() {
                   EN VIVO
                 </span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {campaign?.name || 'Campaña Médica Activa'} {campaign?.location_name ? `• ${campaign.location_name}` : ''}
+              <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 flex-wrap">
+                <span>{campaign?.name || 'Campaña Médica Activa'} {campaign?.location_name ? `• ${campaign.location_name}` : ''}</span>
+                {data?.timestamp && (
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">• Sinc: {new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                )}
               </p>
             </div>
           </div>
@@ -161,88 +181,68 @@ export default function StockPublicoPage() {
       </header>
 
       {/* Contenedor Principal */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1">
-        {/* Banner de Indicador para Médicos */}
-        <div className="mb-6 p-4 rounded-xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg border border-indigo-700/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="material-symbols-outlined text-amber-400">stethoscope</span>
-              <h2 className="text-base sm:text-lg font-bold tracking-tight">
-                Tablero de Disponibilidad para Médicos Prescriptores
-              </h2>
-            </div>
-            <p className="text-xs text-indigo-200/90 max-w-2xl">
-              Consulte este catálogo en tiempo real antes de emitir recetas a los pacientes. Cada vez que farmacia entrega un medicamento a una persona, el inventario se descuenta automáticamente.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 self-start md:self-auto text-xs text-indigo-200 bg-white/10 px-3 py-2 rounded-lg border border-white/15">
-            <span className="material-symbols-outlined text-sm text-emerald-400">update</span>
-            <span>Última sincronización: <strong>{data?.timestamp ? new Date(data.timestamp).toLocaleTimeString() : 'Conectando...'}</strong></span>
-          </div>
-        </div>
-
-        {/* Tarjetas KPI de Estado de Stock */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 w-full flex-1">
+        {/* Tarjetas KPI de Estado de Stock (Compactas en celular) */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
           {/* Total */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm text-primary">medication</span>
-              Catálogo Total
+          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 sm:gap-1.5 truncate">
+              <span className="material-symbols-outlined text-xs sm:text-sm text-primary shrink-0">medication</span>
+              <span className="truncate">Catálogo Total</span>
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+            <div className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5 sm:mt-1">
               {data?.total ?? 0}
             </div>
-            <div className="text-[11px] text-slate-500 mt-0.5">
-              {data?.unidades_totales ?? 0} unidades físicas
+            <div className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate">
+              {data?.unidades_totales ?? 0} <span className="hidden sm:inline">unidades físicas</span><span className="sm:hidden">unid.</span>
             </div>
           </div>
 
           {/* Disponibles */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/50 shadow-2xs">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm text-emerald-600">check_circle</span>
-              Disponibles
+          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-emerald-200 dark:border-emerald-900/50 shadow-2xs">
+            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1 sm:gap-1.5 truncate">
+              <span className="material-symbols-outlined text-xs sm:text-sm text-emerald-600 shrink-0">check_circle</span>
+              <span className="truncate">Disponibles</span>
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">
+            <div className="text-xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1">
               {stats.disponibles}
             </div>
-            <div className="text-[11px] text-emerald-700/80 dark:text-emerald-400/80 mt-0.5">
-              Stock óptimo para recetar
+            <div className="text-[10px] sm:text-[11px] text-emerald-700/80 dark:text-emerald-400/80 mt-0.5 truncate">
+              <span className="hidden sm:inline">Stock óptimo para recetar</span><span className="sm:hidden">Óptimo</span>
             </div>
           </div>
 
           {/* Por Agotarse */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-amber-200 dark:border-amber-900/50 shadow-2xs">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm text-amber-600">warning</span>
-              Stock Crítico / Bajo
+          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-amber-200 dark:border-amber-900/50 shadow-2xs">
+            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1 sm:gap-1.5 truncate">
+              <span className="material-symbols-outlined text-xs sm:text-sm text-amber-600 shrink-0">warning</span>
+              <span className="truncate">Stock Crítico</span>
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">
+            <div className="text-xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">
               {stats.bajos}
             </div>
-            <div className="text-[11px] text-amber-700/80 dark:text-amber-400/80 mt-0.5">
-              Próximos a agotarse
+            <div className="text-[10px] sm:text-[11px] text-amber-700/80 dark:text-amber-400/80 mt-0.5 truncate">
+              <span className="hidden sm:inline">Próximos a agotarse</span><span className="sm:hidden">Por agotarse</span>
             </div>
           </div>
 
           {/* Agotados */}
-          <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-rose-200 dark:border-rose-900/50 shadow-2xs">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-sm text-rose-600">block</span>
-              Agotados (Cero)
+          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-rose-200 dark:border-rose-900/50 shadow-2xs">
+            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-1 sm:gap-1.5 truncate">
+              <span className="material-symbols-outlined text-xs sm:text-sm text-rose-600 shrink-0">block</span>
+              <span className="truncate">Agotados</span>
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 mt-1">
+            <div className="text-xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 mt-0.5 sm:mt-1">
               {stats.agotados}
             </div>
-            <div className="text-[11px] text-rose-700/80 dark:text-rose-400/80 mt-0.5 font-semibold">
-              ⚠️ No prescribir
+            <div className="text-[10px] sm:text-[11px] text-rose-700/80 dark:text-rose-400/80 mt-0.5 font-semibold truncate">
+              ⚠️ <span className="hidden sm:inline">No prescribir</span><span className="sm:hidden">Cero</span>
             </div>
           </div>
         </div>
 
         {/* Barra de Filtros y Controles de Vista */}
-        <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs mb-6">
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs mb-4 sm:mb-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             {/* Input de Búsqueda rápida */}
             <div className="relative flex-1">
@@ -254,7 +254,7 @@ export default function StockPublicoPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar por Nombre Genérico, Comercial, Código, Clasificación..."
-                className="w-full h-10 pl-10 pr-9 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg focus:border-emerald-500 focus:outline-none text-slate-900 dark:text-white"
+                className="w-full h-9 sm:h-10 pl-10 pr-9 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg focus:border-emerald-500 focus:outline-none text-slate-900 dark:text-white"
               />
               {searchTerm && (
                 <button
@@ -297,63 +297,117 @@ export default function StockPublicoPage() {
             </div>
           </div>
 
-          {/* Filtros rápidos: Estado y Vía */}
-          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
-            {/* Píldoras de Estado */}
-            <div className="flex flex-wrap items-center gap-1.5 text-xs">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1">Filtrar:</span>
-              <button
-                onClick={() => setSelectedStatus('todos')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
-                  selectedStatus === 'todos'
-                    ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                Todos ({data?.data?.length ?? 0})
-              </button>
-              <button
-                onClick={() => setSelectedStatus('disponible')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
-                  selectedStatus === 'disponible'
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100'
-                }`}
-              >
-                Disponibles ({stats.disponibles})
-              </button>
-              <button
-                onClick={() => setSelectedStatus('bajo')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
-                  selectedStatus === 'bajo'
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100'
-                }`}
-              >
-                Bajo Stock ({stats.bajos})
-              </button>
-              <button
-                onClick={() => setSelectedStatus('agotado')}
-                className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
-                  selectedStatus === 'agotado'
-                    ? 'bg-rose-600 text-white'
-                    : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
-                }`}
-              >
-                Agotados ({stats.agotados})
-              </button>
+          {/* Filtros rápidos: Estado, Vía y Clasificación */}
+          <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
+            {/* Fila 1: Píldoras de Estado */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1">Estado:</span>
+                <button
+                  onClick={() => setSelectedStatus('todos')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    selectedStatus === 'todos'
+                      ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                >
+                  Todos ({data?.data?.length ?? 0})
+                </button>
+                <button
+                  onClick={() => setSelectedStatus('disponible')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    selectedStatus === 'disponible'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100'
+                  }`}
+                >
+                  Disponibles ({stats.disponibles})
+                </button>
+                <button
+                  onClick={() => setSelectedStatus('bajo')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    selectedStatus === 'bajo'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100'
+                  }`}
+                >
+                  Bajo Stock ({stats.bajos})
+                </button>
+                <button
+                  onClick={() => setSelectedStatus('agotado')}
+                  className={`px-2.5 py-1 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                    selectedStatus === 'agotado'
+                      ? 'bg-rose-600 text-white'
+                      : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
+                  }`}
+                >
+                  Agotados ({stats.agotados})
+                </button>
+              </div>
+
+              {/* Botón resetear filtros si hay alguno activo */}
+              {(selectedStatus !== 'todos' || selectedVia !== 'todas' || selectedClasificacion !== 'todas' || searchTerm) && (
+                <button
+                  onClick={() => {
+                    setSelectedStatus('todos')
+                    setSelectedVia('todas')
+                    setSelectedClasificacion('todas')
+                    setSearchTerm('')
+                  }}
+                  className="text-[11px] text-rose-600 hover:underline flex items-center gap-0.5 shrink-0 cursor-pointer font-medium"
+                >
+                  <span className="material-symbols-outlined text-xs">clear_all</span>
+                  Restablecer filtros
+                </button>
+              )}
             </div>
 
-            {/* Píldoras de Vía */}
+            {/* Fila 2: Filtro por Clasificación Terapéutica */}
+            {availableClasificaciones.length > 0 && (
+              <div className="flex items-center gap-1 text-xs overflow-x-auto pb-1 max-w-full">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1 shrink-0 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs text-primary">category</span>
+                  Clasificación:
+                </span>
+                <button
+                  onClick={() => setSelectedClasificacion('todas')}
+                  className={`px-2 py-0.5 rounded text-[11px] font-medium shrink-0 cursor-pointer ${
+                    selectedClasificacion === 'todas'
+                      ? 'bg-teal-600 text-white'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                  }`}
+                >
+                  Todas
+                </button>
+                {availableClasificaciones.map((clasif) => (
+                  <button
+                    key={clasif}
+                    onClick={() => setSelectedClasificacion(clasif)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-medium shrink-0 cursor-pointer ${
+                      selectedClasificacion === clasif
+                        ? 'bg-teal-600 text-white'
+                        : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                    }`}
+                  >
+                    {clasif}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Fila 3: Filtro por Vía de Administración */}
             {availableVias.length > 0 && (
               <div className="flex items-center gap-1 text-xs overflow-x-auto pb-1 max-w-full">
-                <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1">Vía:</span>
+                <span className="text-[11px] font-semibold text-slate-400 uppercase mr-1 shrink-0 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs text-indigo-500">route</span>
+                  Vía:
+                </span>
                 <button
                   onClick={() => setSelectedVia('todas')}
-                  className={`px-2 py-0.5 rounded text-[11px] font-medium cursor-pointer ${
+                  className={`px-2 py-0.5 rounded text-[11px] font-medium shrink-0 cursor-pointer ${
                     selectedVia === 'todas'
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
                   }`}
                 >
                   Todas
@@ -362,7 +416,7 @@ export default function StockPublicoPage() {
                   <button
                     key={via}
                     onClick={() => setSelectedVia(via)}
-                    className={`px-2 py-0.5 rounded text-[11px] font-medium uppercase cursor-pointer ${
+                    className={`px-2 py-0.5 rounded text-[11px] font-medium uppercase shrink-0 cursor-pointer ${
                       selectedVia === via
                         ? 'bg-indigo-600 text-white'
                         : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'

@@ -151,6 +151,24 @@ function atenciones_store(array $user): void {
         $pdo->beginTransaction();
         $inTx = true;
 
+        // Correlativo diario para la atención: se renueva cada día iniciando en 1 cada fecha calendario
+        try {
+            $stmtTnum = $pdo->prepare("
+                SELECT COALESCE(MAX(ticket_number), 0) + 1 as next 
+                FROM atenciones 
+                WHERE campaign_id = :cid 
+                  AND DATE(created_at) = CURDATE() 
+                FOR UPDATE
+            ");
+            $stmtTnum->execute([':cid' => $cid]);
+            $ticketNumber = (int)$stmtTnum->fetch()['next'];
+        } catch (\Throwable) {
+            $ticketNumber = 1;
+        }
+
+        // Formato diario de 4 dígitos para el ticket (0001, 0002...)
+        $ticketCodigo = sprintf('%04d', $ticketNumber);
+
         foreach ($requestedCodes as $spCode) {
             $spStmt = $pdo->prepare("SELECT * FROM campaign_specialties WHERE campaign_id = :cid AND specialty_code = :code AND active = 1");
             $spStmt->execute([':cid' => $cid, ':code' => $spCode]);
@@ -163,22 +181,6 @@ function atenciones_store(array $user): void {
             $consultorio = (!empty($b['consultorio']) && count($requestedCodes) === 1)
                 ? trim($b['consultorio'])
                 : ($spConfig['consultorio'] ?? 'Consultorio 01');
-
-            // Correlativo por especialidad
-            try {
-                $countStmt = $pdo->prepare("SELECT COUNT(*) as cnt FROM atenciones WHERE campaign_id = :cid AND specialty_code = :code FOR UPDATE");
-                $countStmt->execute([':cid' => $cid, ':code' => $spCode]);
-                $currentCount = (int)$countStmt->fetch()['cnt'];
-            } catch (\Throwable) {
-                $currentCount = 0;
-            }
-            $nextSpecialtyNum = $currentCount + 1;
-            $ticketCodigo = sprintf('%s-%04d', $spCode, $nextSpecialtyNum);
-
-            // Overall ticket_number para compatibilidad
-            $stmtTnum = $pdo->prepare("SELECT COALESCE(MAX(ticket_number), 100) + 1 as next FROM atenciones WHERE campaign_id = :cid FOR UPDATE");
-            $stmtTnum->execute([':cid' => $cid]);
-            $ticketNumber = (int)$stmtTnum->fetch()['next'];
 
             $fields = [
                 'beneficiario_id' => $bid,
@@ -316,7 +318,7 @@ function atenciones_update_status(int $id): void {
 function atenciones_cola(int $campaignId): void {
     $stmt = db()->prepare("
         SELECT a.id, a.ticket_number,
-               COALESCE(a.ticket_codigo, CONCAT(COALESCE(a.specialty_code, 'MED'), '-', LPAD(a.ticket_number, 4, '0'))) as ticket_codigo,
+               COALESCE(a.ticket_codigo, LPAD(a.ticket_number, 4, '0')) as ticket_codigo,
                a.specialty_code, a.specialty_name, a.consultorio,
                a.status, a.arrival_time, a.triage_start_at, a.triage_end_at,
                b.nombres, b.apellidos, b.dni, b.sexo, b.fecha_nacimiento,
@@ -350,7 +352,7 @@ function atenciones_cola_live(int $campaignId): never {
     while (true) {
         $stmt = db()->prepare("
             SELECT a.id, a.ticket_number,
-                   COALESCE(a.ticket_codigo, CONCAT(COALESCE(a.specialty_code, 'MED'), '-', LPAD(a.ticket_number, 4, '0'))) as ticket_codigo,
+                   COALESCE(a.ticket_codigo, LPAD(a.ticket_number, 4, '0')) as ticket_codigo,
                    a.specialty_code, a.specialty_name, a.consultorio,
                    a.status, a.arrival_time,
                    b.nombres, b.apellidos, b.dni,

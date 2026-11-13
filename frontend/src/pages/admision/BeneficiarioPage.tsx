@@ -393,12 +393,16 @@ export default function BeneficiarioPage() {
 
       setAssignedTickets(generatedTickets)
       setAssignedTicketInfo(generatedTickets[0] || null)
-      const ticketsStr = generatedTickets.map((t) => 'N° ' + (t.correlativo || t.ticket)).join(', ')
+      const formatNum = (val?: string | number) => {
+        const n = parseInt(String(val || ''), 10)
+        return isNaN(n) ? String(val || '0001') : String(n).padStart(4, '0')
+      }
+      const ticketsStr = generatedTickets.map((t) => formatNum(t.correlativo || t.ticket)).join(', ')
       setLastAssignedTicket(ticketsStr)
       setTicketModalOpen(true)
 
       setMessage({
-        text: `✓ ¡Paciente registrado con éxito! Turno Asignado: ${generatedTickets.map((t) => `N° ${t.correlativo || t.ticket} (${t.especialidad})`).join(' y ')} para ${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}.`,
+        text: `✓ ¡Paciente registrado con éxito! Turno Asignado: ${generatedTickets.map((t) => `${formatNum(t.correlativo || t.ticket)} (${t.especialidad})`).join(' y ')} para ${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}.`,
         type: 'success',
       })
 

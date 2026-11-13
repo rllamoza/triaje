@@ -28,6 +28,12 @@ PREPARE stmt_idx1 FROM @add_dni_idx; EXECUTE stmt_idx1; DEALLOCATE PREPARE stmt_
 SET @add_ape_idx = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `beneficiarios` ADD INDEX `idx_beneficiarios_apellidos` (`apellidos`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'beneficiarios' AND INDEX_NAME = 'idx_beneficiarios_apellidos');
 PREPARE stmt_idx2 FROM @add_ape_idx; EXECUTE stmt_idx2; DEALLOCATE PREPARE stmt_idx2;
 
+-- 1.2 Permitir renovación diaria de correlativos en atenciones (eliminar restricción unique entre días)
+SET @has_camp_idx = (SELECT IF(COUNT(*) = 0, 'ALTER TABLE `atenciones` ADD KEY `idx_atenciones_campaign_id` (`campaign_id`)', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'atenciones' AND INDEX_NAME = 'idx_atenciones_campaign_id');
+PREPARE stmt_camp FROM @has_camp_idx; EXECUTE stmt_camp; DEALLOCATE PREPARE stmt_camp;
+SET @drop_tnum_uniq = (SELECT IF(COUNT(*) > 0, 'ALTER TABLE `atenciones` DROP INDEX `atenciones_campaign_id_ticket_number_unique`', 'SELECT 1') FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'atenciones' AND INDEX_NAME = 'atenciones_campaign_id_ticket_number_unique');
+PREPARE stmt_tnum FROM @drop_tnum_uniq; EXECUTE stmt_tnum; DEALLOCATE PREPARE stmt_tnum;
+
 -- 2. Asegurar nuevas columnas en la tabla `medicamentos`
 -- Nota: En MySQL si la columna ya existe, omite el error o ejecute individualmente
 SET @dbname = DATABASE();

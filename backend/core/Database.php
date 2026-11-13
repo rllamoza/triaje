@@ -68,6 +68,14 @@ function ensure_schema_compatibility(PDO $pdo): void {
             }
         }
 
+        // 2.0 Asegurar que los correlativos de ticket se puedan reiniciar diariamente (sin restricción UNIQUE global)
+        try {
+            $pdo->exec("ALTER TABLE atenciones ADD KEY idx_atenciones_campaign_id (campaign_id)");
+        } catch (\Throwable $e) {}
+        try {
+            $pdo->exec("ALTER TABLE atenciones DROP INDEX atenciones_campaign_id_ticket_number_unique");
+        } catch (\Throwable $e) {}
+
         // 2.1 Asegurar que campos no obligatorios en beneficiarios permitan NULL y DNI no sea restrictivo
         try {
             $pdo->exec("ALTER TABLE beneficiarios MODIFY COLUMN dni VARCHAR(15) NULL DEFAULT NULL");

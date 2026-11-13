@@ -65,21 +65,21 @@ export function TicketModal({
     year: 'numeric',
   })
 
-  // Número correlativo limpio para el ticket de atención (ej: en lugar de #MED-DIR-02 muestra 02)
+  // Número correlativo de 4 dígitos (0001, 0002...) que se renueva cada día iniciando en 1
   const displayNumero = (() => {
     if (firstTicket?.correlativo !== undefined && firstTicket?.correlativo !== null && String(firstTicket.correlativo).trim() !== '') {
       const parsed = parseInt(String(firstTicket.correlativo), 10)
-      if (!isNaN(parsed)) return String(parsed).padStart(2, '0')
-      return String(firstTicket.correlativo)
+      if (!isNaN(parsed)) return String(parsed).padStart(4, '0')
+      return String(firstTicket.correlativo).padStart(4, '0')
     }
     const cleanStr = String(firstTicket?.ticket || '').trim()
     const match = cleanStr.match(/(\d+)$/)
     if (match) {
       const parsed = parseInt(match[1], 10)
-      if (!isNaN(parsed)) return String(parsed).padStart(2, '0')
-      return match[1]
+      if (!isNaN(parsed)) return String(parsed).padStart(4, '0')
+      return match[1].padStart(4, '0')
     }
-    return cleanStr || '01'
+    return '0001'
   })()
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export function TicketModal({
               TURNO DE ATENCIÓN
             </span>
             <span className="text-5xl font-mono font-black text-primary my-1 block tracking-wider">
-              N° {displayNumero}
+              {displayNumero}
             </span>
             {ticketList.length === 1 ? (
               <div className="text-sm font-bold uppercase text-on-surface mt-1">
@@ -347,7 +347,7 @@ export function TicketModal({
                     TURNO DE ATENCIÓN
                   </div>
                   <div className="text-4xl font-mono font-black tracking-widest my-1 text-black">
-                    N° {displayNumero}
+                    {displayNumero}
                   </div>
                   {ticketList.length === 1 ? (
                     <div className="text-xs font-black uppercase text-black mt-1">

@@ -254,7 +254,7 @@ class ESCPOSService
                 $rawNum = $m[1];
             }
         }
-        $correlativoNum = $rawNum ? str_pad((string)(int)$rawNum, 2, '0', STR_PAD_LEFT) : '01';
+        $correlativoNum = $rawNum ? str_pad((string)(int)$rawNum, 4, '0', STR_PAD_LEFT) : '0001';
 
         $paciente = trim(($b['apellidos'] ?? '') . ', ' . ($b['nombres'] ?? ''));
         if (empty($paciente)) {
@@ -298,7 +298,7 @@ class ESCPOSService
         // 3. Turno Correlativo y Especialidad(es) elegida(s)
         $out .= self::CENTER;
         $out .= self::BOLD_ON . $this->encodeText("TURNO DE ATENCION:\n") . self::BOLD_OFF;
-        $out .= self::BOLD_ON . "\x1D\x21\x11" . $this->encodeText("N° {$correlativoNum}\n") . "\x1D\x21\x00" . self::BOLD_OFF;
+        $out .= self::BOLD_ON . "\x1D\x21\x11" . $this->encodeText("{$correlativoNum}\n") . "\x1D\x21\x00" . self::BOLD_OFF;
         if (empty($especialidades)) {
             $esp = $atencion['specialty_name'] ?? 'MEDICINA GENERAL';
             $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDAD: {$esp}\n") . self::BOLD_OFF;

@@ -13,6 +13,7 @@ export default function StockPublicoPage() {
   const [selectedClasificacion, setSelectedClasificacion] = useState<string>('todas')
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
   const [copiedLink, setCopiedLink] = useState(false)
+  const [showTotales, setShowTotales] = useState<boolean>(false)
 
   // Vías únicas
   const availableVias = useMemo(() => {
@@ -182,64 +183,97 @@ export default function StockPublicoPage() {
 
       {/* Contenedor Principal */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 w-full flex-1">
-        {/* Tarjetas KPI de Estado de Stock (Compactas en celular) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-          {/* Total */}
-          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
-            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 sm:gap-1.5 truncate">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-primary shrink-0">medication</span>
-              <span className="truncate">Catálogo Total</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5 sm:mt-1">
-              {data?.total ?? 0}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate">
-              {data?.unidades_totales ?? 0} <span className="hidden sm:inline">unidades físicas</span><span className="sm:hidden">unid.</span>
-            </div>
-          </div>
+        {/* Botón selector de Totales (Oculto al inicio) */}
+        <div className="flex items-center justify-between mb-3">
+          <button
+            type="button"
+            onClick={() => setShowTotales((prev) => !prev)}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer select-none shadow-2xs border ${
+              showTotales
+                ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:border-emerald-500'
+            }`}
+            title="Haga clic para ver u ocultar la barra de totales"
+          >
+            <span className="material-symbols-outlined text-sm">
+              analytics
+            </span>
+            <span>Totales</span>
+            <span className={`text-[10px] font-normal ${showTotales ? 'text-emerald-100' : 'text-slate-400'}`}>
+              ({data?.total ?? 0} fármacos • {data?.unidades_totales ?? 0} un.)
+            </span>
+            <span className="material-symbols-outlined text-xs">
+              {showTotales ? 'expand_less' : 'expand_more'}
+            </span>
+          </button>
 
-          {/* Disponibles */}
-          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-emerald-200 dark:border-emerald-900/50 shadow-2xs">
-            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1 sm:gap-1.5 truncate">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-emerald-600 shrink-0">check_circle</span>
-              <span className="truncate">Disponibles</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1">
-              {stats.disponibles}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-emerald-700/80 dark:text-emerald-400/80 mt-0.5 truncate">
-              <span className="hidden sm:inline">Stock óptimo para recetar</span><span className="sm:hidden">Óptimo</span>
-            </div>
-          </div>
-
-          {/* Por Agotarse */}
-          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-amber-200 dark:border-amber-900/50 shadow-2xs">
-            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1 sm:gap-1.5 truncate">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-amber-600 shrink-0">warning</span>
-              <span className="truncate">Stock Crítico</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">
-              {stats.bajos}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-amber-700/80 dark:text-amber-400/80 mt-0.5 truncate">
-              <span className="hidden sm:inline">Próximos a agotarse</span><span className="sm:hidden">Por agotarse</span>
-            </div>
-          </div>
-
-          {/* Agotados */}
-          <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-rose-200 dark:border-rose-900/50 shadow-2xs">
-            <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-1 sm:gap-1.5 truncate">
-              <span className="material-symbols-outlined text-xs sm:text-sm text-rose-600 shrink-0">block</span>
-              <span className="truncate">Agotados</span>
-            </div>
-            <div className="text-xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 mt-0.5 sm:mt-1">
-              {stats.agotados}
-            </div>
-            <div className="text-[10px] sm:text-[11px] text-rose-700/80 dark:text-rose-400/80 mt-0.5 font-semibold truncate">
-              ⚠️ <span className="hidden sm:inline">No prescribir</span><span className="sm:hidden">Cero</span>
-            </div>
-          </div>
+          {showTotales && (
+            <span className="text-[11px] text-slate-400 dark:text-slate-500 hidden sm:inline">
+              Haga clic en &quot;Totales&quot; para ocultar el resumen
+            </span>
+          )}
         </div>
+
+        {/* Tarjetas KPI de Estado de Stock (Solo visibles al seleccionar 'Totales') */}
+        {showTotales && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6 animate-fadeIn">
+            {/* Total */}
+            <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs">
+              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1 sm:gap-1.5 truncate">
+                <span className="material-symbols-outlined text-xs sm:text-sm text-primary shrink-0">medication</span>
+                <span className="truncate">Catálogo Total</span>
+              </div>
+              <div className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5 sm:mt-1">
+                {data?.total ?? 0}
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-slate-500 mt-0.5 truncate">
+                {data?.unidades_totales ?? 0} <span className="hidden sm:inline">unidades físicas</span><span className="sm:hidden">unid.</span>
+              </div>
+            </div>
+
+            {/* Disponibles */}
+            <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-emerald-200 dark:border-emerald-900/50 shadow-2xs">
+              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1 sm:gap-1.5 truncate">
+                <span className="material-symbols-outlined text-xs sm:text-sm text-emerald-600 shrink-0">check_circle</span>
+                <span className="truncate">Disponibles</span>
+              </div>
+              <div className="text-xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1">
+                {stats.disponibles}
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-emerald-700/80 dark:text-emerald-400/80 mt-0.5 truncate">
+                <span className="hidden sm:inline">Stock óptimo para recetar</span><span className="sm:hidden">Óptimo</span>
+              </div>
+            </div>
+
+            {/* Por Agotarse */}
+            <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-amber-200 dark:border-amber-900/50 shadow-2xs">
+              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1 sm:gap-1.5 truncate">
+                <span className="material-symbols-outlined text-xs sm:text-sm text-amber-600 shrink-0">warning</span>
+                <span className="truncate">Stock Crítico</span>
+              </div>
+              <div className="text-xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">
+                {stats.bajos}
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-amber-700/80 dark:text-amber-400/80 mt-0.5 truncate">
+                <span className="hidden sm:inline">Próximos a agotarse</span><span className="sm:hidden">Por agotarse</span>
+              </div>
+            </div>
+
+            {/* Agotados */}
+            <div className="bg-white dark:bg-slate-900 p-2.5 sm:p-4 rounded-lg sm:rounded-xl border border-rose-200 dark:border-rose-900/50 shadow-2xs">
+              <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-rose-700 dark:text-rose-400 flex items-center gap-1 sm:gap-1.5 truncate">
+                <span className="material-symbols-outlined text-xs sm:text-sm text-rose-600 shrink-0">block</span>
+                <span className="truncate">Agotados</span>
+              </div>
+              <div className="text-xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 mt-0.5 sm:mt-1">
+                {stats.agotados}
+              </div>
+              <div className="text-[10px] sm:text-[11px] text-rose-700/80 dark:text-rose-400/80 mt-0.5 font-semibold truncate">
+                ⚠️ <span className="hidden sm:inline">No prescribir</span><span className="sm:hidden">Cero</span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Barra de Filtros y Controles de Vista */}
         <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-2xs mb-4 sm:mb-6">

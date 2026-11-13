@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import {
   useFarmaciaMedicamentos,
   useFarmaciaAtenciones,
@@ -36,6 +36,7 @@ export default function FarmaciaPage() {
   const [selectedBeneficiarioId, setSelectedBeneficiarioId] = useState<number | null>(null)
   const [searchPacienteQuery, setSearchPacienteQuery] = useState('')
   const [isSearchPacienteOpen, setIsSearchPacienteOpen] = useState(false)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
   const { data: searchPacientesData, isLoading: isSearchingPacientes } = useBeneficiariosBuscar(searchPacienteQuery)
 
   const [pacienteNombre, setPacienteNombre] = useState('')
@@ -115,14 +116,72 @@ export default function FarmaciaPage() {
     return Array.from(set)
   }, [medicamentos])
 
+  // Cerrar dropdown al hacer clic fuera del buscador
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsSearchPacienteOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Pacientes en cola / atenciones de la campaña que coinciden con la búsqueda en tiempo real
+  const matchingCola = useMemo(() => {
+    const q = searchPacienteQuery.trim().toLowerCase()
+    if (!q) return []
+    return atencionesCola.filter((at: any) => {
+      const nom = `${at.apellidos || ''} ${at.nombres || ''}`.toLowerCase()
+      const dni = String(at.dni || '').toLowerCase()
+      const tkt = String(at.ticket_codigo || at.ticket_number || '').toLowerCase()
+      return nom.includes(q) || dni.includes(q) || tkt.includes(q)
+    })
+  }, [atencionesCola, searchPacienteQuery])
+
+  // Buscar por DNI directamente desde el input de DNI
+  const handleSearchByDni = (dniToSearch: string) => {
+    const cleanDni = dniToSearch.trim()
+    if (!cleanDni) return
+
+    // 1. Buscar primero en la cola de la campaña de hoy
+    const matchCola = atencionesCola.find(
+      (at: any) => at.dni && String(at.dni).trim() === cleanDni
+    )
+    if (matchCola) {
+      handleSelectAtencionCola(matchCola)
+      setIsSearchPacienteOpen(false)
+      return
+    }
+
+    // 2. Si no está en cola de hoy, disparar búsqueda en el padrón
+    setSearchPacienteQuery(cleanDni)
+    setIsSearchPacienteOpen(true)
+  }
+
   // Al seleccionar un paciente del padrón
   const handleSelectBeneficiario = (b: Beneficiario) => {
     setSelectedBeneficiarioId(b.id)
+    setSelectedAtencionId(null)
     setPacienteNombre(`${b.apellidos}, ${b.nombres}`)
     setPacienteDni(b.dni || '')
     setPacienteComunidad(b.comunidad || '')
     setSearchPacienteQuery('')
     setIsSearchPacienteOpen(false)
+  }
+
+  // Limpiar paciente seleccionado y resetear campos
+  const handleClearPaciente = () => {
+    setSelectedAtencionId(null)
+    setSelectedBeneficiarioId(null)
+    setSearchPacienteQuery('')
+    setIsSearchPacienteOpen(false)
+    setPacienteNombre('')
+    setPacienteDni('')
+    setPacienteComunidad('')
+    setCanastaItems([])
+    setSelectedMedicoId('')
+    setCustomMedicoNombre('')
   }
 
   // Al seleccionar un paciente de la cola
@@ -406,15 +465,7 @@ export default function FarmaciaPage() {
             {(selectedAtencionId || selectedBeneficiarioId || pacienteNombre || pacienteDni) && (
               <button
                 type="button"
-                onClick={() => {
-                  setSelectedAtencionId(null)
-                  setSelectedBeneficiarioId(null)
-                  setSearchPacienteQuery('')
-                  setPacienteNombre('')
-                  setPacienteDni('')
-                  setPacienteComunidad('')
-                  setCanastaItems([])
-                }}
+                onClick={handleClearPaciente}
                 className="text-[11px] text-error hover:underline cursor-pointer flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-xs">close</span>
@@ -423,85 +474,169 @@ export default function FarmaciaPage() {
             )}
           </div>
 
-          {/* BUSCADOR PREDICTIVO EN PADRÓN (DNI O APELLIDOS / NOMBRES) */}
-          <div className="relative mb-3">
+          {/* BUSCADOR INTEGRAL EN REGISTRO DE PACIENTES (POR DNI O APELLIDOS / NOMBRES) */}
+          <div ref={searchContainerRef} className="relative mb-3">
             <label className="block text-[11px] font-bold uppercase text-primary mb-1 flex items-center gap-1">
               <span className="material-symbols-outlined text-xs">person_search</span>
-              <span>Buscar en Padrón de Pacientes (por DNI o Apellidos / Nombres)</span>
+              <span>Buscar Paciente en el Registro (por DNI o Apellidos / Nombres):</span>
             </label>
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-primary text-base select-none pointer-events-none">
-                search
-              </span>
-              <input
-                type="text"
-                placeholder="Escriba DNI o Apellidos / Nombres para autocompletar..."
-                value={searchPacienteQuery}
-                onChange={(e) => {
-                  setSearchPacienteQuery(e.target.value)
-                  setIsSearchPacienteOpen(true)
-                }}
-                onFocus={() => {
-                  if (searchPacienteQuery.trim().length >= 1) setIsSearchPacienteOpen(true)
-                }}
-                className="w-full h-9 pl-9 pr-8 text-xs bg-surface-container-low border border-primary/40 focus:border-primary text-on-surface focus:outline-none placeholder:text-on-surface-variant/60 font-medium transition-all"
-              />
-              {searchPacienteQuery && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchPacienteQuery('')
-                    setIsSearchPacienteOpen(false)
+            <div className="flex gap-1.5">
+              <div className="relative flex-1">
+                <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-primary text-base select-none pointer-events-none">
+                  search
+                </span>
+                <input
+                  type="text"
+                  placeholder="Escriba DNI o Apellidos / Nombres para buscar..."
+                  value={searchPacienteQuery}
+                  onChange={(e) => {
+                    setSearchPacienteQuery(e.target.value)
+                    setIsSearchPacienteOpen(true)
                   }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-0.5 cursor-pointer"
-                  title="Limpiar búsqueda"
-                >
-                  <span className="material-symbols-outlined text-sm">close</span>
-                </button>
-              )}
+                  onFocus={() => {
+                    if (searchPacienteQuery.trim().length >= 1) setIsSearchPacienteOpen(true)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      setIsSearchPacienteOpen(true)
+                      if (matchingCola.length === 1 && (!searchPacientesData?.data || searchPacientesData.data.length === 0)) {
+                        handleSelectAtencionCola(matchingCola[0])
+                        setIsSearchPacienteOpen(false)
+                        setSearchPacienteQuery('')
+                      } else if (matchingCola.length === 0 && searchPacientesData?.data?.length === 1) {
+                        handleSelectBeneficiario(searchPacientesData.data[0])
+                        setIsSearchPacienteOpen(false)
+                        setSearchPacienteQuery('')
+                      }
+                    }
+                  }}
+                  className="w-full h-10 pl-9 pr-8 text-xs bg-surface-container-low border-2 border-primary/40 focus:border-primary text-on-surface focus:outline-none placeholder:text-on-surface-variant/60 font-medium transition-all"
+                />
+                {searchPacienteQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchPacienteQuery('')
+                      setIsSearchPacienteOpen(false)
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface p-1 cursor-pointer"
+                    title="Limpiar búsqueda"
+                  >
+                    <span className="material-symbols-outlined text-sm">close</span>
+                  </button>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSearchPacienteOpen(true)
+                  if (matchingCola.length === 1 && (!searchPacientesData?.data || searchPacientesData.data.length === 0)) {
+                    handleSelectAtencionCola(matchingCola[0])
+                    setIsSearchPacienteOpen(false)
+                    setSearchPacienteQuery('')
+                  } else if (matchingCola.length === 0 && searchPacientesData?.data?.length === 1) {
+                    handleSelectBeneficiario(searchPacientesData.data[0])
+                    setIsSearchPacienteOpen(false)
+                    setSearchPacienteQuery('')
+                  }
+                }}
+                className="px-4 h-10 bg-primary hover:bg-primary/90 text-on-primary font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer shadow-xs transition-colors shrink-0"
+              >
+                <span className="material-symbols-outlined text-base">search</span>
+                <span>Buscar</span>
+              </button>
             </div>
 
             {/* Dropdown flotante de resultados predictivos */}
             {isSearchPacienteOpen && searchPacienteQuery.trim().length >= 1 && (
-              <>
-                <div
-                  className="fixed inset-0 z-20"
-                  onClick={() => setIsSearchPacienteOpen(false)}
-                />
-                <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-surface border border-surface-container-high shadow-xl max-h-60 overflow-y-auto rounded-none">
-                  {isSearchingPacientes && (
-                    <div className="p-3 text-xs text-on-surface-variant flex items-center gap-2">
-                      <span className="material-symbols-outlined text-sm animate-spin text-primary">progress_activity</span>
-                      Buscando en padrón de pacientes...
+              <div className="absolute left-0 right-0 top-full mt-1 z-30 bg-surface border-2 border-primary shadow-2xl max-h-72 overflow-y-auto">
+                {/* 1. Coincidencias en la cola de hoy (atenciones con receta y médico) */}
+                {matchingCola.length > 0 && (
+                  <div className="bg-primary/5 p-2 border-b border-primary/20">
+                    <div className="text-[10px] font-mono font-bold uppercase text-primary px-1 pb-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-xs">local_hospital</span>
+                      <span>Atenciones de la Campaña de Hoy ({matchingCola.length})</span>
                     </div>
-                  )}
-                  {!isSearchingPacientes && (!searchPacientesData?.data || searchPacientesData.data.length === 0) && (
-                    <div className="p-3 text-xs text-on-surface-variant">
-                      No se encontraron pacientes para &quot;{searchPacienteQuery}&quot;. Puede completar los datos manualmente abajo.
+                    <div className="divide-y divide-primary/10">
+                      {matchingCola.map((at: any) => (
+                        <button
+                          key={`cola-${at.atencion_id}`}
+                          type="button"
+                          onClick={() => {
+                            handleSelectAtencionCola(at)
+                            setIsSearchPacienteOpen(false)
+                            setSearchPacienteQuery('')
+                          }}
+                          className="w-full text-left px-2.5 py-2 hover:bg-primary/15 transition-colors flex items-center justify-between gap-2 text-xs cursor-pointer group"
+                        >
+                          <div>
+                            <div className="font-bold text-on-surface group-hover:text-primary flex items-center gap-1.5">
+                              <span className="px-1.5 py-0.2 bg-primary text-on-primary text-[10px] font-mono font-bold">
+                                #{at.ticket_codigo || `T-${at.ticket_number}`}
+                              </span>
+                              <span>{at.apellidos}, {at.nombres}</span>
+                            </div>
+                            <div className="text-[10px] text-on-surface-variant flex items-center gap-2 mt-0.5">
+                              <span className="font-mono font-semibold">DNI: {at.dni || 'S/DNI'}</span>
+                              {at.comunidad && <span>• {at.comunidad}</span>}
+                              {at.medico_nombre && (
+                                <span className="text-secondary font-medium">• Dr(a): {at.medico_nombre}</span>
+                              )}
+                              {Array.isArray(at.receta) && at.receta.length > 0 && (
+                                <span className="text-emerald-700 dark:text-emerald-400 font-semibold">• {at.receta.length} meds recetados</span>
+                              )}
+                            </div>
+                          </div>
+                          <span className="px-2 py-0.5 text-[9px] font-bold uppercase bg-primary/20 text-primary rounded-xs shrink-0">
+                            Cargar Datos & Receta
+                          </span>
+                        </button>
+                      ))}
                     </div>
-                  )}
-                  {!isSearchingPacientes && searchPacientesData?.data && searchPacientesData.data.length > 0 && (
+                  </div>
+                )}
+
+                {/* 2. Coincidencias en el padrón general */}
+                {isSearchingPacientes && (
+                  <div className="p-3 text-xs text-on-surface-variant flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm animate-spin text-primary">progress_activity</span>
+                    Buscando en padrón de pacientes...
+                  </div>
+                )}
+
+                {!isSearchingPacientes && searchPacientesData?.data && searchPacientesData.data.length > 0 && (
+                  <div className="p-2">
+                    <div className="text-[10px] font-mono font-bold uppercase text-secondary px-1 pb-1 flex items-center gap-1">
+                      <span className="material-symbols-outlined text-xs">group</span>
+                      <span>Padrón de Beneficiarios ({searchPacientesData.data.length})</span>
+                    </div>
                     <div className="divide-y divide-surface-container-high">
                       {searchPacientesData.data.map((ben) => {
                         const hasNoDni = !ben.dni || ben.dni.trim() === ''
                         return (
                           <button
-                            key={ben.id}
+                            key={`padron-${ben.id}`}
                             type="button"
-                            onClick={() => handleSelectBeneficiario(ben)}
-                            className="w-full text-left px-3 py-2 hover:bg-surface-container transition-colors flex items-center justify-between gap-3 text-xs cursor-pointer group"
+                            onClick={() => {
+                              handleSelectBeneficiario(ben)
+                              setIsSearchPacienteOpen(false)
+                              setSearchPacienteQuery('')
+                            }}
+                            className="w-full text-left px-2.5 py-1.5 hover:bg-surface-container transition-colors flex items-center justify-between gap-2 text-xs cursor-pointer group"
                           >
                             <div>
                               <div className="font-semibold text-on-surface group-hover:text-primary">
                                 {ben.apellidos}, {ben.nombres}
                               </div>
-                              <div className="text-[11px] text-on-surface-variant flex items-center gap-2 mt-0.5">
+                              <div className="text-[10px] text-on-surface-variant flex items-center gap-2 mt-0.5">
                                 {hasNoDni ? (
-                                  <span className="px-1.5 py-0.2 bg-red-100 text-red-700 dark:bg-red-950/60 dark:text-red-300 font-mono text-[10px] rounded-xs font-semibold">
+                                  <span className="px-1.5 py-0.2 bg-red-100 text-red-700 font-mono text-[9px] font-semibold">
                                     ⚠️ Sin DNI
                                   </span>
                                 ) : (
-                                  <span className="font-mono text-[11px] font-semibold text-primary">
+                                  <span className="font-mono text-primary font-semibold">
                                     DNI: {ben.dni}
                                   </span>
                                 )}
@@ -516,14 +651,38 @@ export default function FarmaciaPage() {
                         )
                       })}
                     </div>
-                  )}
-                </div>
-              </>
+                  </div>
+                )}
+
+                {/* 3. Mensaje si no se encuentra en ningún lugar */}
+                {!isSearchingPacientes && matchingCola.length === 0 && (!searchPacientesData?.data || searchPacientesData.data.length === 0) && (
+                  <div className="p-3 text-xs text-on-surface-variant text-center">
+                    <div>No se encontraron pacientes para &quot;<strong>{searchPacienteQuery}</strong>&quot;.</div>
+                    <div className="text-[11px] text-on-surface-variant/70 mt-1">
+                      Puede escribir los datos del paciente manualmente en los campos de abajo.
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
-          {/* Cartel de vinculación con Padrón */}
-          {selectedBeneficiarioId && (
+          {/* Cartel de paciente seleccionado (Atención o Padrón) */}
+          {selectedAtencionId ? (
+            <div className="mb-3 px-2.5 py-1.5 bg-primary/10 border border-primary/30 text-on-surface text-xs flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-medium">
+                <span className="material-symbols-outlined text-sm text-primary">local_hospital</span>
+                <span>Atención de Campaña Seleccionada (#{selectedAtencionId})</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedAtencionId(null)}
+                className="text-[10px] uppercase font-bold text-primary hover:underline cursor-pointer"
+              >
+                Desvincular
+              </button>
+            </div>
+          ) : selectedBeneficiarioId ? (
             <div className="mb-3 px-2.5 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-medium">
                 <span className="material-symbols-outlined text-sm text-emerald-600">verified</span>
@@ -537,7 +696,7 @@ export default function FarmaciaPage() {
                 Desvincular
               </button>
             </div>
-          )}
+          ) : null}
 
           {/* Cola Rápida de Farmacia (si hay pacientes con recetas pendientes) */}
           {atencionesCola.length > 0 && (
@@ -546,7 +705,7 @@ export default function FarmaciaPage() {
                 Pacientes en Espera / Recetas Emitidas ({atencionesCola.length})
               </label>
               <div className="flex gap-2 overflow-x-auto pb-1.5">
-                {atencionesCola.slice(0, 8).map((at) => (
+                {atencionesCola.slice(0, 10).map((at: any) => (
                   <button
                     key={at.atencion_id}
                     type="button"
@@ -587,13 +746,31 @@ export default function FarmaciaPage() {
               <label className="block text-[11px] font-bold uppercase text-on-surface-variant mb-1">
                 DNI / Documento
               </label>
-              <input
-                type="text"
-                placeholder="8 dígitos"
-                value={pacienteDni}
-                onChange={(e) => setPacienteDni(e.target.value)}
-                className="w-full h-9 px-3 text-xs font-mono bg-surface-container-low border border-surface-container-highest text-on-surface focus:border-primary focus:outline-none"
-              />
+              <div className="relative flex">
+                <input
+                  type="text"
+                  placeholder="8 dígitos"
+                  value={pacienteDni}
+                  onChange={(e) => setPacienteDni(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleSearchByDni(pacienteDni)
+                    }
+                  }}
+                  className="w-full h-9 pl-3 pr-8 text-xs font-mono bg-surface-container-low border border-surface-container-highest text-on-surface focus:border-primary focus:outline-none"
+                />
+                {pacienteDni && (
+                  <button
+                    type="button"
+                    onClick={() => handleSearchByDni(pacienteDni)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1 text-primary hover:text-primary-variant cursor-pointer"
+                    title="Buscar paciente por este DNI"
+                  >
+                    <span className="material-symbols-outlined text-base">search</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -93,9 +93,14 @@ function farmacia_atenciones(): void {
         LEFT JOIN consultas co ON co.atencion_id = a.id
         LEFT JOIN users u ON u.id = co.medico_id OR u.id = a.medico_id
         WHERE a.campaign_id = :cid
-          AND (a.status IN ('en_farmacia', 'en_consulta', 'finalizado') OR co.receta IS NOT NULL)
-        ORDER BY a.id DESC
-        LIMIT 60
+        ORDER BY 
+           CASE WHEN a.status = 'en_farmacia' THEN 1
+                WHEN co.receta IS NOT NULL THEN 2
+                WHEN a.status = 'en_consulta' THEN 3
+                ELSE 4
+           END,
+           a.id DESC
+        LIMIT 100
     ");
     $stmt->execute([':cid' => $cid]);
     $rows = $stmt->fetchAll();

@@ -373,8 +373,39 @@ export const useBeneficiariosBuscar = (q: string) => {
   const clean = q.trim()
   return useQuery<{ total: number; data: (Beneficiario & { missing_dni?: boolean; is_estimated_birth?: boolean })[] }>({
     queryKey: ['beneficiarios-buscar', clean],
-    queryFn: () => api.get('/beneficiarios/buscar', { params: { q: clean } }).then((r) => r.data),
-    enabled: clean.length >= 2 && !!token,
+    queryFn: async () => {
+      try {
+        const res = await api.get('/beneficiarios/buscar', { params: { q: clean } })
+        if (res.data && Array.isArray(res.data.data)) {
+          return res.data
+        }
+        if (Array.isArray(res.data)) {
+          return { total: res.data.length, data: res.data }
+        }
+      } catch (err: any) {
+        console.warn('Fallo /beneficiarios/buscar, intentando fallback a /beneficiarios:', err)
+      }
+
+      // Fallback universal a /beneficiarios?search= (compatible con cualquier backend en producción cPanel)
+      try {
+        const fallback = await api.get('/beneficiarios', { params: { search: clean, per_page: 25 } })
+        const list = Array.isArray(fallback.data?.data)
+          ? fallback.data.data
+          : Array.isArray(fallback.data)
+          ? fallback.data
+          : []
+        const mapped = list.map((b: any) => ({
+          ...b,
+          missing_dni: !b.dni || String(b.dni).trim() === '',
+          is_estimated_birth: Boolean(b.fecha_nacimiento && String(b.fecha_nacimiento).endsWith('-01-01')),
+        }))
+        return { total: mapped.length, data: mapped }
+      } catch (fallbackErr) {
+        console.error('Error en búsqueda de beneficiarios:', fallbackErr)
+        return { total: 0, data: [] }
+      }
+    },
+    enabled: clean.length >= 1 && !!token,
     staleTime: 3000,
   })
 }

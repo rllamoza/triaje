@@ -294,7 +294,7 @@ function beneficiarios_index(): void {
 // Búsqueda rápida predictiva por DNI o Apellidos / Nombres (para autocomplete en Admisión)
 function beneficiarios_buscar(): void {
     $q = trim((string)get_param('q', ''));
-    if (strlen($q) < 2) {
+    if (strlen($q) < 1) {
         json_ok(['total' => 0, 'data' => []]);
     }
 

@@ -30,3 +30,4 @@ Documento confidencial con los usuarios, contraseñas y roles autorizados para e
    - Cada profesional debe resguardar su contraseña y no compartirla.
    - En caso de requerir nuevos usuarios o actualizar contraseñas en terreno, el Administrador General puede gestionarlo desde el módulo de **Usuarios** (`/admin/usuarios`).
    - El PIN de 4 dígitos es exclusivo para contingencia offline de emergencia ante cortes severos de red.
+

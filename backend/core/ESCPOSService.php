@@ -247,49 +247,89 @@ class ESCPOSService
 
     public function buildAdmisionTicket(array $atencion): string
     {
-        $t = $atencion['triaje'] ?? null;
         $b = $atencion['beneficiario'] ?? [];
-        $prioridadLabel = 'PENDIENTE TRIAJE';
-        if ($t) {
-            $prioridadLabel = match($t['prioridad'] ?? '') {
-                'I'     => 'EMERGENCIA (ROJO)',
-                'II'    => 'URGENTE (AMARILLO)',
-                default => 'NO URGENTE (VERDE)',
-            };
+        $ticketCodigo = $atencion['ticket_codigo'] ?? ('T-' . ($atencion['ticket_number'] ?? '1'));
+        $paciente = trim(($b['apellidos'] ?? '') . ', ' . ($b['nombres'] ?? ''));
+        if (empty($paciente)) {
+            $paciente = trim(($b['nombres'] ?? '') . ' ' . ($b['apellidos'] ?? ''));
         }
-
-        $vitals = [];
-        if ($t) {
-            if (!empty($t['presion_sistolica'])) $vitals['pa'] = "{$t['presion_sistolica']}/{$t['presion_diastolica']}";
-            if (!empty($t['temperatura_c']))     $vitals['temp'] = "{$t['temperatura_c']} °C";
-            if (!empty($t['saturacion_o2_pct'])) $vitals['spo2'] = "{$t['saturacion_o2_pct']}%";
-            if (!empty($t['frecuencia_cardiaca'])) $vitals['fc'] = "{$t['frecuencia_cardiaca']} lpm";
-            if (!empty($t['frecuencia_respiratoria'])) $vitals['fr'] = "{$t['frecuencia_respiratoria']} rpm";
-            if (!empty($t['glucosa_mg_dl'])) $vitals['gluc'] = "{$t['glucosa_mg_dl']} mg/dL";
+        if (empty($paciente)) {
+            $paciente = 'PACIENTE GENERAL';
         }
+        $dni = $b['dni'] ?? 'S/DNI';
+        $comunidad = $b['comunidad'] ?? 'Comunidad General';
+        $fecha = date('d/m/Y');
+        $hora = date('H:i');
+        $especialidades = $atencion['especialidades'] ?? [];
 
-        $payload = [
-            'ticket'         => 'T-' . ($atencion['ticket_number'] ?? '1'),
-            'paciente'       => trim(($b['nombres'] ?? '') . ' ' . ($b['apellidos'] ?? '')),
-            'dni'            => $b['dni'] ?? '',
-            'edad'           => ($b['edad_calculada'] ?? '') . ' años',
-            'sexo'           => $b['sexo'] ?? '',
-            'comunidad'      => $b['comunidad'] ?? '',
-            'prioridadLabel' => $prioridadLabel,
-            'espera'         => '10 min',
-            'header'         => 'ONG SEMILLA - TURNO',
-            'subheader'      => $atencion['campaign_name'] ?? 'Campaña Médica Rural',
-            'destino'        => $atencion['station_label'] ?? 'Estación de Triaje',
-            'vitals'         => $vitals,
-            'chkQueue'       => true,
-            'chkVitals'      => !empty($vitals),
-            'chkDestino'     => true,
-            'chkRx'          => false,
-            'chkQr'          => true,
-            'qrPayload'      => "TRIAJE|T-{$atencion['ticket_number']}|" . ($b['dni'] ?? '') . "|{$atencion['id']}",
-        ];
+        $width = 42;
+        $singleSep = str_repeat('-', $width) . self::LF;
+        $doubleSep = str_repeat('=', $width) . self::LF;
 
-        return $this->buildTicketFromPayload($payload);
+        $out  = self::INIT;
+        $out .= self::SELECT_CP850;
+        $out .= self::FONT_A;
+        $out .= self::DOUBLE_STRIKE_ON;
+        $out .= self::LINE_SPACING;
+        $out .= "\x1D\x4C\x00\x00";
+
+        // 1. Logo / Cabecera Centrada (Mediana)
+        $out .= self::CENTER . self::BOLD_ON;
+        $out .= $this->encodeText("ONG SEMILLA - ASISTENCIA MEDICA\n");
+        $out .= self::BOLD_OFF;
+        $out .= $this->encodeText("TICKET DE INSCRIPCION Y ATENCION\n");
+        $out .= $doubleSep;
+
+        // 2. Datos del Paciente (CON FECHA Y HORA, SIN MEDICO)
+        $out .= self::LEFT;
+        $out .= self::BOLD_ON . $this->encodeText("PACIENTE: ") . $this->encodeText($this->wrapText($paciente, 32)) . self::BOLD_OFF . self::LF;
+        $out .= self::BOLD_ON . $this->encodeText("DNI: ") . self::BOLD_OFF . $this->encodeText("{$dni}\n");
+        $out .= self::BOLD_ON . $this->encodeText("COMUNIDAD: ") . self::BOLD_OFF . $this->encodeText("{$comunidad}\n");
+        $out .= self::BOLD_ON . $this->encodeText("FECHA: ") . self::BOLD_OFF . $this->encodeText("{$fecha}  ") . self::BOLD_ON . $this->encodeText("HORA: ") . self::BOLD_OFF . $this->encodeText("{$hora}\n");
+        $out .= $singleSep;
+
+        // 3. Especialidad(es) elegida(s)
+        $out .= self::CENTER;
+        if (empty($especialidades)) {
+            $esp = $atencion['specialty_name'] ?? 'MEDICINA GENERAL';
+            $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDAD ASIGNADA:\n") . self::BOLD_OFF;
+            $out .= self::BOLD_ON . "\x1D\x21\x11" . $this->encodeText("{$ticketCodigo}\n") . "\x1D\x21\x00" . self::BOLD_OFF;
+            $out .= self::BOLD_ON . $this->encodeText("{$esp}\n") . self::BOLD_OFF;
+        } else {
+            $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDADES ELEGIDAS:\n") . self::BOLD_OFF;
+            $out .= self::LEFT;
+            foreach ($especialidades as $idx => $espItem) {
+                $num = $idx + 1;
+                $eNombre = is_string($espItem) ? $espItem : ($espItem['nombre'] ?? $espItem['especialidad'] ?? '');
+                $eCodigo = is_array($espItem) ? ($espItem['ticket'] ?? $espItem['codigo'] ?? '') : '';
+                $line = "  {$num}. {$eNombre}" . ($eCodigo ? " [{$eCodigo}]" : "");
+                $out .= self::BOLD_ON . $this->encodeText("{$line}\n") . self::BOLD_OFF;
+            }
+        }
+        $out .= $singleSep;
+
+        // 4. Espacio con cruz en medio dividiendo el ticket en cuatro cuadrantes en blanco para sellos
+        $out .= self::CENTER . self::BOLD_ON . $this->encodeText("ESPACIO PARA SELLOS Y FIRMAS MEDICAS\n") . self::BOLD_OFF;
+        $out .= self::LEFT;
+        $out .= "+--------------------+--------------------+\n";
+        $out .= "| 1. SELLO Y FIRMA   | 2. SELLO Y FIRMA   |\n";
+        $out .= "|                    |                    |\n";
+        $out .= "|                    |                    |\n";
+        $out .= "|                    |                    |\n";
+        $out .= "+--------------------+--------------------+\n";
+        $out .= "| 3. SELLO Y FIRMA   | 4. SELLO Y FIRMA   |\n";
+        $out .= "|                    |                    |\n";
+        $out .= "|                    |                    |\n";
+        $out .= "|                    |                    |\n";
+        $out .= "+--------------------+--------------------+\n";
+
+        // 5. Cierre
+        $out .= self::CENTER;
+        $out .= $this->encodeText("Presente este comprobante en cada estacion.\n");
+        $out .= "\n\n\n\n";
+        $out .= self::CUT;
+
+        return base64_encode($out);
     }
 
     public function buildRecetaTicket(array $atencion): string

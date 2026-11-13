@@ -372,16 +372,18 @@ export default function BeneficiarioPage() {
       })
 
       const rawList = atencionRes?.atenciones || (Array.isArray(atencionRes) ? atencionRes : [atencionRes])
-      const nowHora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      const now = new Date()
+      const nowHora = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      const nowFecha = now.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
       const generatedTickets: TicketInfo[] = rawList.map((atn: any) => ({
         ticket: atn.ticket_codigo || `T-${atn.ticket_number}`,
         paciente: `${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}`,
         dni: cleanDni || 'S/DNI',
         comunidad: comunidad || 'Comunidad General',
+        fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : nowFecha,
         hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : nowHora,
         especialidad: atn.specialty_name || 'Medicina General',
-        medico: atn.medico_asignado_nombre || 'Médico Asignado',
         consultorio: atn.consultorio || 'Consultorio 01',
       }))
 
@@ -1629,10 +1631,10 @@ export default function BeneficiarioPage() {
                               paciente: `${ape}, ${nom}`,
                               dni: doc,
                               comunidad: atn.comunidad || 'Comunidad General',
+                              fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : new Date().toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
                               hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--',
                               especialidad: esp,
                               consultorio: atn.consultorio || 'Consultorio 01',
-                              medico: atn.medico_asignado_nombre || 'Médico Asignado',
                             }
                             setAssignedTickets([singleTicket])
                             setAssignedTicketInfo(singleTicket)
@@ -1735,7 +1737,7 @@ export default function BeneficiarioPage() {
         </div>
       )}
 
-      {/* Modal de Impresión Térmica Inmediata del / de los Ticket(s) Asignado(s) */}
+      {/* Modal de Impresión Térmica Inmediata del Ticket Asignado */}
       <TicketModal
         isOpen={ticketModalOpen}
         onClose={() => {
@@ -1745,6 +1747,7 @@ export default function BeneficiarioPage() {
         }}
         tickets={assignedTickets}
         info={assignedTicketInfo}
+        mode="admision"
         autoPrint={true}
         onNext={() => {
           setTicketModalOpen(false)

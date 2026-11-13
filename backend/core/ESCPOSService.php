@@ -248,7 +248,14 @@ class ESCPOSService
     public function buildAdmisionTicket(array $atencion): string
     {
         $b = $atencion['beneficiario'] ?? [];
-        $ticketCodigo = $atencion['ticket_codigo'] ?? ('T-' . ($atencion['ticket_number'] ?? '1'));
+        $rawNum = $atencion['ticket_number'] ?? null;
+        if (!$rawNum && !empty($atencion['ticket_codigo'])) {
+            if (preg_match('/(\d+)$/', (string)$atencion['ticket_codigo'], $m)) {
+                $rawNum = $m[1];
+            }
+        }
+        $correlativoNum = $rawNum ? str_pad((string)(int)$rawNum, 2, '0', STR_PAD_LEFT) : '01';
+
         $paciente = trim(($b['apellidos'] ?? '') . ', ' . ($b['nombres'] ?? ''));
         if (empty($paciente)) {
             $paciente = trim(($b['nombres'] ?? '') . ' ' . ($b['apellidos'] ?? ''));
@@ -288,22 +295,19 @@ class ESCPOSService
         $out .= self::BOLD_ON . $this->encodeText("FECHA: ") . self::BOLD_OFF . $this->encodeText("{$fecha}  ") . self::BOLD_ON . $this->encodeText("HORA: ") . self::BOLD_OFF . $this->encodeText("{$hora}\n");
         $out .= $singleSep;
 
-        // 3. Especialidad(es) elegida(s)
+        // 3. Turno Correlativo y Especialidad(es) elegida(s)
         $out .= self::CENTER;
+        $out .= self::BOLD_ON . $this->encodeText("TURNO DE ATENCION:\n") . self::BOLD_OFF;
+        $out .= self::BOLD_ON . "\x1D\x21\x11" . $this->encodeText("N° {$correlativoNum}\n") . "\x1D\x21\x00" . self::BOLD_OFF;
         if (empty($especialidades)) {
             $esp = $atencion['specialty_name'] ?? 'MEDICINA GENERAL';
-            $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDAD ASIGNADA:\n") . self::BOLD_OFF;
-            $out .= self::BOLD_ON . "\x1D\x21\x11" . $this->encodeText("{$ticketCodigo}\n") . "\x1D\x21\x00" . self::BOLD_OFF;
-            $out .= self::BOLD_ON . $this->encodeText("{$esp}\n") . self::BOLD_OFF;
+            $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDAD: {$esp}\n") . self::BOLD_OFF;
         } else {
-            $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDADES ELEGIDAS:\n") . self::BOLD_OFF;
-            $out .= self::LEFT;
+            $out .= self::LEFT . self::BOLD_ON . $this->encodeText("ESPECIALIDADES REGISTRADAS:\n") . self::BOLD_OFF;
             foreach ($especialidades as $idx => $espItem) {
                 $num = $idx + 1;
                 $eNombre = is_string($espItem) ? $espItem : ($espItem['nombre'] ?? $espItem['especialidad'] ?? '');
-                $eCodigo = is_array($espItem) ? ($espItem['ticket'] ?? $espItem['codigo'] ?? '') : '';
-                $line = "  {$num}. {$eNombre}" . ($eCodigo ? " [{$eCodigo}]" : "");
-                $out .= self::BOLD_ON . $this->encodeText("{$line}\n") . self::BOLD_OFF;
+                $out .= self::BOLD_ON . $this->encodeText("  {$num}. {$eNombre}\n") . self::BOLD_OFF;
             }
         }
         $out .= $singleSep;

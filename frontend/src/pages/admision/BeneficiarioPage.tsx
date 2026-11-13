@@ -376,25 +376,29 @@ export default function BeneficiarioPage() {
       const nowHora = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       const nowFecha = now.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
-      const generatedTickets: TicketInfo[] = rawList.map((atn: any) => ({
-        ticket: atn.ticket_codigo || `T-${atn.ticket_number}`,
-        paciente: `${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}`,
-        dni: cleanDni || 'S/DNI',
-        comunidad: comunidad || 'Comunidad General',
-        fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : nowFecha,
-        hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : nowHora,
-        especialidad: atn.specialty_name || 'Medicina General',
-        consultorio: atn.consultorio || 'Consultorio 01',
-      }))
+      const generatedTickets: TicketInfo[] = rawList.map((atn: any) => {
+        const corr = atn.ticket_number || (atn.ticket_codigo ? atn.ticket_codigo.match(/(\d+)$/)?.[1] : undefined)
+        return {
+          ticket: String(corr || atn.ticket_codigo || '1'),
+          correlativo: corr || atn.ticket_number,
+          paciente: `${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}`,
+          dni: cleanDni || 'S/DNI',
+          comunidad: comunidad || 'Comunidad General',
+          fecha: atn.arrival_time ? new Date(atn.arrival_time).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : nowFecha,
+          hora: atn.arrival_time ? new Date(atn.arrival_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : nowHora,
+          especialidad: atn.specialty_name || 'Medicina General',
+          consultorio: atn.consultorio || 'Consultorio 01',
+        }
+      })
 
       setAssignedTickets(generatedTickets)
       setAssignedTicketInfo(generatedTickets[0] || null)
-      const ticketsStr = generatedTickets.map((t) => '#' + t.ticket).join(', ')
+      const ticketsStr = generatedTickets.map((t) => 'N° ' + (t.correlativo || t.ticket)).join(', ')
       setLastAssignedTicket(ticketsStr)
       setTicketModalOpen(true)
 
       setMessage({
-        text: `✓ ¡Paciente registrado con éxito! Turno(s) Asignado(s): ${generatedTickets.map((t) => `#${t.ticket} (${t.especialidad})`).join(' y ')} para ${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}. Se imprimirán juntos para el paciente.`,
+        text: `✓ ¡Paciente registrado con éxito! Turno Asignado: ${generatedTickets.map((t) => `N° ${t.correlativo || t.ticket} (${t.especialidad})`).join(' y ')} para ${apellidos.trim().toUpperCase()}, ${nombres.trim().toUpperCase()}.`,
         type: 'success',
       })
 
@@ -1626,8 +1630,10 @@ export default function BeneficiarioPage() {
                         <button
                           type="button"
                           onClick={() => {
+                            const corr = atn.ticket_number || (tkt ? tkt.match(/(\d+)$/)?.[1] : undefined)
                             const singleTicket: TicketInfo = {
-                              ticket: tkt,
+                              ticket: String(corr || tkt || '1'),
+                              correlativo: corr,
                               paciente: `${ape}, ${nom}`,
                               dni: doc,
                               comunidad: atn.comunidad || 'Comunidad General',

@@ -284,7 +284,6 @@ class ESCPOSService
         $out .= self::CENTER . self::BOLD_ON;
         $out .= $this->encodeText("ONG SEMILLA - ASISTENCIA MEDICA\n");
         $out .= self::BOLD_OFF;
-        $out .= $this->encodeText("TICKET DE INSCRIPCION Y ATENCION\n");
         $out .= $doubleSep;
 
         // 2. Datos del Paciente (CON FECHA Y HORA, SIN MEDICO)
@@ -295,21 +294,10 @@ class ESCPOSService
         $out .= self::BOLD_ON . $this->encodeText("FECHA: ") . self::BOLD_OFF . $this->encodeText("{$fecha}  ") . self::BOLD_ON . $this->encodeText("HORA: ") . self::BOLD_OFF . $this->encodeText("{$hora}\n");
         $out .= $singleSep;
 
-        // 3. Turno Correlativo y Especialidad(es) elegida(s)
+        // 3. Nro de Ticket (Sin Especialidad)
         $out .= self::CENTER;
-        $out .= self::BOLD_ON . $this->encodeText("TURNO DE ATENCION:\n") . self::BOLD_OFF;
+        $out .= self::BOLD_ON . $this->encodeText("Nro de Ticket:\n") . self::BOLD_OFF;
         $out .= self::BOLD_ON . "\x1D\x21\x11" . $this->encodeText("{$correlativoNum}\n") . "\x1D\x21\x00" . self::BOLD_OFF;
-        if (empty($especialidades)) {
-            $esp = $atencion['specialty_name'] ?? 'MEDICINA GENERAL';
-            $out .= self::BOLD_ON . $this->encodeText("ESPECIALIDAD: {$esp}\n") . self::BOLD_OFF;
-        } else {
-            $out .= self::LEFT . self::BOLD_ON . $this->encodeText("ESPECIALIDADES REGISTRADAS:\n") . self::BOLD_OFF;
-            foreach ($especialidades as $idx => $espItem) {
-                $num = $idx + 1;
-                $eNombre = is_string($espItem) ? $espItem : ($espItem['nombre'] ?? $espItem['especialidad'] ?? '');
-                $out .= self::BOLD_ON . $this->encodeText("  {$num}. {$eNombre}\n") . self::BOLD_OFF;
-            }
-        }
         $out .= $singleSep;
 
         // 4. Espacio con cruz en medio dividiendo el ticket en cuatro cuadrantes en blanco para sellos

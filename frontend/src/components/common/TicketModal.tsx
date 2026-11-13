@@ -166,9 +166,11 @@ export function TicketModal({
             {branding.appName || 'Asistencia Médica'}
           </div>
 
-          <h2 className="text-xl font-black uppercase text-on-surface mt-1">
-            {isAdmision ? 'Ticket de Inscripción' : (isMulti ? `${ticketList.length} Turnos Asignados` : 'Turno Clínico Asignado')}
-          </h2>
+          {!isAdmision && (
+            <h2 className="text-xl font-black uppercase text-on-surface mt-1">
+              {isMulti ? `${ticketList.length} Turnos Asignados` : 'Turno Clínico Asignado'}
+            </h2>
+          )}
 
           {/* Resumen de Datos del Paciente (CON FECHA Y HORA, SIN MÉDICO) */}
           <div className="bg-surface-container p-3.5 border border-surface-container-high text-left my-3 space-y-2">
@@ -202,40 +204,14 @@ export function TicketModal({
             </div>
           </div>
 
-          {/* Turno Correlativo y Especialidad o Especialidades Elegidas */}
+          {/* Nro de Ticket (Sin Especialidad) */}
           <div className="my-3 p-3.5 bg-primary/10 border-2 border-dashed border-primary text-center">
             <span className="text-[11px] uppercase tracking-wider font-semibold text-secondary block">
-              TURNO DE ATENCIÓN
+              Nro de Ticket
             </span>
             <span className="text-5xl font-mono font-black text-primary my-1 block tracking-wider">
               {displayNumero}
             </span>
-            {ticketList.length === 1 ? (
-              <div className="text-sm font-bold uppercase text-on-surface mt-1">
-                Especialidad: <strong>{firstTicket.especialidad || 'Medicina General'}</strong>
-              </div>
-            ) : (
-              <div className="border-t border-primary/30 pt-2 mt-2 text-left">
-                <span className="text-[11px] uppercase tracking-wider font-bold text-secondary block mb-1.5">
-                  Especialidades Registradas ({ticketList.length}):
-                </span>
-                <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
-                  {ticketList.map((t, idx) => (
-                    <div
-                      key={idx}
-                      className="p-1.5 bg-surface border border-primary/25 flex items-center gap-2"
-                    >
-                      <span className="px-1.5 py-0.5 text-[10px] font-mono font-bold bg-primary text-on-primary">
-                        #{idx + 1}
-                      </span>
-                      <span className="text-xs font-bold uppercase text-on-surface truncate">
-                        {t.especialidad || 'Especialidad'}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Espacio con Cruz en Medio dividiendo el Ticket en 4 Cuadrantes en Blanco para Sellos */}
@@ -305,12 +281,6 @@ export function TicketModal({
                     <div className="font-bold text-base uppercase tracking-wider">{branding.appName}</div>
                   )}
                   <div className="font-bold text-xs uppercase">{branding.appName}</div>
-                  {branding.loginTitle && (
-                    <div className="text-[10px] font-bold text-gray-800">{branding.loginTitle}</div>
-                  )}
-                  <div className="text-[9px] font-bold text-gray-700 mt-0.5 uppercase tracking-wide">
-                    TICKET DE INSCRIPCIÓN Y ATENCIÓN
-                  </div>
                 </div>
 
                 {/* 2. Datos del Paciente (CON FECHA Y HORA, SIN MÉDICO) */}
@@ -345,38 +315,14 @@ export function TicketModal({
                   </div>
                 </div>
 
-                {/* 3. Turno Correlativo y Especialidad o Especialidades Elegidas */}
+                {/* 3. Nro de Ticket (Sin Especialidad) */}
                 <div className="my-2 border-2 border-black p-2.5 text-center bg-white">
                   <div className="text-[10px] font-black uppercase tracking-wider text-black">
-                    TURNO DE ATENCIÓN
+                    NRO DE TICKET
                   </div>
                   <div className="text-4xl font-mono font-black tracking-widest my-1 text-black">
                     {displayNumero}
                   </div>
-                  {ticketList.length === 1 ? (
-                    <div className="text-xs font-black uppercase text-black mt-1">
-                      ESPECIALIDAD: {firstTicket.especialidad || 'MEDICINA GENERAL'}
-                    </div>
-                  ) : (
-                    <div className="border-t border-black pt-1.5 mt-1.5 text-left">
-                      <div className="text-[9px] font-black uppercase text-black mb-1">
-                        ESPECIALIDADES REGISTRADAS ({ticketList.length}):
-                      </div>
-                      <div className="space-y-1">
-                        {ticketList.map((t, idx) => (
-                          <div
-                            key={idx}
-                            className="text-xs font-bold uppercase text-black flex items-center gap-1.5"
-                          >
-                            <span className="w-3.5 h-3.5 rounded-full bg-black text-white text-[9px] font-mono flex items-center justify-center shrink-0">
-                              {idx + 1}
-                            </span>
-                            <span>{t.especialidad || 'Medicina General'}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 {/* 4. Espacio con Cruz en Medio dividiendo en 4 Cuadrantes en Blanco para Sellos */}

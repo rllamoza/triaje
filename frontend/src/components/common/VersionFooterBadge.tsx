@@ -2,9 +2,16 @@ import { useState } from 'react'
 
 export const SYSTEM_VERSIONS = [
   {
+    version: 'v2.1.0',
+    date: '13 Nov 2026',
+    current: true,
+    title: 'Producción: Correlativo Diario 0001, Edad, Distrito & Seguridad Estricta',
+    description: 'Última y más actualizada versión de producción: reinicio diario del ticket a 0001, edad y distrito integrados, retiro total de autologin y vademécum en tiempo real.',
+  },
+  {
     version: 'v1.0.6',
     date: '05 Nov 2026',
-    current: true,
+    current: false,
     title: 'Farmacia, Dispensación & Descuento de Stock',
     description: 'Entrega de fármacos con receta, registro de doctor, descuento interactivo en grid/modal, cargos con firma/foto y comprobante configurable.',
   },
